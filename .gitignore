@@ -1,0 +1,5 @@
+# build directory
+bin/
+
+# temporary disabled
+go.sum
