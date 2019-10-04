@@ -3,16 +3,16 @@ Lokalise CLI 2.0 Golang sources
 
 Objectives:
 
-- Develop a CLI tool for Lokalise (https://lokalise.co) API 2.0 (https://lokalise.co/api2docs/curl/#resource-getting-started). 
+- Develop a CLI tool for Lokalise (https://lokalise.com) API 2.0 (https://lokalise.com/api2docs/curl/#resource-getting-started). 
 - The CLI tool must be developed using GO programming language using either of https://github.com/urfave/cli or https://github.com/spf13/cobra. 
 - The resulting app must be compiled for linux, mac, windows.
 - All the output should be mirrored from API as JSON (besides the `file download` command, where there is a switch to show json only, otherwise download the file too). 
 - The CLI tool must respect pagination and sequentally fetch all pages if more than 1 returned by API.
 
-
 Command line tool parameter specifications:
 
 lokalise
+
 	--config string
 
 	--version

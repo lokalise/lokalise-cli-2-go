@@ -1,17 +1,18 @@
 package cmd
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/lokalise/go-lokalise-api"
 	"github.com/spf13/cobra"
 )
 
 var (
-	teamId int64
-	userId int64
-	role   string
+	teamId    int64
+	userId    int64
+	keyId     int64
+	commentId int64
+	projectId string
+
+	role string
 )
 
 // teamUserCmd represents the team-user command
@@ -26,22 +27,11 @@ var teamUserListCmd = &cobra.Command{
 	Short: "Lists all team users. Requires Admin role in the team.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		c, err := lokalise.NewClient(Token)
+		resp, err := Api.TeamUsers().List(teamId)
 		if err != nil {
 			return err
 		}
-
-		resp, err := c.TeamUsers.List(context.Background(), teamId, lokalise.PageOptions{})
-		if err != nil {
-			return err
-		}
-		output, err := json.MarshalIndent(resp, "", "  ")
-		if err != nil {
-			return err
-		}
-
-		fmt.Println(string(output))
-		return nil
+		return printJson(resp)
 	},
 }
 
@@ -51,22 +41,11 @@ var teamUserRetrieveCmd = &cobra.Command{
 	Short: "Retrieves a Team user object. Requires Admin role in the team.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		c, err := lokalise.NewClient(Token)
+		resp, err := Api.TeamUsers().Retrieve(teamId, userId)
 		if err != nil {
 			return err
 		}
-
-		resp, err := c.TeamUsers.Retrieve(context.Background(), teamId, userId)
-		if err != nil {
-			return err
-		}
-		output, err := json.MarshalIndent(resp, "", "  ")
-		if err != nil {
-			return err
-		}
-
-		fmt.Println(string(output))
-		return nil
+		return printJson(resp)
 	},
 }
 
@@ -77,28 +56,28 @@ var teamUserUpdateCmd = &cobra.Command{
 	Long: `
 Available roles are  owner, admin, member.
 
-* owner может управлять ролями owner, admin, member, в том числе понизить привилегии
-* admin может управлять ролями admin, member, НЕ может повысить привилегии до owner
-* member НЕ может менять роли
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		c, err := lokalise.NewClient(Token)
+		resp, err := Api.TeamUsers().UpdateRole(teamId, userId, lokalise.TeamUserRole(role))
 		if err != nil {
 			return err
 		}
+		return printJson(resp)
+	},
+}
 
-		resp, err := c.TeamUsers.UpdateRole(context.Background(), teamId, userId, lokalise.TeamUserRole(role))
-		if err != nil {
-			return err
-		}
-		output, err := json.MarshalIndent(resp, "", "  ")
-		if err != nil {
-			return err
-		}
+// teamUserDeleteCmd represents team-user delete command
+var teamUserDeleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Deletes the role of a team user. Requires Admin role in the team.",
+	RunE: func(cmd *cobra.Command, args []string) error {
 
-		fmt.Println(string(output))
-		return nil
+		resp, err := Api.TeamUsers().Delete(teamId, userId)
+		if err != nil {
+			return err
+		}
+		return printJson(resp)
 	},
 }
 
@@ -106,6 +85,7 @@ func init() {
 	teamUserCmd.AddCommand(teamUserListCmd)
 	teamUserCmd.AddCommand(teamUserRetrieveCmd)
 	teamUserCmd.AddCommand(teamUserUpdateCmd)
+	teamUserCmd.AddCommand(teamUserDeleteCmd)
 
 	rootCmd.AddCommand(teamUserCmd)
 
@@ -119,4 +99,7 @@ func init() {
 	_ = teamUserUpdateCmd.MarkFlagRequired("user-id")
 	teamUserUpdateCmd.Flags().StringVar(&role, "role", "", "Role of the user. Available roles are owner, admin, member (required)")
 	_ = teamUserUpdateCmd.MarkFlagRequired("role")
+
+	teamUserDeleteCmd.Flags().Int64Var(&userId, "user-id", 0, "A unique identifier of the user (required)")
+	_ = teamUserDeleteCmd.MarkFlagRequired("user-id")
 }
