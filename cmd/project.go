@@ -25,7 +25,6 @@ var (
 // projectCmd represents the project command
 var projectCmd = &cobra.Command{
 	Use:   "project",
-	Short: "The Project object",
 }
 
 var projectCreateCmd = &cobra.Command{

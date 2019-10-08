@@ -21,13 +21,7 @@ var (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "lokalise",
-	Short: "Lokalise CLI app",
-	Long: `
-=== Lokalise command-line tool ====
-
-Lokalise is a CLI application that allows to perform queries to API. 
-Enjoy!
-`,
+	Short: "Lokalise command-line tool. Documentation is available at https://docs.lokalise.com/cli2",
 	Version: Version,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
 		// init Api, runs like a middleware
@@ -47,7 +41,7 @@ func Execute() {
 
 func init() {
 	// API Token, used for all commands
-	rootCmd.PersistentFlags().StringVarP(&Token, "token", "t", "", "API token (required)")
+	rootCmd.PersistentFlags().StringVarP(&Token, "token", "t", "", "API token (required). You can create API tokens at https://lokalise.com/profile.")
 	_ = rootCmd.MarkPersistentFlagRequired("token")
 }
 

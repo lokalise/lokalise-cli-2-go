@@ -13,11 +13,14 @@ var (
 // commentCmd represents the comment command
 var commentCmd = &cobra.Command{
 	Use: "comment",
+	Short: "Manage key comments",
+	Long: "Comments can be used to give translators a context about the key, or as a discussion about certain aspects of translation for the key. There is a separate comments thread for each key. All comments are cross-posted into project chat.",
 }
 
 var commentListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists all comments",
+	Short: "List project comments",
+	Long: "Retrieves a list of all comments in the project.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Comments().ListProject(projectId)
@@ -30,7 +33,8 @@ var commentListCmd = &cobra.Command{
 
 var commentListKeyCmd = &cobra.Command{
 	Use:   "list-key",
-	Short: "Retrieves a list of all comments for a key",
+	Short: "List key comments",
+	Long: "Retrieves a list of all comments of the key.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Comments().ListByKey(projectId, keyId)
@@ -43,7 +47,8 @@ var commentListKeyCmd = &cobra.Command{
 
 var commentCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Adds a comment to the key",
+	Short: "Add a comment",
+	Long: "Adds a comment to the skey.",
 	RunE: func(*cobra.Command, []string) error {
 
 		c := lokalise.NewComment{Comment: comment}
@@ -57,7 +62,7 @@ var commentCreateCmd = &cobra.Command{
 
 var commentRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
-	Short: "Retrieves a comment by its id",
+	Short: "Retrieve a comment",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Comments().Retrieve(projectId, keyId, commentId)
@@ -70,7 +75,8 @@ var commentRetrieveCmd = &cobra.Command{
 
 var commentDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Deletes a comment from the project. Authenticated user can only delete own comments.",
+	Short: "Delete a comment",
+	Long: "Deletes a comment from the project. Authenticated user can only delete own comments.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Comments().Delete(projectId, keyId, commentId)
@@ -93,7 +99,7 @@ func init() {
 
 	// Create
 	flagKeyId(commentCreateCmd)
-	commentCreateCmd.Flags().StringVar(&comment, "comment", "", "The comment")
+	commentCreateCmd.Flags().StringVar(&comment, "comment", "", "The comment to add (required).")
 	_ = commentCreateCmd.MarkFlagRequired("comment")
 
 	// Retrieve
@@ -106,6 +112,6 @@ func init() {
 }
 
 func flagCommentId(cmd *cobra.Command) {
-	cmd.Flags().Int64Var(&commentId, "comment-id", 0, "A unique identifier of comment (required)")
+	cmd.Flags().Int64Var(&commentId, "comment-id", 0, "A unique identifier of comment (required).")
 	_ = cmd.MarkFlagRequired("comment-id")
 }

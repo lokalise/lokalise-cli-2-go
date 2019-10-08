@@ -11,7 +11,6 @@ var (
 // teamCmd represents the team command
 var teamCmd = &cobra.Command{
 	Use:   "team",
-	Short: "The Team object",
 }
 
 // teamListCmd represents team list command

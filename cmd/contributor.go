@@ -16,12 +16,14 @@ var (
 // contributorCmd represents the contributor command
 var contributorCmd = &cobra.Command{
 	Use:   "contributor",
-	Short: "The Contributor object",
+	Short: "Manage project contributors",
+	Long: "You may add unlimited number of contributors to your project. User roles include admin, translator and reviewer.",
 }
 
 var contributorListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists all contributors",
+	Short: "List all contributors",
+	Long: "Lists contributors of the project, including access levels to the project languages. Admins always have read/write access to all languages.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Contributors().List(projectId)
@@ -34,8 +36,8 @@ var contributorListCmd = &cobra.Command{
 
 var contributorCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Creates a contributor in the project",
-	Long: `
+	Short: "Create a contributor",
+	Long: `Creates a contributor in the project.
 Requires Manage contributors admin right.
 
 If is_admin flag is set to true, the user would automatically get access to all project languages, 
@@ -63,7 +65,7 @@ if the user has already been registered in Lokalise.
 
 var contributorRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
-	Short: "Retrieves a contributor by its id",
+	Short: "Retrieve a contributor",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Contributors().Retrieve(projectId, userId)
@@ -76,8 +78,8 @@ var contributorRetrieveCmd = &cobra.Command{
 
 var contributorUpdateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Updates the properties of a contributor",
-	Long: `
+	Short: "Update a contributor",
+	Long: `Updates a contributor.
 Requires Manage contributors admin right.
 
 If you want to give an existing contributor access to a new language, you must specify full languages array, 
@@ -104,7 +106,8 @@ including the previously added languages as well.
 
 var contributorDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Deletes a user from the project. Requires Manage contributors admin right.",
+	Short: "Delete a contributor",
+	Long: "Deletes a user from the project. Requires Manage contributors admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Contributors().Delete(projectId, userId)
@@ -125,21 +128,21 @@ func init() {
 
 	// Create
 	fs := contributorCreateCmd.Flags()
-	fs.StringVar(&contributorCreate.Email, "email", "", "")
+	fs.StringVar(&contributorCreate.Email, "email", "", "E-mail.")
 	_ = contributorCreateCmd.MarkFlagRequired("email")
-	fs.StringVar(&contributorCreate.Fullname, "fullname", "", "")
-	fs.BoolVar(&contributorCreate.IsAdmin, "is-admin", false, "")
-	fs.BoolVar(&contributorCreate.IsReviewer, "is-reviewer", false, "")
-	fs.StringVar(&contributorLanguages, "languages", "", "")
-	fs.StringSliceVar(&contributorCreate.AdminRights, "admin-rights", []string{}, "")
+	fs.StringVar(&contributorCreate.Fullname, "fullname", "", "Full name (only valid for inviting users, who previously did not have an account in Lokalise).")
+	fs.BoolVar(&contributorCreate.IsAdmin, "is-admin", false, "Whether the user has Admin access to the project.")
+	fs.BoolVar(&contributorCreate.IsReviewer, "is-reviewer", false, "Whether the user has Reviewer access to the project.")
+	fs.StringVar(&contributorLanguages, "languages", "", "List of languages, accessible to the user. Required if is_admin is set to false (JSON, see https://lokalise.com/api2docs/curl/#transition-create-contributors-post).")
+	fs.StringSliceVar(&contributorCreate.AdminRights, "admin-rights", []string{}, "Custom list of user permissions. Possible values are upload, activity, download, settings, statistics, keys, screenshots, contributors, languages. Omitted or empty parameter will set default admin rights for user role.")
 
 	// Update
 	flagContributorId(contributorUpdateCmd)
 	fs = contributorUpdateCmd.Flags()
-	fs.BoolVar(&permissionUpdate.IsAdmin, "is-admin", false, "")
-	fs.BoolVar(&permissionUpdate.IsReviewer, "is-reviewer", false, "")
-	fs.StringVar(&contributorLanguages, "languages", "", "")
-	fs.StringSliceVar(&permissionUpdate.AdminRights, "admin-rights", []string{}, "")
+	fs.BoolVar(&permissionUpdate.IsAdmin, "is-admin", false, "Whether the user has Admin access to the project.")
+	fs.BoolVar(&permissionUpdate.IsReviewer, "is-reviewer", false, "Whether the user has Reviewer access to the project.")
+	fs.StringVar(&contributorLanguages, "languages", "", "List of languages, accessible to the user (JSON, see https://lokalise.com/api2docs/curl/#transition-update-a-contributor-put).")
+	fs.StringSliceVar(&permissionUpdate.AdminRights, "admin-rights", []string{}, "Custom list of user permissions. Possible values are upload, activity, download, settings, statistics, keys, screenshots, contributors, languages. Empty parameter will set default admin rights for user role.")
 
 	// Retrieve, delete
 	flagContributorId(contributorRetrieveCmd)
@@ -147,6 +150,6 @@ func init() {
 }
 
 func flagContributorId(cmd *cobra.Command) {
-	cmd.Flags().Int64Var(&contributorId, "contributor-id", 0, "A unique identifier of contributor (required)")
+	cmd.Flags().Int64Var(&contributorId, "contributor-id", 0, "A unique identifier of contributor (required).")
 	_ = cmd.MarkFlagRequired("contributor-id")
 }

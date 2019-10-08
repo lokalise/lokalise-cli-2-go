@@ -22,7 +22,6 @@ var (
 // keyCmd represents the key command
 var keyCmd = &cobra.Command{
 	Use:   "key",
-	Short: "Keys are core item elements of the project.",
 }
 
 var keyListCmd = &cobra.Command{

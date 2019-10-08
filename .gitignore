@@ -1,5 +1,7 @@
 # build directory
 bin/
+.idea/
+.DS_Store
 
 # temporary disabled
 go.sum

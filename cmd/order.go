@@ -13,7 +13,6 @@ var (
 // orderCmd represents the order command
 var orderCmd = &cobra.Command{
 	Use:   "order",
-	Short: "The ...",
 }
 
 var orderListCmd = &cobra.Command{
