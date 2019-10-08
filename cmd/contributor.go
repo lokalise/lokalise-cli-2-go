@@ -1,8 +1,16 @@
 package cmd
 
 import (
+	"encoding/json"
 	"github.com/lokalise/go-lokalise-api"
 	"github.com/spf13/cobra"
+)
+
+var (
+	contributorId        int64
+	contributorCreate    lokalise.NewContributor
+	permissionUpdate     lokalise.Permission
+	contributorLanguages string
 )
 
 // contributorCmd represents the contributor command
@@ -14,7 +22,8 @@ var contributorCmd = &cobra.Command{
 var contributorListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all contributors",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Contributors().List(projectId)
 		if err != nil {
 			return err
@@ -33,9 +42,18 @@ If is_admin flag is set to true, the user would automatically get access to all 
 overriding supplied languages object. Attribute fullname will be ignored, 
 if the user has already been registered in Lokalise.
 `,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		c := lokalise.CustomContributor{contributorOptions}
-		resp, err := Api.Contributors().Create(projectId, []lokalise.CustomContributor{c})
+	RunE: func(*cobra.Command, []string) error {
+		// fill opts
+		if contributorLanguages != "" {
+			var ls []lokalise.Language
+			err := json.Unmarshal([]byte(contributorLanguages), &ls)
+			if err != nil {
+				return err
+			}
+			contributorCreate.Languages = ls
+		}
+
+		resp, err := Api.Contributors().Create(projectId, []lokalise.NewContributor{contributorCreate})
 		if err != nil {
 			return err
 		}
@@ -46,7 +64,8 @@ if the user has already been registered in Lokalise.
 var contributorRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
 	Short: "Retrieves a contributor by its id",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Contributors().Retrieve(projectId, userId)
 		if err != nil {
 			return err
@@ -64,8 +83,18 @@ Requires Manage contributors admin right.
 If you want to give an existing contributor access to a new language, you must specify full languages array, 
 including the previously added languages as well.
 `,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Contributors().Update(projectId, userId, contributorOptions) // fixme in lib incorrect signature
+	RunE: func(*cobra.Command, []string) error {
+		// Fill permission langs
+		if contributorLanguages != "" {
+			var ls []lokalise.Language
+			err := json.Unmarshal([]byte(contributorLanguages), &ls)
+			if err != nil {
+				return err
+			}
+			permissionUpdate.Languages = ls
+		}
+
+		resp, err := Api.Contributors().Update(projectId, userId, permissionUpdate)
 		if err != nil {
 			return err
 		}
@@ -76,7 +105,8 @@ including the previously added languages as well.
 var contributorDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a user from the project. Requires Manage contributors admin right.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Contributors().Delete(projectId, userId)
 		if err != nil {
 			return err
@@ -86,19 +116,37 @@ var contributorDeleteCmd = &cobra.Command{
 }
 
 func init() {
-	contributorCmd.AddCommand(contributorListCmd)
-	contributorCmd.AddCommand(contributorCreateCmd)
-	contributorCmd.AddCommand(contributorRetrieveCmd)
-	contributorCmd.AddCommand(contributorUpdateCmd)
-	contributorCmd.AddCommand(contributorDeleteCmd)
-
+	contributorCmd.AddCommand(contributorListCmd, contributorCreateCmd, contributorRetrieveCmd,
+		contributorUpdateCmd, contributorDeleteCmd)
 	rootCmd.AddCommand(contributorCmd)
 
 	// common for all Comment cmd`s
-	withProjectId(contributorCmd, true)
+	flagProjectId(contributorCmd, true)
 
-	// separate flags for every command
-	withKeyId(contributorCreateCmd)
-	withKeyId(contributorRetrieveCmd)
-	withKeyId(contributorDeleteCmd)
+	// Create
+	fs := contributorCreateCmd.Flags()
+	fs.StringVar(&contributorCreate.Email, "email", "", "")
+	_ = contributorCreateCmd.MarkFlagRequired("email")
+	fs.StringVar(&contributorCreate.Fullname, "fullname", "", "")
+	fs.BoolVar(&contributorCreate.IsAdmin, "is-admin", false, "")
+	fs.BoolVar(&contributorCreate.IsReviewer, "is-reviewer", false, "")
+	fs.StringVar(&contributorLanguages, "languages", "", "")
+	fs.StringSliceVar(&contributorCreate.AdminRights, "admin-rights", []string{}, "")
+
+	// Update
+	flagContributorId(contributorUpdateCmd)
+	fs = contributorUpdateCmd.Flags()
+	fs.BoolVar(&permissionUpdate.IsAdmin, "is-admin", false, "")
+	fs.BoolVar(&permissionUpdate.IsReviewer, "is-reviewer", false, "")
+	fs.StringVar(&contributorLanguages, "languages", "", "")
+	fs.StringSliceVar(&permissionUpdate.AdminRights, "admin-rights", []string{}, "")
+
+	// Retrieve, delete
+	flagContributorId(contributorRetrieveCmd)
+	flagContributorId(contributorDeleteCmd)
+}
+
+func flagContributorId(cmd *cobra.Command) {
+	cmd.Flags().Int64Var(&contributorId, "contributor-id", 0, "A unique identifier of contributor (required)")
+	_ = cmd.MarkFlagRequired("contributor-id")
 }

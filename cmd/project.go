@@ -1,8 +1,25 @@
 package cmd
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/lokalise/go-lokalise-api"
 	"github.com/spf13/cobra"
+)
+
+var (
+	projectId string
+	// List projects options
+	includeStatistics uint8
+	includeSettings   uint8
+	filterTeamID      int64
+	filterNames       string
+
+	newProject     lokalise.NewProject
+	newProjectLang string
+
+	updateProject lokalise.UpdateProject
 )
 
 // projectCmd represents the project command
@@ -11,12 +28,39 @@ var projectCmd = &cobra.Command{
 	Short: "The Project object",
 }
 
+var projectCreateCmd = &cobra.Command{
+	Use: "create",
+	RunE: func(*cobra.Command, []string) error {
+		err := json.Unmarshal([]byte(newProjectLang), &newProject.Languages)
+		if err != nil {
+			return err
+		}
+
+		p := Api.Projects()
+		p.SetDebug(true)
+		resp, err := p.Create(newProject)
+		if err != nil {
+			return err
+		}
+		return printJson(resp)
+	},
+}
+
 var projectListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all projects",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
 
-		resp, err := Api.Projects().List(lokalise.ProjectsOptions{}) // todo alter after changes in the library
+		p := Api.Projects()
+		p.SetDebug(true)
+		opts := lokalise.ProjectListOptions{
+			IncludeSettings: fmt.Sprintf("%d", includeSettings),
+			IncludeStat:     fmt.Sprintf("%d", includeStatistics),
+			FilterTeamID:    filterTeamID,
+			FilterNames:     filterNames,
+		}
+
+		resp, err := p.WithListOptions(opts).List()
 		if err != nil {
 			return err
 		}
@@ -26,7 +70,7 @@ var projectListCmd = &cobra.Command{
 
 var projectRetrieveCmd = &cobra.Command{
 	Use: "retrieve",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Projects().Retrieve(projectId)
 		if err != nil {
@@ -38,9 +82,9 @@ var projectRetrieveCmd = &cobra.Command{
 
 var projectUpdateCmd = &cobra.Command{
 	Use: "update",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
 
-		resp, err := Api.Projects().Update(projectId, name, description)
+		resp, err := Api.Projects().Update(projectId, updateProject)
 		if err != nil {
 			return err
 		}
@@ -49,9 +93,8 @@ var projectUpdateCmd = &cobra.Command{
 }
 
 var projectDeleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Deletes the role of a team user. Requires Admin role in the team.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Use: "delete",
+	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Projects().Delete(projectId)
 		if err != nil {
@@ -62,11 +105,10 @@ var projectDeleteCmd = &cobra.Command{
 }
 
 var projectEmptyCmd = &cobra.Command{
-	Use:   "empty",
-	Short: "Deletes the role of a team user. Requires Admin role in the team.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Use: "empty",
+	RunE: func(*cobra.Command, []string) error {
 
-		resp, err := Api.Projects().Empty(projectId)
+		resp, err := Api.Projects().Truncate(projectId)
 		if err != nil {
 			return err
 		}
@@ -75,17 +117,42 @@ var projectEmptyCmd = &cobra.Command{
 }
 
 func init() {
-	projectCmd.AddCommand(projectListCmd)
-	projectCmd.AddCommand(projectRetrieveCmd)
-	projectCmd.AddCommand(projectUpdateCmd)
-	projectCmd.AddCommand(projectEmptyCmd)
-	projectCmd.AddCommand(projectDeleteCmd)
-
+	projectCmd.AddCommand(projectCreateCmd, projectListCmd, projectRetrieveCmd, projectUpdateCmd,
+		projectEmptyCmd, projectDeleteCmd)
 	rootCmd.AddCommand(projectCmd)
 
+	// Create
+	fs := projectCreateCmd.Flags()
+	fs.StringVar(&newProject.Name, "name", "", "Name of the project")
+	_ = projectCreateCmd.MarkFlagRequired("name")
+	fs.Int64Var(&newProject.TeamID, "team-id", 0, "ID of the team to create a project in")
+	fs.StringVar(&newProject.Description, "description", "", "Description of the project")
+	fs.StringVar(&newProjectLang, "languages", "", "List of languages to add")
+	fs.StringVar(&newProject.BaseLangISO, "base-lang-iso", "", "Language/locale code of the project base language")
+	fs.StringVar(&newProject.ProjectType, "project-type", "", "Project type")
+
+	// List
+	fs = projectListCmd.Flags()
+	fs.Uint8Var(&includeStatistics, "include-statistics", 1, "Whether to include project statistics")
+	fs.Uint8Var(&includeSettings, "include-settings", 1, "Whether to include project settings")
+	fs.Int64Var(&filterTeamID, "filter-team-id", 0, "Limit results to team ID")
+	fs.StringVar(&filterNames, "filter-names", "", "One or more project names to filter by (comma separated)")
+
+	// Retrieve
+	flagProjectId(projectRetrieveCmd, false)
+
+	// Update
+	flagProjectId(projectUpdateCmd, false)
+	fs = projectUpdateCmd.Flags()
+	fs.StringVar(&updateProject.Name, "name", "", "Name of the project")
+	fs.StringVar(&updateProject.Description, "description", "", "Description of the project")
+
+	// Empty, delete
+	flagProjectId(projectEmptyCmd, false)
+	flagProjectId(projectDeleteCmd, false)
 }
 
-func withProjectId(cmd *cobra.Command, isPersistent bool) {
+func flagProjectId(cmd *cobra.Command, isPersistent bool) {
 	if isPersistent {
 		cmd.PersistentFlags().StringVar(&projectId, "project-id", "", "A unique project identifier (required)")
 		_ = cmd.MarkPersistentFlagRequired("project-id")

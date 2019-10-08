@@ -11,15 +11,15 @@ var (
 
 // taskCmd represents the task command
 var taskCmd = &cobra.Command{
-	Use:   "task",
-	Short: "The ...",
+	Use: "task",
 }
 
 var taskListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists project tasks",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Tasks().List(projectId, lokalise.TasksOptions{}) // todo extract title
+	RunE: func(*cobra.Command, []string) error {
+
+		resp, err := Api.Tasks().List(projectId)
 		if err != nil {
 			return err
 		}
@@ -30,10 +30,9 @@ var taskListCmd = &cobra.Command{
 var taskCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Creates a task in the project",
+	RunE: func(*cobra.Command, []string) error {
 
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Tasks().Create(projectId, lokalise.CreateTaskRequest{}) // todo implement
-
+		resp, err := Api.Tasks().Create(projectId, lokalise.CreateTask{})
 		if err != nil {
 			return err
 		}
@@ -44,7 +43,8 @@ var taskCreateCmd = &cobra.Command{
 var taskRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
 	Short: "Retrieves a task ",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Tasks().Retrieve(projectId, taskId)
 		if err != nil {
 			return err
@@ -56,8 +56,9 @@ var taskRetrieveCmd = &cobra.Command{
 var taskUpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Updates the properties of a task",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Tasks().Update(projectId, taskId, lokalise.UpdateTaskRequest{}) // todo implement
+	RunE: func(*cobra.Command, []string) error {
+
+		resp, err := Api.Tasks().Update(projectId, taskId, lokalise.UpdateTask{})
 		if err != nil {
 			return err
 		}
@@ -68,7 +69,8 @@ var taskUpdateCmd = &cobra.Command{
 var taskDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a task from the project.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Tasks().Delete(projectId, taskId)
 		if err != nil {
 			return err
@@ -78,16 +80,11 @@ var taskDeleteCmd = &cobra.Command{
 }
 
 func init() {
-	taskCmd.AddCommand(taskListCmd)
-	taskCmd.AddCommand(taskCreateCmd)
-	taskCmd.AddCommand(taskRetrieveCmd)
-	taskCmd.AddCommand(taskUpdateCmd)
-	taskCmd.AddCommand(taskDeleteCmd)
-
+	taskCmd.AddCommand(taskListCmd, taskCreateCmd, taskRetrieveCmd, taskUpdateCmd, taskDeleteCmd)
 	rootCmd.AddCommand(taskCmd)
 
 	// general flags
-	withProjectId(taskCmd, true)
+	flagProjectId(taskCmd, true)
 
 	// separate flags for every command
 	flagTaskId(taskRetrieveCmd)

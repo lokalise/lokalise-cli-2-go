@@ -7,19 +7,23 @@ import (
 
 var (
 	translationId int64
+
+	translationListOpts      lokalise.TranslationListOptions
+	translationUpdate        lokalise.UpdateTranslation
+	translationUpdateIsFuzzy bool
 )
 
 // translationCmd represents the translation command
 var translationCmd = &cobra.Command{
-	Use:   "translation",
-	Short: "The ...",
+	Use: "translation",
 }
 
 var translationListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists project translations",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Translations().List(projectId, lokalise.TranslationsOptions{})
+	RunE: func(*cobra.Command, []string) error {
+
+		resp, err := Api.Translations().WithListOptions(translationListOpts).List(projectId)
 		if err != nil {
 			return err
 		}
@@ -30,7 +34,8 @@ var translationListCmd = &cobra.Command{
 var translationRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
 	Short: "Retrieves a translation ",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Translations().Retrieve(projectId, translationId)
 		if err != nil {
 			return err
@@ -42,28 +47,43 @@ var translationRetrieveCmd = &cobra.Command{
 var translationUpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Updates a translation from the project.",
-	/*RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Translations().Update(projectId, translationId) // todo combine parameters
+	RunE: func(*cobra.Command, []string) error {
+		// processing opts
+		translationUpdate.IsFuzzy = &translationUpdateIsFuzzy
+
+		resp, err := Api.Translations().Update(projectId, translationId, translationUpdate)
 		if err != nil {
 			return err
 		}
 		return printJson(resp)
-	},*/
+	},
 }
 
 func init() {
-	translationCmd.AddCommand(translationListCmd)
-	translationCmd.AddCommand(translationRetrieveCmd)
-	translationCmd.AddCommand(translationUpdateCmd)
-
+	translationCmd.AddCommand(translationListCmd, translationRetrieveCmd, translationUpdateCmd)
 	rootCmd.AddCommand(translationCmd)
 
 	// general flags
-	withProjectId(translationCmd, true)
+	flagProjectId(translationCmd, true)
 
-	// separate flags for every command
+	// List
+	fs := translationListCmd.Flags()
+	fs.Uint8Var(&translationListOpts.DisableReferences, "disable-references", 0, "")
+	fs.StringVar(&translationListOpts.FilterLangID, "filter-lang-id", "", "")
+	fs.Uint8Var(&translationListOpts.FilterIsReviewed, "filter-is-reviewed", 0, "")
+	fs.Uint8Var(&translationListOpts.FilterFuzzy, "filter-fuzzy", 0, "")
+	fs.StringVar(&translationListOpts.FilterQAIssues, "filter-qa-issues", "", "")
+
+	// Retrieve
 	flagTranslationId(translationRetrieveCmd)
+
+	// Update
 	flagTranslationId(translationUpdateCmd)
+	fs = translationUpdateCmd.Flags()
+	fs.StringVar(&translationUpdate.Translation, "translation", "", "")
+	_ = translationUpdateCmd.MarkFlagRequired("translation")
+	fs.BoolVar(&translationUpdateIsFuzzy, "is-fuzzy", true, "")
+	fs.BoolVar(&translationUpdate.IsReviewed, "is-reviewed", false, "")
 }
 
 func flagTranslationId(cmd *cobra.Command) {

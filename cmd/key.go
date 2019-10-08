@@ -1,34 +1,40 @@
 package cmd
 
 import (
+	"encoding/json"
 	"github.com/lokalise/go-lokalise-api"
 	"github.com/spf13/cobra"
+)
+
+var (
+	keyId int64
+
+	keyListOpts        lokalise.KeyListOptions
+	filterUntranslated bool
+
+	newKey             lokalise.NewKey
+	newKeyName         string
+	newKeyFilenames    string
+	newKeyComments     []string
+	newKeyTranslations string
 )
 
 // keyCmd represents the key command
 var keyCmd = &cobra.Command{
 	Use:   "key",
 	Short: "Keys are core item elements of the project.",
-	Long: `
-Each phrase that is used in your app or website must be identified by a key and have values 
-that represent translations to various languages. For example key 'index.welcome' would have values of
-'Welcome' in English and 'Benvenuto' in Italian. 
-Keys can be assigned to one or multiple platforms. Once a key is assigned to a platform, 
-it would be included in the export for file formats related to this platform.
-
-One of the unique features of Lokalise is the ability to use similar keys across different platforms, 
-thus reducing the translation work amount to be done by translators. 
-Once you import or add keys, they need to be assigned to one or several platforms (e.g. iOS, Android).
-
-See also https://docs.lokalise.com/developer-docs/keys-and-platforms
-`,
 }
 
 var keyListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all keys",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Keys().List(projectId, lokalise.ListKeysOptions{}) // todo check
+	RunE: func(*cobra.Command, []string) error {
+		// preparing filters
+		if filterUntranslated {
+			keyListOpts.FilterUntranslated = "1"
+		}
+
+		resp, err := Api.Keys().WithListOptions(keyListOpts).List(projectId)
 		if err != nil {
 			return err
 		}
@@ -39,21 +45,29 @@ var keyListCmd = &cobra.Command{
 var keyCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Creates one or more keys in the project.",
-	/*RunE: func(cmd *cobra.Command, args []string) error {
-		c := lokalise.Key{key} // todo implement multiple keys
-		resp, err := Api.Keys().Create(projectId, []lokalise.Key{c})
+	RunE: func(*cobra.Command, []string) error {
+		// preparing options
+		err := newKeyFillFields()
+		if err != nil {
+			return err
+		}
+
+		k := Api.Keys()
+		// k.SetDebug(false)
+		resp, err := k.Create(projectId, []lokalise.NewKey{newKey})
 		if err != nil {
 			return err
 		}
 		return printJson(resp)
-	},*/
+	},
 }
 
 var keyRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
 	Short: "Retrieves a Key object",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Keys().Retrieve(projectId, keyId, lokalise.RetrieveKeyOptions{})
+	RunE: func(*cobra.Command, []string) error {
+
+		resp, err := Api.Keys().Retrieve(projectId, keyId)
 		if err != nil {
 			return err
 		}
@@ -64,19 +78,26 @@ var keyRetrieveCmd = &cobra.Command{
 var keyUpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Updates a Key object",
-	/*RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Keys().Update(projectId, keyId, key) // todo also bulk update here for key-names as json
+	RunE: func(*cobra.Command, []string) error {
+		// preparing opts
+		err := newKeyFillFields()
+		if err != nil {
+			return err
+		}
+
+		resp, err := Api.Keys().Update(projectId, keyId, newKey)
 		if err != nil {
 			return err
 		}
 		return printJson(resp)
-	},*/
+	},
 }
 
 var keyDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a key from the project.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Keys().Delete(projectId, keyId)
 		if err != nil {
 			return err
@@ -86,25 +107,95 @@ var keyDeleteCmd = &cobra.Command{
 }
 
 func init() {
-	keyCmd.AddCommand(keyListCmd)
-	keyCmd.AddCommand(keyCreateCmd)
-	keyCmd.AddCommand(keyRetrieveCmd)
-	keyCmd.AddCommand(keyUpdateCmd)
-	keyCmd.AddCommand(keyDeleteCmd)
-
+	keyCmd.AddCommand(keyListCmd, keyCreateCmd, keyRetrieveCmd, keyUpdateCmd, keyDeleteCmd)
 	rootCmd.AddCommand(keyCmd)
 
 	// common for all Comment cmd`s
-	keyCmd.PersistentFlags().StringVar(&projectId, "project-id", "", "A unique project identifier (required)")
-	_ = keyCmd.MarkPersistentFlagRequired("project-id")
+	flagProjectId(keyCmd, true)
 
-	// separate flags for every command
-	withKeyId(keyCreateCmd)
-	withKeyId(keyRetrieveCmd)
-	withKeyId(keyDeleteCmd)
+	// List
+	fs := keyListCmd.Flags()
+	fs.Uint8Var(&keyListOpts.DisableReferences, "disable-references", 0, "")
+	fs.Uint8Var(&keyListOpts.IncludeComments, "include-comments", 0, "")
+	fs.Uint8Var(&keyListOpts.IncludeScreenshots, "include-screenshots", 0, "")
+	fs.Uint8Var(&keyListOpts.IncludeTranslations, "include-translations", 0, "")
+	fs.StringVar(&keyListOpts.FilterTranslationLangIDs, "filter-translation-lang-ids", "",
+		"One or more language ID to filter by (comma separated)")
+	fs.StringVar(&keyListOpts.FilterTags, "filter-tags", "", "")
+	fs.StringVar(&keyListOpts.FilterFilenames, "filter-filenames", "", "")
+	fs.StringVar(&keyListOpts.FilterKeys, "filter-keys", "", "")
+	fs.StringVar(&keyListOpts.FilterKeyIDs, "filter-key-ids", "", "")
+	fs.StringVar(&keyListOpts.FilterPlatforms, "filter-platforms", "", "Possible values are ios, android, web and other")
+	fs.BoolVar(&filterUntranslated, "filter-untranslated", false, "")
+	fs.StringVar(&keyListOpts.FilterQAIssues, "filter-qa-issues", "", "")
+
+	// Create
+	fs = keyCreateCmd.Flags()
+	fs.StringVar(&newKeyName, "key-name", "", "Key identifier")
+	_ = keyCreateCmd.MarkFlagRequired("key-name")
+	fs.StringVar(&newKey.Description, "description", "", "")
+	fs.StringSliceVar(&newKey.Platforms, "platforms", []string{}, "List of platforms, enabled for this key")
+	_ = keyCreateCmd.MarkFlagRequired("platforms")
+	fs.StringVar(&newKeyFilenames, "filenames", "", "")
+	fs.StringSliceVar(&newKey.Tags, "tags", []string{}, "")
+	fs.StringSliceVar(&newKeyComments, "comments", []string{}, "")
+	// screenshots skipped
+	fs.StringVar(&newKeyTranslations, "translations", "", "")
+	fs.BoolVar(&newKey.IsPlural, "is-plural", false, "")
+	fs.StringVar(&newKey.PluralName, "plural-name", "", "")
+	fs.BoolVar(&newKey.IsHidden, "is-hidden", false, "")
+	fs.BoolVar(&newKey.IsArchived, "is-archived", false, "")
+	fs.StringVar(&newKey.Context, "context", "", "")
+	fs.IntVar(&newKey.CharLimit, "char-limit", 0, "")
+	fs.StringVar(&newKey.CustomAttributes, "custom-attributes", "", "")
+
+	// Update
+	flagKeyId(keyUpdateCmd)
+	fs = keyUpdateCmd.Flags()
+	fs.StringVar(&newKeyName, "key-name", "", "")
+	fs.StringVar(&newKey.Description, "description", "", "")
+	fs.StringSliceVar(&newKey.Platforms, "platforms", []string{}, "")
+	fs.StringVar(&newKeyFilenames, "filenames", "", "")
+	fs.StringSliceVar(&newKey.Tags, "tags", []string{}, "")
+	// fs.BoolVar(&newKey.MergeTags, "merge-tags", false, "") // todo enable
+	fs.BoolVar(&newKey.IsPlural, "merge-tags", false, "")
+	fs.StringVar(&newKey.PluralName, "plural-name", "", "")
+	fs.BoolVar(&newKey.IsHidden, "is-hidden", false, "")
+	fs.BoolVar(&newKey.IsArchived, "is-archived", false, "")
+	fs.StringVar(&newKey.Context, "context", "", "")
+	fs.IntVar(&newKey.CharLimit, "char-limit", 0, "")
+	fs.StringVar(&newKey.CustomAttributes, "custom-attributes", "", "")
+
+	// retrieve, delete
+	flagKeyId(keyRetrieveCmd)
+	keyRetrieveCmd.Flags().Uint8Var(&keyListOpts.DisableReferences, "disable-references", 0, "")
+
+	flagKeyId(keyDeleteCmd)
 }
 
-func withKeyId(cmd *cobra.Command) { // todo rename as flagKeyId
+func flagKeyId(cmd *cobra.Command) {
 	cmd.Flags().Int64Var(&keyId, "key-id", 0, "A unique identifier of key (required)")
 	_ = cmd.MarkFlagRequired("key-id")
+}
+
+func newKeyFillFields() error {
+	newKey.KeyName = newKeyName
+
+	if newKeyFilenames != "" {
+		ps := lokalise.PlatformStrings{}
+		err := json.Unmarshal([]byte(newKeyFilenames), &ps)
+		if err != nil {
+			return err
+		}
+		newKey.Filenames = &ps
+	}
+
+	if newKeyTranslations != "" {
+		err := json.Unmarshal([]byte(newKeyTranslations), &newKey.Translations)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

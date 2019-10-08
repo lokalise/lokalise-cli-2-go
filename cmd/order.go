@@ -6,7 +6,8 @@ import (
 )
 
 var (
-	orderId int64
+	orderId  int64
+	newOrder lokalise.CreateOrder
 )
 
 // orderCmd represents the order command
@@ -18,7 +19,8 @@ var orderCmd = &cobra.Command{
 var orderListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists project orders",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Orders().List(teamId)
 		if err != nil {
 			return err
@@ -30,10 +32,9 @@ var orderListCmd = &cobra.Command{
 var orderCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Creates a order in the project",
+	RunE: func(*cobra.Command, []string) error {
 
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Orders().Create(teamId, lokalise.CreateOrder{}) // fixme
-
+		resp, err := Api.Orders().Create(teamId, newOrder)
 		if err != nil {
 			return err
 		}
@@ -44,7 +45,8 @@ var orderCreateCmd = &cobra.Command{
 var orderRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
 	Short: "Retrieves a order ",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Orders().Retrieve(teamId, orderId)
 		if err != nil {
 			return err
@@ -54,16 +56,31 @@ var orderRetrieveCmd = &cobra.Command{
 }
 
 func init() {
-	orderCmd.AddCommand(orderListCmd)
-	orderCmd.AddCommand(orderCreateCmd)
-	orderCmd.AddCommand(orderRetrieveCmd)
-
+	orderCmd.AddCommand(orderListCmd, orderCreateCmd, orderRetrieveCmd)
 	rootCmd.AddCommand(orderCmd)
 
 	// general flags
-	withProjectId(orderCmd, true)
+	flagTeamId(orderCmd)
 
-	// separate flags for every command
+	// Create
+	flagCardId(orderCreateCmd)
+	fs := orderCreateCmd.Flags()
+	fs.StringVar(&newOrder.Briefing, "briefing", "", "")
+	_ = orderCreateCmd.MarkFlagRequired("briefing")
+	fs.StringVar(&newOrder.SourceLangISO, "source-language-iso", "", "")
+	_ = orderCreateCmd.MarkFlagRequired("source-language-iso")
+	fs.StringSliceVar(&newOrder.TargetLangISOs, "target-language-isos", []string{}, "")
+	_ = orderCreateCmd.MarkFlagRequired("target-language-isos")
+	fs.StringSliceVar(&newOrder.Keys, "keys", []string{}, "")
+	_ = orderCreateCmd.MarkFlagRequired("keys")
+	fs.StringVar(&newOrder.ProviderSlug, "provider-slug", "", "")
+	_ = orderCreateCmd.MarkFlagRequired("provider-slug")
+	fs.Int64Var(&newOrder.TranslationTierID, "translation-tier", 0, "")
+	_ = orderCreateCmd.MarkFlagRequired("translation-tier")
+	fs.BoolVar(&newOrder.DryRun, "dry-run", false, "")
+	fs.StringVar(&newOrder.TranslationStyle, "translation-style", "", "")
+
+	// Retrieve
 	flagOrderId(orderRetrieveCmd)
 }
 

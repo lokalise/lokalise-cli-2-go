@@ -1,23 +1,26 @@
 package cmd
 
 import (
+	"github.com/lokalise/go-lokalise-api"
 	"github.com/spf13/cobra"
 )
 
 var (
-	languageId int64
+	languageId     int64
+	newLanguage    lokalise.NewLanguage
+	updateLanguage lokalise.UpdateLanguage
 )
 
 // languageCmd represents the language command
 var languageCmd = &cobra.Command{
-	Use:   "language",
-	Short: "The ...",
+	Use: "language",
 }
 
 var languageListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists project languages",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Languages().ListProject(projectId)
 		if err != nil {
 			return err
@@ -29,7 +32,8 @@ var languageListCmd = &cobra.Command{
 var languageListSystemCmd = &cobra.Command{
 	Use:   "list-system",
 	Short: "Lists system languages",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Languages().ListSystem()
 		if err != nil {
 			return err
@@ -41,21 +45,21 @@ var languageListSystemCmd = &cobra.Command{
 var languageCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Creates a language in the project",
+	RunE: func(*cobra.Command, []string) error {
 
-	/*RunE: func(cmd *cobra.Command, args []string) error {
-		c := lokalise.CustomLanguage{languageOptions}
-		resp, err := Api.Languages().Create(projectId, []lokalise.CustomLanguage{c})
+		resp, err := Api.Languages().Create(projectId, []lokalise.NewLanguage{newLanguage})
 		if err != nil {
 			return err
 		}
 		return printJson(resp)
-	},*/
+	},
 }
 
 var languageRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
 	Short: "Retrieves a language ",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Languages().Retrieve(projectId, languageId)
 		if err != nil {
 			return err
@@ -67,19 +71,21 @@ var languageRetrieveCmd = &cobra.Command{
 var languageUpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Updates the properties of a language",
-	/*RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Languages().Update(projectId, languageId, language)
+	RunE: func(*cobra.Command, []string) error {
+
+		resp, err := Api.Languages().Update(projectId, languageId, updateLanguage)
 		if err != nil {
 			return err
 		}
 		return printJson(resp)
-	},*/
+	},
 }
 
 var languageDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a language from the project. Requires Manage languages admin right.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Languages().Delete(projectId, languageId)
 		if err != nil {
 			return err
@@ -89,20 +95,29 @@ var languageDeleteCmd = &cobra.Command{
 }
 
 func init() {
-	languageCmd.AddCommand(languageListCmd)
-	languageCmd.AddCommand(languageListSystemCmd)
-	languageCmd.AddCommand(languageCreateCmd)
-	languageCmd.AddCommand(languageRetrieveCmd)
-	languageCmd.AddCommand(languageUpdateCmd)
-	languageCmd.AddCommand(languageDeleteCmd)
-
+	languageCmd.AddCommand(languageListCmd, languageListSystemCmd, languageCreateCmd, languageRetrieveCmd,
+		languageUpdateCmd, languageDeleteCmd)
 	rootCmd.AddCommand(languageCmd)
 
 	// common for all Comment cmd`s
-	withProjectId(languageCmd, true) // fixme except for listSystem
+	flagProjectId(languageCmd, true)
 
-	// separate flags for every command
-	flagLangId(languageCreateCmd)
+	// Create
+	fs := languageCreateCmd.Flags()
+	fs.StringVar(&newLanguage.LangISO, "lang-iso", "", "")
+	_ = languageCreateCmd.MarkFlagRequired("lang-iso")
+	fs.StringVar(&newLanguage.CustomISO, "custom-iso", "", "")
+	fs.StringVar(&newLanguage.CustomName, "custom-name", "", "")
+	fs.StringSliceVar(&newLanguage.CustomPluralForms, "custom-plural-forms", []string{}, "")
+
+	// Update
+	flagLangId(languageUpdateCmd)
+	fs = languageUpdateCmd.Flags()
+	fs.StringVar(&updateLanguage.LangISO, "lang-iso", "", "")
+	fs.StringVar(&updateLanguage.LangName, "lang-name", "", "")
+	fs.StringSliceVar(&updateLanguage.PluralForms, "plural-forms", []string{}, "")
+
+	// Retrieve & delete
 	flagLangId(languageRetrieveCmd)
 	flagLangId(languageDeleteCmd)
 }

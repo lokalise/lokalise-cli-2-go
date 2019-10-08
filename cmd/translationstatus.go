@@ -6,19 +6,21 @@ import (
 )
 
 var (
-	trStatusId int64
+	trStatusId     int64
+	trStatusCreate lokalise.NewTranslationStatus
+	trStatusUpdate lokalise.UpdateTranslationStatus
 )
 
 // translationStatusCmd represents the translation-status command
 var translationStatusCmd = &cobra.Command{
-	Use:   "translationStatus",
-	Short: "The ...",
+	Use: "translationStatus",
 }
 
 var translationStatusListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists project translation statuses",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.TranslationStatuses().List(projectId)
 		if err != nil {
 			return err
@@ -30,10 +32,9 @@ var translationStatusListCmd = &cobra.Command{
 var translationStatusCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Creates a translationStatus in the project",
+	RunE: func(*cobra.Command, []string) error {
 
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.TranslationStatuses().Create(projectId, lokalise.CreateTranslationStatus{}) // fixme
-
+		resp, err := Api.TranslationStatuses().Create(projectId, trStatusCreate)
 		if err != nil {
 			return err
 		}
@@ -44,7 +45,8 @@ var translationStatusCreateCmd = &cobra.Command{
 var translationStatusRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
 	Short: "Retrieves a translationStatus ",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.TranslationStatuses().Retrieve(projectId, trStatusId)
 		if err != nil {
 			return err
@@ -56,7 +58,8 @@ var translationStatusRetrieveCmd = &cobra.Command{
 var translationStatusRetrieveColorsCmd = &cobra.Command{
 	Use:   "retrieve-colors",
 	Short: "Retrieves colors for translation statuses ",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.TranslationStatuses().ListColors(projectId)
 		if err != nil {
 			return err
@@ -68,8 +71,9 @@ var translationStatusRetrieveColorsCmd = &cobra.Command{
 var translationStatusUpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Updates the properties of a translationStatus",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.TranslationStatuses().Update(projectId, trStatusId, lokalise.UpdateTranslationStatus{})
+	RunE: func(*cobra.Command, []string) error {
+
+		resp, err := Api.TranslationStatuses().Update(projectId, trStatusId, trStatusUpdate)
 		if err != nil {
 			return err
 		}
@@ -80,7 +84,8 @@ var translationStatusUpdateCmd = &cobra.Command{
 var translationStatusDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a translationStatus from the project.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.TranslationStatuses().Delete(projectId, trStatusId)
 		if err != nil {
 			return err
@@ -90,21 +95,26 @@ var translationStatusDeleteCmd = &cobra.Command{
 }
 
 func init() {
-	translationStatusCmd.AddCommand(translationStatusListCmd)
-	translationStatusCmd.AddCommand(translationStatusCreateCmd)
-	translationStatusCmd.AddCommand(translationStatusRetrieveCmd)
-	translationStatusCmd.AddCommand(translationStatusRetrieveColorsCmd)
-	translationStatusCmd.AddCommand(translationStatusUpdateCmd)
-	translationStatusCmd.AddCommand(translationStatusDeleteCmd)
-
+	translationStatusCmd.AddCommand(translationStatusListCmd, translationStatusCreateCmd, translationStatusRetrieveCmd,
+		translationStatusRetrieveColorsCmd, translationStatusUpdateCmd, translationStatusDeleteCmd)
 	rootCmd.AddCommand(translationStatusCmd)
 
 	// general flags
-	withProjectId(translationStatusCmd, true)
+	flagProjectId(translationStatusCmd, true)
 
-	// separate flags for every command
-	flagTrStatusId(translationStatusRetrieveCmd)
+	// Create
+	fs := translationStatusCreateCmd.Flags()
+	fs.StringVar(&trStatusCreate.Title, "title", "", "")
+	fs.StringVar(&trStatusCreate.Color, "color", "", "")
+
+	// Update
 	flagTrStatusId(translationStatusUpdateCmd)
+	fs = translationStatusUpdateCmd.Flags()
+	fs.StringVar(&trStatusUpdate.Title, "title", "", "")
+	fs.StringVar(&trStatusUpdate.Color, "color", "", "")
+
+	// Retrieve, delete
+	flagTrStatusId(translationStatusRetrieveCmd)
 	flagTrStatusId(translationStatusDeleteCmd)
 }
 

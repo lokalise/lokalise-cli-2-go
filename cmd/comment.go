@@ -5,17 +5,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	commentId int64
+	comment   string
+)
+
 // commentCmd represents the comment command
 var commentCmd = &cobra.Command{
-	Use:   "comment",
-	Short: "A brief description of your command",
+	Use: "comment",
 }
 
 var commentListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all comments",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Comments().ListProject(projectId, lokalise.PageOptions{}) // todo remove
+	RunE: func(*cobra.Command, []string) error {
+
+		resp, err := Api.Comments().ListProject(projectId)
 		if err != nil {
 			return err
 		}
@@ -26,8 +31,9 @@ var commentListCmd = &cobra.Command{
 var commentListKeyCmd = &cobra.Command{
 	Use:   "list-key",
 	Short: "Retrieves a list of all comments for a key",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.Comments().ListByKey(projectId, keyId, lokalise.PageOptions{}) // todo remove
+	RunE: func(*cobra.Command, []string) error {
+
+		resp, err := Api.Comments().ListByKey(projectId, keyId)
 		if err != nil {
 			return err
 		}
@@ -38,8 +44,9 @@ var commentListKeyCmd = &cobra.Command{
 var commentCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Adds a comment to the key",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		c := lokalise.NewComment{comment}
+	RunE: func(*cobra.Command, []string) error {
+
+		c := lokalise.NewComment{Comment: comment}
 		resp, err := Api.Comments().Create(projectId, keyId, []lokalise.NewComment{c})
 		if err != nil {
 			return err
@@ -51,7 +58,8 @@ var commentCreateCmd = &cobra.Command{
 var commentRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
 	Short: "Retrieves a comment by its id",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Comments().Retrieve(projectId, keyId, commentId)
 		if err != nil {
 			return err
@@ -63,7 +71,8 @@ var commentRetrieveCmd = &cobra.Command{
 var commentDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a comment from the project. Authenticated user can only delete own comments.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.Comments().Delete(projectId, keyId, commentId)
 		if err != nil {
 			return err
@@ -73,20 +82,30 @@ var commentDeleteCmd = &cobra.Command{
 }
 
 func init() {
-	commentCmd.AddCommand(commentListCmd)
-	commentCmd.AddCommand(commentListKeyCmd)
-	commentCmd.AddCommand(commentCreateCmd)
-	commentCmd.AddCommand(commentRetrieveCmd)
-	commentCmd.AddCommand(commentDeleteCmd)
-
+	commentCmd.AddCommand(commentListCmd, commentListKeyCmd, commentCreateCmd, commentRetrieveCmd, commentDeleteCmd)
 	rootCmd.AddCommand(commentCmd)
 
 	// common for all Comment cmd`s
-	commentCmd.PersistentFlags().StringVar(&projectId, "project-id", "", "A unique project identifier (required)")
-	_ = commentCmd.MarkPersistentFlagRequired("project-id")
+	flagProjectId(commentCmd, true)
 
-	// separate flags for every command
-	withKeyId(commentCreateCmd)
-	withKeyId(commentRetrieveCmd)
-	withKeyId(commentDeleteCmd)
+	// List key
+	flagKeyId(commentListKeyCmd)
+
+	// Create
+	flagKeyId(commentCreateCmd)
+	commentCreateCmd.Flags().StringVar(&comment, "comment", "", "The comment")
+	_ = commentCreateCmd.MarkFlagRequired("comment")
+
+	// Retrieve
+	flagKeyId(commentRetrieveCmd)
+	flagCommentId(commentRetrieveCmd)
+
+	// Delete
+	flagKeyId(commentDeleteCmd)
+	flagCommentId(commentDeleteCmd)
+}
+
+func flagCommentId(cmd *cobra.Command) {
+	cmd.Flags().Int64Var(&commentId, "comment-id", 0, "A unique identifier of comment (required)")
+	_ = cmd.MarkFlagRequired("comment-id")
 }

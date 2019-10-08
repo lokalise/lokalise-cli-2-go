@@ -4,6 +4,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	teamId int64
+)
+
 // teamCmd represents the team command
 var teamCmd = &cobra.Command{
 	Use:   "team",
@@ -14,7 +18,7 @@ var teamCmd = &cobra.Command{
 var teamListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all teams available to the user",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Teams().List()
 		if err != nil {
@@ -26,6 +30,11 @@ var teamListCmd = &cobra.Command{
 
 func init() {
 	teamCmd.AddCommand(teamListCmd)
-
 	rootCmd.AddCommand(teamCmd)
+}
+
+// always persistent
+func flagTeamId(cmd *cobra.Command) {
+	cmd.PersistentFlags().Int64Var(&teamId, "team-id", 0, "A unique identifier of team (required)")
+	_ = cmd.MarkPersistentFlagRequired("team-id")
 }

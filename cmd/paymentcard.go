@@ -6,19 +6,20 @@ import (
 )
 
 var (
-	cardId int64
+	cardId  int64
+	newCard lokalise.CreatePaymentCard
 )
 
 // cardCmd represents the payment-card command
 var cardCmd = &cobra.Command{
-	Use:   "payment-card",
-	Short: "The ...",
+	Use: "payment-card",
 }
 
 var cardListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists user cards",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.PaymentCards().List()
 		if err != nil {
 			return err
@@ -30,10 +31,9 @@ var cardListCmd = &cobra.Command{
 var cardCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Creates a card in the project",
+	RunE: func(*cobra.Command, []string) error {
 
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := Api.PaymentCards().Create(lokalise.CreatePaymentCard{}) // fixme
-
+		resp, err := Api.PaymentCards().Create(newCard)
 		if err != nil {
 			return err
 		}
@@ -44,7 +44,8 @@ var cardCreateCmd = &cobra.Command{
 var cardRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
 	Short: "Retrieves a card ",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.PaymentCards().Retrieve(cardId)
 		if err != nil {
 			return err
@@ -56,7 +57,8 @@ var cardRetrieveCmd = &cobra.Command{
 var cardDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a card from the project.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(*cobra.Command, []string) error {
+
 		resp, err := Api.PaymentCards().Delete(cardId)
 		if err != nil {
 			return err
@@ -66,16 +68,23 @@ var cardDeleteCmd = &cobra.Command{
 }
 
 func init() {
-	cardCmd.AddCommand(cardListCmd)
-	cardCmd.AddCommand(cardCreateCmd)
-	cardCmd.AddCommand(cardRetrieveCmd)
-	cardCmd.AddCommand(cardDeleteCmd)
-
+	cardCmd.AddCommand(cardListCmd, cardCreateCmd, cardRetrieveCmd, cardDeleteCmd)
 	rootCmd.AddCommand(cardCmd)
 
 	// general flags
 
-	// separate flags for every command
+	// Create
+	fs := cardCreateCmd.Flags()
+	fs.StringVar(&newCard.Number, "number", "", "")
+	_ = cardCreateCmd.MarkFlagRequired("number")
+	fs.StringVar(&newCard.CVC, "cvc", "", "")
+	_ = cardCreateCmd.MarkFlagRequired("cvc")
+	fs.Int64Var(&newCard.ExpMonth, "exp-month", 0, "")
+	_ = cardCreateCmd.MarkFlagRequired("exp-month")
+	fs.Int64Var(&newCard.ExpYear, "exp-year", 0, "")
+	_ = cardCreateCmd.MarkFlagRequired("exp-year")
+
+	// Retrieve, delete
 	flagCardId(cardRetrieveCmd)
 	flagCardId(cardDeleteCmd)
 }
