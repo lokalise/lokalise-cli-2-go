@@ -12,15 +12,15 @@ var (
 
 // commentCmd represents the comment command
 var commentCmd = &cobra.Command{
-	Use: "comment",
+	Use:   "comment",
 	Short: "Manage key comments",
-	Long: "Comments can be used to give translators a context about the key, or as a discussion about certain aspects of translation for the key. There is a separate comments thread for each key. All comments are cross-posted into project chat.",
+	Long:  "Comments can be used to give translators a context about the key, or as a discussion about certain aspects of translation for the key. There is a separate comments thread for each key. All comments are cross-posted into project chat.",
 }
 
 var commentListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List project comments",
-	Long: "Retrieves a list of all comments in the project.",
+	Long:  "Retrieves a list of all comments in the project.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Comments().ListProject(projectId)
@@ -34,7 +34,7 @@ var commentListCmd = &cobra.Command{
 var commentListKeyCmd = &cobra.Command{
 	Use:   "list-key",
 	Short: "List key comments",
-	Long: "Retrieves a list of all comments of the key.",
+	Long:  "Retrieves a list of all comments of the key.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Comments().ListByKey(projectId, keyId)
@@ -48,7 +48,7 @@ var commentListKeyCmd = &cobra.Command{
 var commentCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Add a comment",
-	Long: "Adds a comment to the skey.",
+	Long:  "Adds a comment to the skey.",
 	RunE: func(*cobra.Command, []string) error {
 
 		c := lokalise.NewComment{Comment: comment}
@@ -76,7 +76,7 @@ var commentRetrieveCmd = &cobra.Command{
 var commentDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a comment",
-	Long: "Deletes a comment from the project. Authenticated user can only delete own comments.",
+	Long:  "Deletes a comment from the project. Authenticated user can only delete own comments.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Comments().Delete(projectId, keyId, commentId)

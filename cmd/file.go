@@ -25,15 +25,15 @@ var (
 
 // fileCmd represents the file command
 var fileCmd = &cobra.Command{
-	Use: "file",
+	Use:   "file",
 	Short: "Upload and download files",
-	Long: "Lokalise is a project-oriented translation management system, which means we store all keys and translations in the database and can generate files in any format you require. Assigning a key to one or more platforms means including the key in the export routine for file formats, associated with this platform, e.g. if a key is assigned to iOS platform it would get included with strings and xliff format exports. In addition to assign keys to platforms you may assign keys to files and have different filename depending on the platform. List of supported file formats is available here https://docs.lokalise.com/en/collections/652248-supported-file-formats.",
+	Long:  "Lokalise is a project-oriented translation management system, which means we store all keys and translations in the database and can generate files in any format you require. Assigning a key to one or more platforms means including the key in the export routine for file formats, associated with this platform, e.g. if a key is assigned to iOS platform it would get included with strings and xliff format exports. In addition to assign keys to platforms you may assign keys to files and have different filename depending on the platform. List of supported file formats is available here https://docs.lokalise.com/en/collections/652248-supported-file-formats.",
 }
 
 var fileListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all files",
-	Long: "Lists project files and associated key count. If there are some keys in the project that do not have a file association, they will be returned with filename __unassigned__.",
+	Long:  "Lists project files and associated key count. If there are some keys in the project that do not have a file association, they will be returned with filename __unassigned__.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Files().List(projectId)
@@ -47,7 +47,7 @@ var fileListCmd = &cobra.Command{
 var fileUploadCmd = &cobra.Command{
 	Use:   "upload",
 	Short: "Upload a file",
-	Long: "Imports a localization file to the project. Requires Upload files admin right. List of supported file formats is available here https://docs.lokalise.com/en/collections/652248-supported-file-formats",
+	Long:  "Imports a localization file to the project. Requires Upload files admin right. List of supported file formats is available here https://docs.lokalise.com/en/collections/652248-supported-file-formats",
 	RunE: func(*cobra.Command, []string) error {
 		// preparing opts
 		uploadOpts.ConvertPlaceholders = &uploadOptsConvertPlaceholders
@@ -67,7 +67,7 @@ var fileUploadCmd = &cobra.Command{
 var fileDownloadCmd = &cobra.Command{
 	Use:   "download",
 	Short: "Download files",
-	Long: "Exports project files as a .zip bundle. Generated bundle will be uploaded to an Amazon S3 bucket, which will be stored there for 12 months available to download. As the bundle is generated and uploaded you would get a response with the URL to the file. Requires Download files admin right.",
+	Long:  "Exports project files as a .zip bundle. Generated bundle will be uploaded to an Amazon S3 bucket, which will be stored there for 12 months available to download. As the bundle is generated and uploaded you would get a response with the URL to the file. Requires Download files admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Files().Download(projectId, downloadOpts)
@@ -96,7 +96,7 @@ func init() {
 	fs.StringVar(&downloadUnzipTo, "unzip-to", "", "Unzip to this folder.")
 
 	fs.BoolVar(&downloadOpts.OriginalFilenames, "original-filenames", true, "Enable to use original filenames/formats. If set to false all keys will be export to a single file per language.")
-	// fs.StringVar(&downloadOpts.BundleStructure, "bundle-structure", "", "")
+	fs.StringVar(&downloadOpts.BundleStructure, "bundle-structure", "", "Bundle structure, used when original-filenames set to false. Allowed placeholders are %LANG_ISO%, %LANG_NAME%, %FORMAT% and %PROJECT_NAME%).")
 	fs.StringVar(&downloadOpts.DirectoryPrefix, "directory-prefix", "", "Directory prefix in the bundle, used when original_filenames set to true). Allowed placeholder is %LANG_ISO%.")
 	fs.BoolVar(&downloadOpts.AllPlatforms, "all-platforms", false, "Enable to include all platform keys. If disabled, only the keys, associated with the platform of the format will be exported.")
 	fs.StringVar(&downloadOpts.FilterLangs, "filter-langs", "", "List of languages to export. Omit this parameter for all languages.")
@@ -130,7 +130,7 @@ func init() {
 
 	// Upload
 	fs = fileUploadCmd.Flags()
-	fs.StringVar(&uploadFile, "file", "", "Path to local file.")
+	fs.StringVar(&uploadFile, "file", "", "Path to local file (required).")
 	_ = fileUploadCmd.MarkFlagRequired("file")
 	// force-filename is skipped because current time only single-file is supplied
 	fs.StringVar(&uploadOpts.LangISO, "lang-iso", "", "Language code of the translations in the file you are importing (required).")
@@ -142,7 +142,7 @@ func init() {
 	fs.BoolVar(&uploadOptsTagUpdatedKeys, "tag-updated-keys", true, "Add specified tags to updated keys.")
 	fs.BoolVar(&uploadOpts.TagSkippedKeys, "tag-skipped-keys", false, "Add specified tags to skipped keys.")
 	fs.BoolVar(&uploadOpts.ReplaceModified, "replace-modified", false, "Enable to replace translations, that have been modified (in the file being uploaded).")
-	fs.BoolVar(&uploadOpts.SlashNToLinebreak, "slashn-to-linebreak", false, "Enable to replace \n with a line break.")
+	fs.BoolVar(&uploadOpts.SlashNToLinebreak, "slashn-to-linebreak", false, "Enable to replace \\n with a line break.")
 	fs.BoolVar(&uploadOpts.KeysToValues, "keys-to-values", false, "Enable to automatically replace values with key names.")
 	fs.BoolVar(&uploadOpts.DistinguishByFile, "distinguish-by-file", false, "Enable to allow keys with similar names to coexist, in case they are assigned to differrent filenames.")
 	fs.BoolVar(&uploadOpts.ApplyTM, "apply-tm", false, "Enable to automatically apply 100% translation memory matches.")

@@ -15,12 +15,14 @@ var (
 
 // translationCmd represents the translation command
 var translationCmd = &cobra.Command{
-	Use: "translation",
+	Use:   "translation",
+	Short: "Manage translations",
 }
 
 var translationListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists project translations",
+	Short: "List all translations",
+	Long:  "Retrieves a list of project translation items, ungrouped. You may want to request Keys resource in order to get the structured key/translation pairs for all languages.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Translations().WithListOptions(translationListOpts).List(projectId)
@@ -33,7 +35,8 @@ var translationListCmd = &cobra.Command{
 
 var translationRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
-	Short: "Retrieves a translation ",
+	Short: "Retrieve a translation ",
+	Long:  "Retrieves a translation.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Translations().Retrieve(projectId, translationId)
@@ -46,7 +49,8 @@ var translationRetrieveCmd = &cobra.Command{
 
 var translationUpdateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Updates a translation from the project.",
+	Short: "Update a translation",
+	Long:  "Updates a translation.",
 	RunE: func(*cobra.Command, []string) error {
 		// processing opts
 		translationUpdate.IsFuzzy = &translationUpdateIsFuzzy
@@ -68,11 +72,11 @@ func init() {
 
 	// List
 	fs := translationListCmd.Flags()
-	fs.Uint8Var(&translationListOpts.DisableReferences, "disable-references", 0, "")
-	fs.StringVar(&translationListOpts.FilterLangID, "filter-lang-id", "", "")
-	fs.Uint8Var(&translationListOpts.FilterIsReviewed, "filter-is-reviewed", 0, "")
-	fs.Uint8Var(&translationListOpts.FilterFuzzy, "filter-fuzzy", 0, "")
-	fs.StringVar(&translationListOpts.FilterQAIssues, "filter-qa-issues", "", "")
+	fs.Uint8Var(&translationListOpts.DisableReferences, "disable-references", 0, "Whether to disable key references.")
+	fs.StringVar(&translationListOpts.FilterLangID, "filter-lang-id", "", "Return translations only for presented language ID.")
+	fs.Uint8Var(&translationListOpts.FilterIsReviewed, "filter-is-reviewed", 0, "Filter translations which are reviewed.")
+	fs.Uint8Var(&translationListOpts.FilterFuzzy, "filter-fuzzy", 0, "Filter translations which are unverified (fuzzy).")
+	fs.StringVar(&translationListOpts.FilterQAIssues, "filter-qa-issues", "", "One or more QA issues to filter by. Possible values are spelling_and_grammar, placeholders, html, url_count, url, email_count, email, brackets, numbers, leading_whitespace, trailing_whitespace, double_space and special_placeholder.")
 
 	// Retrieve
 	flagTranslationId(translationRetrieveCmd)
@@ -80,13 +84,13 @@ func init() {
 	// Update
 	flagTranslationId(translationUpdateCmd)
 	fs = translationUpdateCmd.Flags()
-	fs.StringVar(&translationUpdate.Translation, "translation", "", "")
+	fs.StringVar(&translationUpdate.Translation, "translation", "", "The actual translation content. Use a JSON object for plural keys (required).")
 	_ = translationUpdateCmd.MarkFlagRequired("translation")
-	fs.BoolVar(&translationUpdateIsFuzzy, "is-fuzzy", true, "")
-	fs.BoolVar(&translationUpdate.IsReviewed, "is-reviewed", false, "")
+	fs.BoolVar(&translationUpdateIsFuzzy, "is-fuzzy", true, "Whether the Fuzzy flag is enabled. (Note: Fuzzy is called Unverified in the editor now).")
+	fs.BoolVar(&translationUpdate.IsReviewed, "is-reviewed", false, "Whether the Reviewed flag is enabled.")
 }
 
 func flagTranslationId(cmd *cobra.Command) {
-	cmd.Flags().Int64Var(&translationId, "translation-id", 0, "A unique identifier of translation (required)")
+	cmd.Flags().Int64Var(&translationId, "translation-id", 0, "A unique identifier of the translation (required).")
 	_ = cmd.MarkFlagRequired("translation-id")
 }

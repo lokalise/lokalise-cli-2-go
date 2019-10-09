@@ -12,13 +12,15 @@ var (
 
 // teamUserCmd represents the team-user command
 var teamUserCmd = &cobra.Command{
-	Use: "team-user",
+	Use:   "team-user",
+	Short: "Manage team users",
 }
 
 // teamUserListCmd represents team-user list command
 var teamUserListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists all team users. Requires Admin role in the team.",
+	Short: "List all team users",
+	Long:  "List all team users. Requires Admin role in the team.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.TeamUsers().List(teamId)
@@ -32,7 +34,8 @@ var teamUserListCmd = &cobra.Command{
 // teamUserRetrieveCmd represents team-user retrieve command
 var teamUserRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
-	Short: "Retrieves a Team user object. Requires Admin role in the team.",
+	Short: "Retrieves a team user",
+	Long:  "Retrieves a team user. Requires Admin role in the team.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.TeamUsers().Retrieve(teamId, userId)
@@ -45,7 +48,9 @@ var teamUserRetrieveCmd = &cobra.Command{
 
 // teamUserUpdateCmd represents team-user update command
 var teamUserUpdateCmd = &cobra.Command{
-	Use: "update",
+	Use:   "update",
+	Short: "Update a team user",
+	Long:  "Updates the role of a team user. Requires Admin role in the team.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.TeamUsers().UpdateRole(teamId, userId, lokalise.TeamUserRole(role))
@@ -59,7 +64,8 @@ var teamUserUpdateCmd = &cobra.Command{
 // teamUserDeleteCmd represents team-user delete command
 var teamUserDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Deletes the role of a team user. Requires Admin role in the team.",
+	Short: "Delete a team user",
+	Long:  "Deletes a user from the team. Requires Admin role in the team.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.TeamUsers().Delete(teamId, userId)
@@ -79,7 +85,7 @@ func init() {
 
 	// Update
 	flagUserId(teamUserUpdateCmd)
-	teamUserUpdateCmd.Flags().StringVar(&role, "role", "", "Role of the user. Available roles are owner, admin, member (required)")
+	teamUserUpdateCmd.Flags().StringVar(&role, "role", "", "Role of the user. Available roles are owner, admin, member (required).")
 	_ = teamUserUpdateCmd.MarkFlagRequired("role")
 
 	// Retrieve, delete
@@ -89,6 +95,6 @@ func init() {
 }
 
 func flagUserId(cmd *cobra.Command) {
-	cmd.Flags().Int64Var(&translationId, "user-id", 0, "A unique identifier of the user (required)")
+	cmd.Flags().Int64Var(&translationId, "user-id", 0, "A unique identifier of the user (required).")
 	_ = cmd.MarkFlagRequired("user-id")
 }

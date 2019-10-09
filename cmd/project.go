@@ -25,10 +25,14 @@ var (
 // projectCmd represents the project command
 var projectCmd = &cobra.Command{
 	Use:   "project",
+	Short: "Manage projects",
+	Long:  "Lokalise is a project-based translation management system. We recommend to keep all platform keys in the same project. Upload iOS, Android, frontend, backend and API language files - everything that relates to a certain app or website - to the same project. We provide you with key merging or referencing options, that let you avoid recurring work for translators.",
 }
 
 var projectCreateCmd = &cobra.Command{
-	Use: "create",
+	Use:   "create",
+	Short: "Create a project",
+	Long:  "Creates a new project in the specified team. Requires Admin role in the team.",
 	RunE: func(*cobra.Command, []string) error {
 		err := json.Unmarshal([]byte(newProjectLang), &newProject.Languages)
 		if err != nil {
@@ -47,7 +51,8 @@ var projectCreateCmd = &cobra.Command{
 
 var projectListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists all projects",
+	Short: "List all projects",
+	Long:  "Retrieves a list of projects available to the user, authorized with a token.",
 	RunE: func(*cobra.Command, []string) error {
 
 		p := Api.Projects()
@@ -68,7 +73,9 @@ var projectListCmd = &cobra.Command{
 }
 
 var projectRetrieveCmd = &cobra.Command{
-	Use: "retrieve",
+	Use:   "retrieve",
+	Short: "Retrieve a project",
+	Long:  "Retrieves a project.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Projects().Retrieve(projectId)
@@ -80,7 +87,9 @@ var projectRetrieveCmd = &cobra.Command{
 }
 
 var projectUpdateCmd = &cobra.Command{
-	Use: "update",
+	Use:   "update",
+	Short: "Update a project",
+	Long:  "Updates the details of a project. Requires Manage settings admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Projects().Update(projectId, updateProject)
@@ -92,7 +101,9 @@ var projectUpdateCmd = &cobra.Command{
 }
 
 var projectDeleteCmd = &cobra.Command{
-	Use: "delete",
+	Use:   "delete",
+	Short: "Delete a project",
+	Long:  "Deletes a project.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Projects().Delete(projectId)
@@ -104,7 +115,9 @@ var projectDeleteCmd = &cobra.Command{
 }
 
 var projectEmptyCmd = &cobra.Command{
-	Use: "empty",
+	Use:   "empty",
+	Short: "Empty a project",
+	Long:  "Deletes all keys and translations from the project. Requires Manage settings admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Projects().Truncate(projectId)
@@ -122,20 +135,20 @@ func init() {
 
 	// Create
 	fs := projectCreateCmd.Flags()
-	fs.StringVar(&newProject.Name, "name", "", "Name of the project")
+	fs.StringVar(&newProject.Name, "name", "", "Name of the project (required).")
 	_ = projectCreateCmd.MarkFlagRequired("name")
-	fs.Int64Var(&newProject.TeamID, "team-id", 0, "ID of the team to create a project in")
-	fs.StringVar(&newProject.Description, "description", "", "Description of the project")
-	fs.StringVar(&newProjectLang, "languages", "", "List of languages to add")
-	fs.StringVar(&newProject.BaseLangISO, "base-lang-iso", "", "Language/locale code of the project base language")
-	fs.StringVar(&newProject.ProjectType, "project-type", "", "Project type")
+	fs.Int64Var(&newProject.TeamID, "team-id", 0, "ID of the team to create a project in. If this parameter is omitted, the project will be created in current team of the user, whose API token is specified.")
+	fs.StringVar(&newProject.Description, "description", "", "Description of the project.")
+	fs.StringVar(&newProjectLang, "languages", "", "List of languages to add (JSON, see https://lokalise.com/api2docs/curl/#transition-create-a-project-post).")
+	fs.StringVar(&newProject.BaseLangISO, "base-lang-iso", "", "Language/locale code of the project base language. Should be in a scope of languages list. Use custom_iso code in case it was defined.")
+	fs.StringVar(&newProject.ProjectType, "project-type", "", "Project type. Allowed values are localization_files, paged_documents.")
 
 	// List
 	fs = projectListCmd.Flags()
-	fs.Uint8Var(&includeStatistics, "include-statistics", 1, "Whether to include project statistics")
-	fs.Uint8Var(&includeSettings, "include-settings", 1, "Whether to include project settings")
-	fs.Int64Var(&filterTeamID, "filter-team-id", 0, "Limit results to team ID")
-	fs.StringVar(&filterNames, "filter-names", "", "One or more project names to filter by (comma separated)")
+	fs.Uint8Var(&includeStatistics, "include-statistics", 1, "Whether to include project statistics.")
+	fs.Uint8Var(&includeSettings, "include-settings", 1, "Whether to include project settings.")
+	fs.Int64Var(&filterTeamID, "filter-team-id", 0, "Limit results to team ID.")
+	fs.StringVar(&filterNames, "filter-names", "", "One or more project names to filter by.")
 
 	// Retrieve
 	flagProjectId(projectRetrieveCmd, false)
@@ -143,8 +156,8 @@ func init() {
 	// Update
 	flagProjectId(projectUpdateCmd, false)
 	fs = projectUpdateCmd.Flags()
-	fs.StringVar(&updateProject.Name, "name", "", "Name of the project")
-	fs.StringVar(&updateProject.Description, "description", "", "Description of the project")
+	fs.StringVar(&updateProject.Name, "name", "", "Name of the project.")
+	fs.StringVar(&updateProject.Description, "description", "", "Description of the project.")
 
 	// Empty, delete
 	flagProjectId(projectEmptyCmd, false)
@@ -153,10 +166,10 @@ func init() {
 
 func flagProjectId(cmd *cobra.Command, isPersistent bool) {
 	if isPersistent {
-		cmd.PersistentFlags().StringVar(&projectId, "project-id", "", "A unique project identifier (required)")
+		cmd.PersistentFlags().StringVar(&projectId, "project-id", "", "A unique project identifier (required).")
 		_ = cmd.MarkPersistentFlagRequired("project-id")
 	} else {
-		cmd.Flags().StringVar(&projectId, "project-id", "", "A unique project identifier (required)")
+		cmd.Flags().StringVar(&projectId, "project-id", "", "A unique project identifier (required).")
 		_ = cmd.MarkFlagRequired("project-id")
 	}
 }

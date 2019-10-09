@@ -11,12 +11,14 @@ var (
 
 // taskCmd represents the task command
 var taskCmd = &cobra.Command{
-	Use: "task",
+	Use:   "task",
+	Short: "Manage tasks",
 }
 
 var taskListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists project tasks",
+	Short: "List all tasks",
+	Long:  "Lists all tasks in the project.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Tasks().List(projectId)
@@ -29,7 +31,8 @@ var taskListCmd = &cobra.Command{
 
 var taskCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Creates a task in the project",
+	Short: "Create a task",
+	Long:  "Creates a task in the project. Requires Manage tasks admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Tasks().Create(projectId, lokalise.CreateTask{})
@@ -42,7 +45,8 @@ var taskCreateCmd = &cobra.Command{
 
 var taskRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
-	Short: "Retrieves a task ",
+	Short: "Retrieve a task",
+	Long:  "Retrieves a task.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Tasks().Retrieve(projectId, taskId)
@@ -55,7 +59,8 @@ var taskRetrieveCmd = &cobra.Command{
 
 var taskUpdateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Updates the properties of a task",
+	Short: "Update a task",
+	Long:  "Updates the properties of a task. Requires Manage tasks admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Tasks().Update(projectId, taskId, lokalise.UpdateTask{})
@@ -68,7 +73,8 @@ var taskUpdateCmd = &cobra.Command{
 
 var taskDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Deletes a task from the project.",
+	Short: "Delete a task",
+	Long:  "Deletes a task from the project. Requires Manage tasks admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Tasks().Delete(projectId, taskId)
@@ -93,6 +99,6 @@ func init() {
 }
 
 func flagTaskId(cmd *cobra.Command) {
-	cmd.Flags().Int64Var(&taskId, "task-id", 0, "A unique identifier of task (required)")
+	cmd.Flags().Int64Var(&taskId, "task-id", 0, "A unique identifier of the task (required).")
 	_ = cmd.MarkFlagRequired("task-id")
 }

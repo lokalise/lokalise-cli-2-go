@@ -17,13 +17,13 @@ var (
 var contributorCmd = &cobra.Command{
 	Use:   "contributor",
 	Short: "Manage project contributors",
-	Long: "You may add unlimited number of contributors to your project. User roles include admin, translator and reviewer.",
+	Long:  "You may add unlimited number of contributors to your project. User roles include admin, translator and reviewer.",
 }
 
 var contributorListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all contributors",
-	Long: "Lists contributors of the project, including access levels to the project languages. Admins always have read/write access to all languages.",
+	Long:  "Lists contributors of the project, including access levels to the project languages. Admins always have read/write access to all languages.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Contributors().List(projectId)
@@ -107,7 +107,7 @@ including the previously added languages as well.
 var contributorDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a contributor",
-	Long: "Deletes a user from the project. Requires Manage contributors admin right.",
+	Long:  "Deletes a user from the project. Requires Manage contributors admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Contributors().Delete(projectId, userId)

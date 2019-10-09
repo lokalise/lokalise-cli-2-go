@@ -13,12 +13,15 @@ var (
 
 // translationStatusCmd represents the translation-status command
 var translationStatusCmd = &cobra.Command{
-	Use: "translationStatus",
+	Use:   "translation-status",
+	Short: "Manage custom translation statuses",
+	Long:  "Custom translation statuses are used to provide a more efficient translation workflow.",
 }
 
 var translationStatusListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists project translation statuses",
+	Short: "List all statuses",
+	Long:  "Lists all custom translation statuses in the project.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.TranslationStatuses().List(projectId)
@@ -31,7 +34,8 @@ var translationStatusListCmd = &cobra.Command{
 
 var translationStatusCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Creates a translationStatus in the project",
+	Short: "Create a status",
+	Long:  "Creates a custom translation status in the project.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.TranslationStatuses().Create(projectId, trStatusCreate)
@@ -44,7 +48,8 @@ var translationStatusCreateCmd = &cobra.Command{
 
 var translationStatusRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
-	Short: "Retrieves a translationStatus ",
+	Short: "Retrieve a status",
+	Long:  "Retrieves a custom translation status.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.TranslationStatuses().Retrieve(projectId, trStatusId)
@@ -57,7 +62,8 @@ var translationStatusRetrieveCmd = &cobra.Command{
 
 var translationStatusRetrieveColorsCmd = &cobra.Command{
 	Use:   "retrieve-colors",
-	Short: "Retrieves colors for translation statuses ",
+	Short: "Retrieve available colors",
+	Long:  "Retrieves an array of available colors that can be assigned to custom translation statuses.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.TranslationStatuses().ListColors(projectId)
@@ -70,7 +76,8 @@ var translationStatusRetrieveColorsCmd = &cobra.Command{
 
 var translationStatusUpdateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Updates the properties of a translationStatus",
+	Short: "Update a status",
+	Long:  "Updates the custom translation status.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.TranslationStatuses().Update(projectId, trStatusId, trStatusUpdate)
@@ -83,7 +90,8 @@ var translationStatusUpdateCmd = &cobra.Command{
 
 var translationStatusDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Deletes a translationStatus from the project.",
+	Short: "Delete a status",
+	Long:  "Deletes a custom translation status.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.TranslationStatuses().Delete(projectId, trStatusId)
@@ -104,14 +112,14 @@ func init() {
 
 	// Create
 	fs := translationStatusCreateCmd.Flags()
-	fs.StringVar(&trStatusCreate.Title, "title", "", "")
-	fs.StringVar(&trStatusCreate.Color, "color", "", "")
+	fs.StringVar(&trStatusCreate.Title, "title", "", "Status title (required).")
+	fs.StringVar(&trStatusCreate.Color, "color", "", "Hex color of the status (required).")
 
 	// Update
 	flagTrStatusId(translationStatusUpdateCmd)
 	fs = translationStatusUpdateCmd.Flags()
-	fs.StringVar(&trStatusUpdate.Title, "title", "", "")
-	fs.StringVar(&trStatusUpdate.Color, "color", "", "")
+	fs.StringVar(&trStatusUpdate.Title, "title", "", "Status title.")
+	fs.StringVar(&trStatusUpdate.Color, "color", "", "Hex color of the status.")
 
 	// Retrieve, delete
 	flagTrStatusId(translationStatusRetrieveCmd)
@@ -119,6 +127,6 @@ func init() {
 }
 
 func flagTrStatusId(cmd *cobra.Command) {
-	cmd.Flags().Int64Var(&trStatusId, "status-id", 0, "A unique identifier of translationStatus (required)")
+	cmd.Flags().Int64Var(&trStatusId, "status-id", 0, "A unique identifier of the translation status (required).")
 	_ = cmd.MarkFlagRequired("status-id")
 }

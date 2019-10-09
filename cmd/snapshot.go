@@ -12,11 +12,13 @@ var (
 // snapshotCmd represents the snapshot command
 var snapshotCmd = &cobra.Command{
 	Use: "snapshot",
+	Short: "Manage snapshots",
 }
 
 var snapshotListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists project snapshots",
+	Short: "List all snapshots",
+	Long: "Retrieves a list of project snapshots. Requires Manage settings admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Snapshots().List(projectId)
@@ -29,7 +31,8 @@ var snapshotListCmd = &cobra.Command{
 
 var snapshotCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Creates snapshot of the project",
+	Short: "Create a snapshot",
+	Long: "Creates snapshot of the project. Requires Manage settings admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Snapshots().Create(projectId, snapshotTitle)
@@ -42,7 +45,8 @@ var snapshotCreateCmd = &cobra.Command{
 
 var snapshotRestoreCmd = &cobra.Command{
 	Use:   "restore",
-	Short: "Restores project snapshot to a project copy",
+	Short: "Restore a snapshot",
+	Long: "Restores project snapshot to a project copy. Requires Manage settings admin right and Admin role in the team.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Snapshots().Restore(projectId, snapshotId)
@@ -55,7 +59,8 @@ var snapshotRestoreCmd = &cobra.Command{
 
 var snapshotDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Deletes a snapshot from the project.",
+	Short: "Delete a snapshot",
+	Long: "Deletes project snapshot. Requires Manage settings admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Snapshots().Delete(projectId, snapshotId)
@@ -74,13 +79,13 @@ func init() {
 	flagProjectId(snapshotCmd, true)
 
 	// separate flags for every command
-	snapshotCreateCmd.Flags().StringVar(&snapshotTitle, "title", "", "Set snapshot title")
+	snapshotCreateCmd.Flags().StringVar(&snapshotTitle, "title", "", "Snapshot title.")
 
 	flagSnapshotId(snapshotDeleteCmd)
 	flagSnapshotId(snapshotRestoreCmd)
 }
 
 func flagSnapshotId(cmd *cobra.Command) {
-	cmd.Flags().Int64Var(&snapshotId, "snapshot-id", 0, "A unique identifier of snapshot (required)")
+	cmd.Flags().Int64Var(&snapshotId, "snapshot-id", 0, "A unique identifier of the snapshot (required).")
 	_ = cmd.MarkFlagRequired("snapshot-id")
 }

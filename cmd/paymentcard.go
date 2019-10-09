@@ -12,12 +12,15 @@ var (
 
 // cardCmd represents the payment-card command
 var cardCmd = &cobra.Command{
-	Use: "payment-card",
+	Use:   "payment-card",
+	Short: "Manage payment cards",
+	Long:  "Credit cards are used to pay for translation orders. Each user has their own cards, that are not shared with other users. We do not store credit card details. Once the card is added, we send the details to Stripe and receive the card token, which can only be used for order purchases at Lokalise.",
 }
 
 var cardListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists user cards",
+	Short: "Lists all cards",
+	Long:  "Lists all user payment cards.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.PaymentCards().List()
@@ -30,7 +33,8 @@ var cardListCmd = &cobra.Command{
 
 var cardCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Creates a card in the project",
+	Short: "Create a card",
+	Long:  "Adds new payment card to user cards.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.PaymentCards().Create(newCard)
@@ -43,7 +47,8 @@ var cardCreateCmd = &cobra.Command{
 
 var cardRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
-	Short: "Retrieves a card ",
+	Short: "Retrieve a card",
+	Long:  "Retrieves a payment card.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.PaymentCards().Retrieve(cardId)
@@ -56,7 +61,8 @@ var cardRetrieveCmd = &cobra.Command{
 
 var cardDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Deletes a card from the project.",
+	Short: "Delete a card",
+	Long:  "Deletes a payment card from user cards.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.PaymentCards().Delete(cardId)
@@ -75,13 +81,13 @@ func init() {
 
 	// Create
 	fs := cardCreateCmd.Flags()
-	fs.StringVar(&newCard.Number, "number", "", "")
+	fs.StringVar(&newCard.Number, "number", "", "Card number (required).")
 	_ = cardCreateCmd.MarkFlagRequired("number")
-	fs.StringVar(&newCard.CVC, "cvc", "", "")
+	fs.StringVar(&newCard.CVC, "cvc", "", "3-digit card CVC code (required).")
 	_ = cardCreateCmd.MarkFlagRequired("cvc")
-	fs.Int64Var(&newCard.ExpMonth, "exp-month", 0, "")
+	fs.Int64Var(&newCard.ExpMonth, "exp-month", 0, "Card expiration month (1-12) (required).")
 	_ = cardCreateCmd.MarkFlagRequired("exp-month")
-	fs.Int64Var(&newCard.ExpYear, "exp-year", 0, "")
+	fs.Int64Var(&newCard.ExpYear, "exp-year", 0, "Card expiration year (required).")
 	_ = cardCreateCmd.MarkFlagRequired("exp-year")
 
 	// Retrieve, delete
@@ -90,6 +96,6 @@ func init() {
 }
 
 func flagCardId(cmd *cobra.Command) {
-	cmd.Flags().Int64Var(&cardId, "card-id", 0, "A unique identifier of card (required)")
+	cmd.Flags().Int64Var(&cardId, "card-id", 0, "A unique identifier of the card (required).")
 	_ = cmd.MarkFlagRequired("card-id")
 }

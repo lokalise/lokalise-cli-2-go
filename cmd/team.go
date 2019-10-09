@@ -11,12 +11,14 @@ var (
 // teamCmd represents the team command
 var teamCmd = &cobra.Command{
 	Use:   "team",
+	Short: "List teams",
 }
 
 // teamListCmd represents team list command
 var teamListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists all teams available to the user",
+	Short: "List all teams",
+	Long:  "Lists all teams available to the user.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Teams().List()
@@ -34,6 +36,6 @@ func init() {
 
 // always persistent
 func flagTeamId(cmd *cobra.Command) {
-	cmd.PersistentFlags().Int64Var(&teamId, "team-id", 0, "A unique identifier of team (required)")
+	cmd.PersistentFlags().Int64Var(&teamId, "team-id", 0, "A unique identifier of the team (required).")
 	_ = cmd.MarkPersistentFlagRequired("team-id")
 }

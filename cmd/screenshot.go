@@ -21,12 +21,14 @@ var (
 
 // screenshotCmd represents the screenshot command
 var screenshotCmd = &cobra.Command{
-	Use: "screenshot",
+	Use:   "screenshot",
+	Short: "Manage screenshots",
 }
 
 var screenshotListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists project screenshots",
+	Short: "List all screenshots",
+	Long:  "Retrieves a list of screenshots from the project.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Screenshots().List(projectId)
@@ -39,7 +41,8 @@ var screenshotListCmd = &cobra.Command{
 
 var screenshotCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Adds a screenshot to the project",
+	Short: "Create a screenshot",
+	Long:  "Creates a screenshot in the project. Requires Manage screenshots admin right.",
 	RunE: func(*cobra.Command, []string) error {
 		// preparing screenshot
 		data, err := screenshotToBase64(newScreenshotFile)
@@ -63,7 +66,8 @@ var screenshotCreateCmd = &cobra.Command{
 
 var screenshotRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
-	Short: "Retrieves a screenshot ",
+	Short: "Retrieve a screenshot",
+	Long:  "Retrieves a screenshot.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Screenshots().Retrieve(projectId, screenshotId)
@@ -76,7 +80,8 @@ var screenshotRetrieveCmd = &cobra.Command{
 
 var screenshotUpdateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Updates the properties of a screenshot",
+	Short: "Updates a screenshot",
+	Long:  "Updates properties of a screenshot. Requires Manage screenshots admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Screenshots().Update(projectId, screenshotId, lokalise.UpdateScreenshot{})
@@ -89,7 +94,8 @@ var screenshotUpdateCmd = &cobra.Command{
 
 var screenshotDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Deletes a screenshot from the project.",
+	Short: "Delete a screenshot",
+	Long:  "Deletes a screenshot from the project. Requires Manage screenshots admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Screenshots().Delete(projectId, screenshotId)
@@ -110,13 +116,13 @@ func init() {
 
 	// Create
 	fs := screenshotCreateCmd.Flags()
-	fs.StringVar(&newScreenshotFile, "file", "", "Path to file")
+	fs.StringVar(&newScreenshotFile, "file", "", "Path to a local image file (required).")
 	_ = screenshotCreateCmd.MarkFlagRequired("file")
 	fs.StringVar(&newScreenshot.Title, "title", "", "Screenshot title")
-	fs.StringVar(&newScreenshot.Description, "description", "", "Screenshot description")
-	fs.BoolVar(&newScreenshotOcr, "ocr", false, "Try to recognize translations on the image")
-	fs.UintSliceVar(&newScreenshotKeyIds, "key-ids", []uint{}, "Attach the screenshot to key IDs specified")
-	fs.StringSliceVar(&newScreenshot.Tags, "tags", []string{}, "List of tags to add to the uploaded screenshot")
+	fs.StringVar(&newScreenshot.Description, "description", "", "Screenshot description.")
+	fs.BoolVar(&newScreenshotOcr, "ocr", true, "Try to recognize translations on the image and attach screenshot to all possible keys.")
+	fs.UintSliceVar(&newScreenshotKeyIds, "key-ids", []uint{}, "Attach the screenshot to key IDs specified.")
+	fs.StringSliceVar(&newScreenshot.Tags, "tags", []string{}, "List of tags to add to the uploaded screenshot.")
 
 	// Other
 	flagScreenshotId(screenshotUpdateCmd)
@@ -125,7 +131,7 @@ func init() {
 }
 
 func flagScreenshotId(cmd *cobra.Command) {
-	cmd.Flags().Int64Var(&screenshotId, "screenshot-id", 0, "A unique identifier of screenshot (required)")
+	cmd.Flags().Int64Var(&screenshotId, "screenshot-id", 0, "A unique identifier of the screenshot (required).")
 	_ = cmd.MarkFlagRequired("screenshot-id")
 }
 

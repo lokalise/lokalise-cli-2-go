@@ -32,7 +32,7 @@ Each phrase that is used in your app or website must be identified by a key and 
 var keyListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all keys",
-	Long: "Lists all keys in the project.",
+	Long:  "Lists all keys in the project.",
 	RunE: func(*cobra.Command, []string) error {
 		// preparing filters
 		if filterUntranslated {
@@ -50,7 +50,7 @@ var keyListCmd = &cobra.Command{
 var keyCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create keys",
-	Long: "Creates one or more keys in the project.",
+	Long:  "Creates one or more keys in the project.",
 	RunE: func(*cobra.Command, []string) error {
 		// preparing options
 		err := newKeyFillFields()
@@ -71,7 +71,7 @@ var keyCreateCmd = &cobra.Command{
 var keyRetrieveCmd = &cobra.Command{
 	Use:   "retrieve",
 	Short: "Retrieve a key",
-	Long: "Retrieves a key.",
+	Long:  "Retrieves a key.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Keys().Retrieve(projectId, keyId)
@@ -85,7 +85,7 @@ var keyRetrieveCmd = &cobra.Command{
 var keyUpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update a key",
-	Long: "Updates the properties of a key and it’s associated objects. Requires Manage keys admin right.",
+	Long:  "Updates the properties of a key and it’s associated objects. Requires Manage keys admin right.",
 	RunE: func(*cobra.Command, []string) error {
 		// preparing opts
 		err := newKeyFillFields()
@@ -104,7 +104,7 @@ var keyUpdateCmd = &cobra.Command{
 var keyDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a key",
-	Long: "Deletes a key from the project. Requires Manage keys admin right.",
+	Long:  "Deletes a key from the project. Requires Manage keys admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
 		resp, err := Api.Keys().Delete(projectId, keyId)
