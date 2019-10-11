@@ -1,8 +1,17 @@
 package cmd
 
 import (
+	"archive/zip"
+	"encoding/base64"
+	"fmt"
 	"github.com/lokalise/go-lokalise-api"
 	"github.com/spf13/cobra"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"path"
+	"path/filepath"
 )
 
 var (
@@ -49,18 +58,37 @@ var fileUploadCmd = &cobra.Command{
 	Short: "Upload a file",
 	Long:  "Imports a localization file to the project. Requires Upload files admin right. List of supported file formats is available here https://docs.lokalise.com/en/collections/652248-supported-file-formats",
 	RunE: func(*cobra.Command, []string) error {
+		f := Api.Files()
+
 		// preparing opts
 		uploadOpts.ConvertPlaceholders = &uploadOptsConvertPlaceholders
 		uploadOpts.TagInsertedKeys = &uploadOptsTagInsertedKeys
 		uploadOpts.TagUpdatedKeys = &uploadOptsTagUpdatedKeys
 
-		f := Api.Files()
-		f.SetDebug(true)
-		resp, err := f.Upload(projectId, uploadOpts)
+		files, err := filepath.Glob(uploadFile)
 		if err != nil {
 			return err
 		}
-		return printJson(resp)
+
+		for _, file := range files {
+			fmt.Println("file", file, "is in progress...")
+			buf, err := ioutil.ReadFile(file)
+			if err != nil {
+				return err
+			}
+
+			uploadOpts.Data = base64.StdEncoding.EncodeToString(buf)
+			uploadOpts.Filename = path.Base(file)
+
+			resp, err := f.Upload(projectId, uploadOpts)
+			if err != nil {
+				return err
+			}
+
+			_ = printJson(resp)
+		}
+
+		return nil
 	},
 }
 
@@ -74,7 +102,17 @@ var fileDownloadCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		return printJson(resp)
+
+		if downloadJsonOnly {
+			return printJson(resp)
+		}
+
+		err = downloadAndUnzip(resp.BundleURL, downloadDestination, downloadUnzipTo)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
 
@@ -92,8 +130,8 @@ func init() {
 
 	fs.BoolVar(&downloadJsonOnly, "json-only", false, "Should only the API JSON response be returned.")
 	fs.BoolVar(&downloadKeepZip, "keep-zip", false, "Keep or delete ZIP file after being unpacked.")
-	fs.StringVar(&downloadDestination, "dest", "/tmp", "Destination folder for ZIP file.")
-	fs.StringVar(&downloadUnzipTo, "unzip-to", "", "Unzip to this folder.")
+	fs.StringVar(&downloadDestination, "dest", "./", "Destination folder for ZIP file.")
+	fs.StringVar(&downloadUnzipTo, "unzip-to", "./", "Unzip to this folder.")
 
 	fs.BoolVar(&downloadOpts.OriginalFilenames, "original-filenames", true, "Enable to use original filenames/formats. If set to false all keys will be export to a single file per language.")
 	fs.StringVar(&downloadOpts.BundleStructure, "bundle-structure", "", "Bundle structure, used when original-filenames set to false. Allowed placeholders are %LANG_ISO%, %LANG_NAME%, %FORMAT% and %PROJECT_NAME%).")
@@ -147,4 +185,84 @@ func init() {
 	fs.BoolVar(&uploadOpts.DistinguishByFile, "distinguish-by-file", false, "Enable to allow keys with similar names to coexist, in case they are assigned to differrent filenames.")
 	fs.BoolVar(&uploadOpts.ApplyTM, "apply-tm", false, "Enable to automatically apply 100% translation memory matches.")
 	fs.BoolVar(&uploadOpts.CleanupMode, "cleanup-mode", false, "Enable to delete all keys with all language translations that are not present in the uploaded file. You may want to make a snapshot of the project before importing new file, just in case.")
+}
+
+//noinspection GoUnhandledErrorResult
+func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
+	fileName := path.Base(srcUrl)
+	zip, err := os.Create(path.Join(destPath, fileName))
+	if err != nil {
+		return err
+	}
+	defer zip.Close()
+
+	resp, err := http.Get(srcUrl)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	_, err = io.Copy(zip, resp.Body)
+	if err != nil {
+		return err
+	}
+
+	err = unzip(zip.Name(), unzipPath)
+	if err != nil {
+		return err
+	}
+
+	if !downloadKeepZip {
+		_ = os.Remove(zip.Name())
+	}
+
+	return nil
+}
+
+//noinspection GoUnhandledErrorResult
+func unzip(src, dest string) error {
+	r, err := zip.OpenReader(src)
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+
+	os.MkdirAll(dest, 0755)
+
+	// Closure to address file descriptors issue with all the deferred .Close() methods
+	extractAndWriteFile := func(f *zip.File) error {
+		rc, err := f.Open()
+		if err != nil {
+			return err
+		}
+		defer rc.Close()
+
+		path := filepath.Join(dest, f.Name)
+
+		if f.FileInfo().IsDir() {
+			os.MkdirAll(path, f.Mode())
+		} else {
+			os.MkdirAll(filepath.Dir(path), f.Mode())
+			f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+			if err != nil {
+				return err
+			}
+			defer f.Close()
+
+			_, err = io.Copy(f, rc)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
+	for _, f := range r.File {
+		err := extractAndWriteFile(f)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

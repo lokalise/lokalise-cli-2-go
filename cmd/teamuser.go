@@ -95,6 +95,6 @@ func init() {
 }
 
 func flagUserId(cmd *cobra.Command) {
-	cmd.Flags().Int64Var(&translationId, "user-id", 0, "A unique identifier of the user (required).")
+	cmd.Flags().Int64Var(&userId, "user-id", 0, "A unique identifier of the user (required).")
 	_ = cmd.MarkFlagRequired("user-id")
 }

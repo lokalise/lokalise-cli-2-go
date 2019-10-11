@@ -59,7 +59,6 @@ var keyCreateCmd = &cobra.Command{
 		}
 
 		k := Api.Keys()
-		// k.SetDebug(false)
 		resp, err := k.Create(projectId, []lokalise.NewKey{newKey})
 		if err != nil {
 			return err

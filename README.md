@@ -346,6 +346,7 @@ lokalise
 
 		create
 			--project-id string*
+			--title string*
 			--description string
 			--due-date string
 			--keys array
@@ -361,11 +362,11 @@ lokalise
 
 		retrieve
 			--project-id string*
-			--task-id int
+			--task-id int*
 
 		update
 			--project-id string*
-			--task-id int
+			--task-id int*
 			--title string
 			--description string
 			--due-date string
@@ -378,7 +379,7 @@ lokalise
 
 		delete
 			--project-id string*
-			--task-id int
+			--task-id int*
 
 	team
 		list
@@ -428,22 +429,22 @@ lokalise
 		add-projects
 			--team-id int*
 			--group-id int*
-			--projects array
+			--projects array*
 
 		remove-projects
 			--team-id int*
 			--group-id int*
-			--projects array
+			--projects array*
 
 		add-members
 			--team-id int*
 			--group-id int*
-			--users array
+			--users array*
 
 		remove-members
 			--team-id int*
 			--group-id int*
-			--users array
+			--users array*
 
 		delete
 			--team-id int*
@@ -468,7 +469,8 @@ lokalise
 			--translation-id int*
 			--translation string*
 			--is-fuzzy bool
-			--is-reviewed bool			
+			--is-reviewed bool
+			--custom-translation-status-ids array	
 
 	translation-provider
 		list
@@ -484,8 +486,8 @@ lokalise
 
 		create
 			--project-id string*
-		 	--title string
-		 	--color string
+		 	--title string*
+		 	--color string*
 
 		retrieve
 			--project-id string*
@@ -503,5 +505,28 @@ lokalise
 
 		retrieve-colors
 
-
+    webhook
+		list
+			--project-id string*
+			
+		retrieve
+			--project-id string*
+			--webhook-id string*
+		
+		create
+			--project-id string*
+			--url string*
+			--events array*
+			--event-lang-map json
+		
+		update
+			--project-id string*
+			--webhook-id string*
+			--url string
+			--events array
+			--event-lang-map json
+		
+		delete
+			--project-id string*
+			--webhook-id string*
 

@@ -40,7 +40,6 @@ var projectCreateCmd = &cobra.Command{
 		}
 
 		p := Api.Projects()
-		p.SetDebug(true)
 		resp, err := p.Create(newProject)
 		if err != nil {
 			return err
@@ -56,7 +55,6 @@ var projectListCmd = &cobra.Command{
 	RunE: func(*cobra.Command, []string) error {
 
 		p := Api.Projects()
-		p.SetDebug(true)
 		opts := lokalise.ProjectListOptions{
 			IncludeSettings: fmt.Sprintf("%d", includeSettings),
 			IncludeStat:     fmt.Sprintf("%d", includeStatistics),

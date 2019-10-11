@@ -67,6 +67,7 @@ func init() {
 	flagTeamId(orderCmd)
 
 	// Create
+	flagProjectId(orderCreateCmd, false)
 	flagCardId(orderCreateCmd)
 	fs := orderCreateCmd.Flags()
 	fs.StringVar(&newOrder.Briefing, "briefing", "", "Order briefing (required).")

@@ -113,7 +113,9 @@ func init() {
 	// Create
 	fs := translationStatusCreateCmd.Flags()
 	fs.StringVar(&trStatusCreate.Title, "title", "", "Status title (required).")
+	_ = translationStatusCreateCmd.MarkFlagRequired("title")
 	fs.StringVar(&trStatusCreate.Color, "color", "", "Hex color of the status (required).")
+	_ = translationStatusCreateCmd.MarkFlagRequired("color")
 
 	// Update
 	flagTrStatusId(translationStatusUpdateCmd)
