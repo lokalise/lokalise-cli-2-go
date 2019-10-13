@@ -34,12 +34,14 @@ var keyListCmd = &cobra.Command{
 	Short: "List all keys",
 	Long:  "Lists all keys in the project.",
 	RunE: func(*cobra.Command, []string) error {
+		k := Api.Keys()
 		// preparing filters
+		keyListOpts.Limit = k.ListOpts().Limit
 		if filterUntranslated {
 			keyListOpts.FilterUntranslated = "1"
 		}
 
-		resp, err := Api.Keys().WithListOptions(keyListOpts).List(projectId)
+		resp, err := k.WithListOptions(keyListOpts).List(projectId)
 		if err != nil {
 			return err
 		}

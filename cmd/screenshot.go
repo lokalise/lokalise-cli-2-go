@@ -114,6 +114,9 @@ func init() {
 	// general flags
 	flagProjectId(screenshotCmd, true)
 
+	// List
+	// todo ScreenshotListOptions ?
+
 	// Create
 	fs := screenshotCreateCmd.Flags()
 	fs.StringVar(&newScreenshotFile, "file", "", "Path to a local image file (required).")

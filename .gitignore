@@ -4,5 +4,8 @@ dist/
 .idea/
 .DS_Store
 
+# config file
+config.*
+
 # temporary disabled
 go.sum

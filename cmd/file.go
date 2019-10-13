@@ -123,6 +123,9 @@ func init() {
 	// general flags
 	flagProjectId(fileCmd, true)
 
+	// List
+	// todo list options
+
 	// Download
 	fs := fileDownloadCmd.Flags()
 	fs.StringVar(&downloadOpts.Format, "format", "", "File format (e.g. json, strings, xml). Must be file extension of any of the file formats we support. May also be ios_sdk or android_sdk for respective OTA SDK bundles. (required)")

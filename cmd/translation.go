@@ -24,8 +24,10 @@ var translationListCmd = &cobra.Command{
 	Short: "List all translations",
 	Long:  "Retrieves a list of project translation items, ungrouped. You may want to request Keys resource in order to get the structured key/translation pairs for all languages.",
 	RunE: func(*cobra.Command, []string) error {
+		t := Api.Translations()
+		translationListOpts.Limit = t.ListOpts().Limit
 
-		resp, err := Api.Translations().WithListOptions(translationListOpts).List(projectId)
+		resp, err := t.WithListOptions(translationListOpts).List(projectId)
 		if err != nil {
 			return err
 		}

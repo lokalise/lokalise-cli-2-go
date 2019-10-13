@@ -3,9 +3,10 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-
 	"github.com/lokalise/go-lokalise-api"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -56,6 +57,7 @@ var projectListCmd = &cobra.Command{
 
 		p := Api.Projects()
 		opts := lokalise.ProjectListOptions{
+			Limit:           p.ListOpts().Limit,
 			IncludeSettings: fmt.Sprintf("%d", includeSettings),
 			IncludeStat:     fmt.Sprintf("%d", includeStatistics),
 			FilterTeamID:    filterTeamID,
@@ -163,11 +165,17 @@ func init() {
 }
 
 func flagProjectId(cmd *cobra.Command, isPersistent bool) {
+	var fs *pflag.FlagSet
+	var defaultPID string
+
 	if isPersistent {
-		cmd.PersistentFlags().StringVar(&projectId, "project-id", "", "A unique project identifier (required).")
-		_ = cmd.MarkPersistentFlagRequired("project-id")
+		fs = cmd.PersistentFlags()
+		defaultPID = viper.GetString("project-id")
 	} else {
-		cmd.Flags().StringVar(&projectId, "project-id", "", "A unique project identifier (required).")
-		_ = cmd.MarkFlagRequired("project-id")
+		fs = cmd.Flags()
+		defaultPID = ""
 	}
+
+	fs.StringVar(&projectId, "project-id", defaultPID, "Unique project identifier (required).")
+	_ = cmd.MarkFlagRequired("project-id")
 }

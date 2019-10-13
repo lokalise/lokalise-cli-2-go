@@ -33,8 +33,10 @@ var taskListCmd = &cobra.Command{
 	Short: "List all tasks",
 	Long:  "Lists all tasks in the project.",
 	RunE: func(*cobra.Command, []string) error {
+		t := Api.Tasks()
+		t.SetListOptions(lokalise.TaskListOptions{Title: filterTitle, Limit: t.ListOpts().Limit})
 
-		resp, err := Api.Tasks().WithListOptions(lokalise.TaskListOptions{Title: filterTitle}).List(projectId)
+		resp, err := t.List(projectId)
 		if err != nil {
 			return err
 		}
