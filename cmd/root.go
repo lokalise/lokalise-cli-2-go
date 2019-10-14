@@ -93,6 +93,7 @@ func repeatableList(
 	forwardPage func(page int64),
 	list func() (lokalise.PageCounter, error),
 ) error {
+	forwardPage(0)
 	resp, err := list()
 	if err != nil {
 		return err
