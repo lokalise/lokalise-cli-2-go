@@ -74,7 +74,7 @@ var contributorRetrieveCmd = &cobra.Command{
 	Short: "Retrieve a contributor",
 	RunE: func(*cobra.Command, []string) error {
 
-		resp, err := Api.Contributors().Retrieve(projectId, userId)
+		resp, err := Api.Contributors().Retrieve(projectId, contributorId)
 		if err != nil {
 			return err
 		}
@@ -102,7 +102,7 @@ including the previously added languages as well.
 			permissionUpdate.Languages = ls
 		}
 
-		resp, err := Api.Contributors().Update(projectId, userId, permissionUpdate)
+		resp, err := Api.Contributors().Update(projectId, contributorId, permissionUpdate)
 		if err != nil {
 			return err
 		}
@@ -116,7 +116,7 @@ var contributorDeleteCmd = &cobra.Command{
 	Long:  "Deletes a user from the project. Requires Manage contributors admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
-		resp, err := Api.Contributors().Delete(projectId, userId)
+		resp, err := Api.Contributors().Delete(projectId, contributorId)
 		if err != nil {
 			return err
 		}
@@ -134,7 +134,7 @@ func init() {
 
 	// Create
 	fs := contributorCreateCmd.Flags()
-	fs.StringVar(&contributorCreate.Email, "email", "", "E-mail.")
+	fs.StringVar(&contributorCreate.Email, "email", "", "E-mail (required).")
 	_ = contributorCreateCmd.MarkFlagRequired("email")
 	fs.StringVar(&contributorCreate.Fullname, "fullname", "", "Full name (only valid for inviting users, who previously did not have an account in Lokalise).")
 	fs.BoolVar(&contributorCreate.IsAdmin, "is-admin", false, "Whether the user has Admin access to the project.")
