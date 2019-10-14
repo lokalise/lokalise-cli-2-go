@@ -41,11 +41,15 @@ var keyListCmd = &cobra.Command{
 			keyListOpts.FilterUntranslated = "1"
 		}
 
-		resp, err := k.WithListOptions(keyListOpts).List(projectId)
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				keyListOpts.Page = uint(p)
+				k.SetListOptions(keyListOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return k.List(projectId)
+			},
+		)
 	},
 }
 

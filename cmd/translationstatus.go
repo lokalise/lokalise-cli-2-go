@@ -23,12 +23,18 @@ var translationStatusListCmd = &cobra.Command{
 	Short: "List all statuses",
 	Long:  "Lists all custom translation statuses in the project.",
 	RunE: func(*cobra.Command, []string) error {
+		c := Api.TranslationStatuses()
+		pageOpts := c.PageOpts()
 
-		resp, err := Api.TranslationStatuses().List(projectId)
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				pageOpts.Page = uint(p)
+				c.SetPageOptions(pageOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return c.List(projectId)
+			},
+		)
 	},
 }
 

@@ -26,12 +26,18 @@ var languageListCmd = &cobra.Command{
 	Short: "List project languages",
 	Long:  "Retrieves a list of project languages.",
 	RunE: func(*cobra.Command, []string) error {
+		c := Api.Languages()
+		pageOpts := c.PageOpts()
 
-		resp, err := Api.Languages().ListProject(projectId)
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				pageOpts.Page = uint(p)
+				c.SetPageOptions(pageOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return c.ListProject(projectId)
+			},
+		)
 	},
 }
 
@@ -40,12 +46,18 @@ var languageListSystemCmd = &cobra.Command{
 	Short: "List system languages",
 	Long:  "Retrieves a list of system languages.s",
 	RunE: func(*cobra.Command, []string) error {
+		c := Api.Languages()
+		pageOpts := c.PageOpts()
 
-		resp, err := Api.Languages().ListSystem()
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				pageOpts.Page = uint(p)
+				c.SetPageOptions(pageOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return c.ListSystem()
+			},
+		)
 	},
 }
 

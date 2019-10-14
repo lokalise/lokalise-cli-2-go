@@ -15,6 +15,8 @@ import (
 )
 
 var (
+	filterFilename string
+
 	downloadOpts              lokalise.FileDownload
 	downloadOptsReplaceBreaks bool
 	downloadOptsLangMapping   string
@@ -44,12 +46,19 @@ var fileListCmd = &cobra.Command{
 	Short: "List all files",
 	Long:  "Lists project files and associated key count. If there are some keys in the project that do not have a file association, they will be returned with filename __unassigned__.",
 	RunE: func(*cobra.Command, []string) error {
+		c := Api.Files()
+		listOpts := c.ListOpts()
+		listOpts.Filename = filterFilename
 
-		resp, err := Api.Files().List(projectId)
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				listOpts.Page = uint(p)
+				c.SetListOptions(listOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return c.List(projectId)
+			},
+		)
 	},
 }
 
@@ -124,7 +133,7 @@ func init() {
 	flagProjectId(fileCmd, true)
 
 	// List
-	// todo list options
+	fileListCmd.Flags().StringVar(&filterFilename, "filter-filename", "", "Set filename filter for the list.")
 
 	// Download
 	fs := fileDownloadCmd.Flags()

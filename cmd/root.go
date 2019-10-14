@@ -81,3 +81,40 @@ func printJson(v interface{}) error {
 	fmt.Println(string(output))
 	return nil
 }
+
+func printPageHeader(cur, total int64) {
+	if viper.GetBool("debug") {
+		fmt.Printf("\n=============\n Page %d of %d\n-------------\n", cur, total)
+	}
+}
+
+// handy function for processing List response for all commands
+func repeatableList(
+	forwardPage func(page int64),
+	list func() (lokalise.PageCounter, error),
+) error {
+	resp, err := list()
+	if err != nil {
+		return err
+	}
+
+	if resp.NumberOfPages() > 1 {
+		printPageHeader(resp.CurrentPage(), resp.NumberOfPages())
+		_ = printJson(resp)
+
+		for p := resp.CurrentPage() + 1; p <= resp.NumberOfPages(); p++ {
+			forwardPage(p)
+			resp, err := list()
+			if err != nil {
+				return err
+			}
+
+			printPageHeader(p, resp.NumberOfPages())
+			_ = printJson(resp)
+		}
+	} else {
+		_ = printJson(resp)
+	}
+
+	return nil
+}

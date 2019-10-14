@@ -22,12 +22,18 @@ var cardListCmd = &cobra.Command{
 	Short: "Lists all cards",
 	Long:  "Lists all user payment cards.",
 	RunE: func(*cobra.Command, []string) error {
+		c := Api.PaymentCards()
+		pageOpts := c.PageOpts()
 
-		resp, err := Api.PaymentCards().List()
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				pageOpts.Page = uint(p)
+				c.SetPageOptions(pageOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return c.List()
+			},
+		)
 	},
 }
 

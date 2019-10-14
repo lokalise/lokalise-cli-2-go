@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/lokalise/go-lokalise-api"
 	"github.com/spf13/cobra"
 )
 
@@ -20,12 +21,18 @@ var providerListCmd = &cobra.Command{
 	Short: "List all providers",
 	Long:  "Lists all translation providers.",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		c := Api.TranslationProviders()
+		pageOpts := c.PageOpts()
 
-		resp, err := Api.TranslationProviders().List(teamId)
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				pageOpts.Page = uint(p)
+				c.SetPageOptions(pageOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return c.List(teamId)
+			},
+		)
 	},
 }
 

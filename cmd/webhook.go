@@ -25,12 +25,18 @@ var webhookListCmd = &cobra.Command{
 	Short: "List all webhooks",
 	Long:  "Retrieves a list of configured webhooks. Requires `Manage settings` admin right.",
 	RunE: func(*cobra.Command, []string) error {
+		c := Api.Webhooks()
+		pageOpts := c.PageOpts()
 
-		resp, err := Api.Webhooks().List(projectId)
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				pageOpts.Page = uint(p)
+				c.SetPageOptions(pageOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return c.List(projectId)
+			},
+		)
 	},
 }
 

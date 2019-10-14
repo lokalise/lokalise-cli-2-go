@@ -27,12 +27,18 @@ var teamUserGroupListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all user groups",
 	RunE: func(*cobra.Command, []string) error {
+		c := Api.TeamUserGroups()
+		pageOpts := c.PageOpts()
 
-		resp, err := Api.TeamUserGroups().List(teamId)
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				pageOpts.Page = uint(p)
+				c.SetPageOptions(pageOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return c.List(teamId)
+			},
+		)
 	},
 }
 

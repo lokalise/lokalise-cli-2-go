@@ -54,7 +54,6 @@ var projectListCmd = &cobra.Command{
 	Short: "List all projects",
 	Long:  "Retrieves a list of projects available to the user, authorized with a token.",
 	RunE: func(*cobra.Command, []string) error {
-
 		p := Api.Projects()
 		opts := lokalise.ProjectListOptions{
 			Limit:           p.ListOpts().Limit,
@@ -64,11 +63,15 @@ var projectListCmd = &cobra.Command{
 			FilterNames:     filterNames,
 		}
 
-		resp, err := p.WithListOptions(opts).List()
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(page int64) {
+				opts.Page = uint(page)
+				p.SetListOptions(opts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return p.List()
+			},
+		)
 	},
 }
 

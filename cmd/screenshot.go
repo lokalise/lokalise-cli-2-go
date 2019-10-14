@@ -30,12 +30,18 @@ var screenshotListCmd = &cobra.Command{
 	Short: "List all screenshots",
 	Long:  "Retrieves a list of screenshots from the project.",
 	RunE: func(*cobra.Command, []string) error {
+		c := Api.Screenshots()
+		pageOpts := c.ListOpts()
 
-		resp, err := Api.Screenshots().List(projectId)
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				pageOpts.Page = uint(p)
+				c.SetListOptions(pageOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return c.List(projectId)
+			},
+		)
 	},
 }
 

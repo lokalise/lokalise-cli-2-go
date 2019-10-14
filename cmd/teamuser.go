@@ -22,12 +22,18 @@ var teamUserListCmd = &cobra.Command{
 	Short: "List all team users",
 	Long:  "List all team users. Requires Admin role in the team.",
 	RunE: func(*cobra.Command, []string) error {
+		c := Api.TeamUsers()
+		pageOpts := c.PageOpts()
 
-		resp, err := Api.TeamUsers().List(teamId)
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				pageOpts.Page = uint(p)
+				c.SetPageOptions(pageOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return c.List(teamId)
+			},
+		)
 	},
 }
 

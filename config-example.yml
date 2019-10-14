@@ -1,0 +1,29 @@
+# This is an example config
+# Copy it to config.yml and modify for usage
+
+# API token
+# you can create & find later your token at https://lokalise.com/profile
+token: 0f0f0f0f0fa40efb0256a57f92f05fd975aaaaaaaaaaa
+
+# Debug option, default false
+#debug: true
+
+# Retry-count enables retry on client and allows you
+# to set no. of retry count. Default 3
+#retry-count: 5
+
+# Sets default wait time to sleep before retrying request.
+# Default is 100 milliseconds.
+#retry-timeout: 500ms
+
+# sets timeout for request raised from client. Default 1 min
+#connection-timeout: 5s
+
+# records per page, default 5000 (max available by API)
+#page-limit: 5
+
+# Default project-id
+# If set it used as default (visible by --help) for all methods
+# that take project id persistently
+#project-id: 373182575d64e892ba8ab2.58226357
+

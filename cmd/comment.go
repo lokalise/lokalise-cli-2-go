@@ -22,12 +22,18 @@ var commentListCmd = &cobra.Command{
 	Short: "List project comments",
 	Long:  "Retrieves a list of all comments in the project.",
 	RunE: func(*cobra.Command, []string) error {
+		c := Api.Comments()
+		pageOpts := c.PageOpts()
 
-		resp, err := Api.Comments().ListProject(projectId)
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				pageOpts.Page = uint(p)
+				c.SetPageOptions(pageOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return c.ListProject(projectId)
+			},
+		)
 	},
 }
 
@@ -36,12 +42,18 @@ var commentListKeyCmd = &cobra.Command{
 	Short: "List key comments",
 	Long:  "Retrieves a list of all comments of the key.",
 	RunE: func(*cobra.Command, []string) error {
+		c := Api.Comments()
+		pageOpts := c.PageOpts()
 
-		resp, err := Api.Comments().ListByKey(projectId, keyId)
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
+		return repeatableList(
+			func(p int64) {
+				pageOpts.Page = uint(p)
+				c.SetPageOptions(pageOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return c.ListByKey(projectId, keyId)
+			},
+		)
 	},
 }
 

@@ -34,13 +34,20 @@ var taskListCmd = &cobra.Command{
 	Long:  "Lists all tasks in the project.",
 	RunE: func(*cobra.Command, []string) error {
 		t := Api.Tasks()
-		t.SetListOptions(lokalise.TaskListOptions{Title: filterTitle, Limit: t.ListOpts().Limit})
-
-		resp, err := t.List(projectId)
-		if err != nil {
-			return err
+		pageOpts := lokalise.TaskListOptions{
+			Title: filterTitle,
+			Limit: t.ListOpts().Limit,
 		}
-		return printJson(resp)
+
+		return repeatableList(
+			func(p int64) {
+				pageOpts.Page = uint(p)
+				t.SetListOptions(pageOpts)
+			},
+			func() (lokalise.PageCounter, error) {
+				return t.List(projectId)
+			},
+		)
 	},
 }
 
