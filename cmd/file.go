@@ -3,15 +3,17 @@ package cmd
 import (
 	"archive/zip"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
-	"github.com/lokalise/go-lokalise-api"
-	"github.com/spf13/cobra"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
+
+	"github.com/lokalise/go-lokalise-api"
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -106,6 +108,15 @@ var fileDownloadCmd = &cobra.Command{
 	Short: "Download files",
 	Long:  "Exports project files as a .zip bundle. Generated bundle will be uploaded to an Amazon S3 bucket, which will be stored there for 12 months available to download. As the bundle is generated and uploaded you would get a response with the URL to the file. Requires Download files admin right.",
 	RunE: func(*cobra.Command, []string) error {
+		// preparing options
+		if downloadOptsLangMapping != "" {
+			var mappings []lokalise.LanguageMapping
+			err := json.Unmarshal([]byte(downloadOptsLangMapping), &mappings)
+			if err != nil {
+				return err
+			}
+			downloadOpts.LanguageMapping = mappings
+		}
 
 		resp, err := Api.Files().Download(projectId, downloadOpts)
 		if err != nil {
@@ -149,20 +160,20 @@ func init() {
 	fs.StringVar(&downloadOpts.BundleStructure, "bundle-structure", "", "Bundle structure, used when original-filenames set to false. Allowed placeholders are %LANG_ISO%, %LANG_NAME%, %FORMAT% and %PROJECT_NAME%).")
 	fs.StringVar(&downloadOpts.DirectoryPrefix, "directory-prefix", "", "Directory prefix in the bundle, used when original_filenames set to true). Allowed placeholder is %LANG_ISO%.")
 	fs.BoolVar(&downloadOpts.AllPlatforms, "all-platforms", false, "Enable to include all platform keys. If disabled, only the keys, associated with the platform of the format will be exported.")
-	fs.StringVar(&downloadOpts.FilterLangs, "filter-langs", "", "List of languages to export. Omit this parameter for all languages.")
-	fs.StringVar(&downloadOpts.FilterData, "filter-data", "", "Narrow export data range. Allowed values are translated or untranslated, reviewed (or reviewed_only), last_reviewed_only, nonfuzzy and nonhidden. (Note: Fuzzy is called Unverified in the editor now).")
-	fs.StringVar(&downloadOpts.FilterFilenames, "filter-filenames", "", "Only keys attributed to selected files will be included. Leave empty for all.")
+	fs.StringSliceVar(&downloadOpts.FilterLangs, "filter-langs", []string{}, "List of languages to export. Omit this parameter for all languages.")
+	fs.StringSliceVar(&downloadOpts.FilterData, "filter-data", []string{}, "Narrow export data range. Allowed values are translated or untranslated, reviewed (or reviewed_only), last_reviewed_only, nonfuzzy and nonhidden. (Note: Fuzzy is called Unverified in the editor now).")
+	fs.StringSliceVar(&downloadOpts.FilterFilenames, "filter-filenames", []string{}, "Only keys attributed to selected files will be included. Leave empty for all.")
 	fs.BoolVar(&downloadOpts.AddNewlineEOF, "add-newline-eof", false, "Enable to add new line at end of file (if supported by format).")
-	fs.StringVar(&downloadOpts.CustomTranslationStatusIDs, "custom-translation-status-ids", "", "Only translations attributed to selected custom statuses will be included. Leave empty for all.")
-	fs.StringVar(&downloadOpts.IncludeTags, "include-tags", "", "Narrow export range to tags specified.")
-	fs.StringVar(&downloadOpts.ExcludeTags, "exclude-tags", "", "Specify to exclude keys with these tags.")
+	fs.StringSliceVar(&downloadOpts.CustomTranslationStatusIDs, "custom-translation-status-ids", []string{}, "Only translations attributed to selected custom statuses will be included. Leave empty for all.")
+	fs.StringSliceVar(&downloadOpts.IncludeTags, "include-tags", []string{}, "Narrow export range to tags specified.")
+	fs.StringSliceVar(&downloadOpts.ExcludeTags, "exclude-tags", []string{}, "Specify to exclude keys with these tags.")
 	fs.StringVar(&downloadOpts.ExportSort, "export-sort", "", "Export key sort mode. Allowed value are first_added, last_added, last_updated, a_z, z_a.")
 	fs.StringVar(&downloadOpts.ExportEmptyAs, "export-empty-as", "", "Select how you would like empty translations to be exported. Allowed values are empty to keep empty, base to replace with the base language value, or skip to omit.")
 	fs.BoolVar(&downloadOpts.IncludeComments, "include-comments", false, "Enable to include key comments and description in exported file (if supported by the format).")
 	fs.BoolVar(&downloadOpts.IncludeDescription, "include-description", false, "Enable to include key description in exported file (if supported by the format).")
-	fs.StringVar(&downloadOpts.IncludeProjectIDs, "include-pids", "", "Other projects ID's, which keys should be included with this export.")
-	fs.StringVar(&downloadOpts.Triggers, "triggers", "", "Trigger integration exports (must be enabled in project settings). Allowed values are amazons3, gcs, github, gitlab, bitbucket.")
-	fs.StringVar(&downloadOpts.FilterRepositories, "filter-repositories", "", "Pull requests will be created only for listed repositories (organization/repository format). Leave empty array to process all configured integrations by platform only.")
+	fs.StringSliceVar(&downloadOpts.IncludeProjectIDs, "include-pids", []string{}, "Other projects ID's, which keys should be included with this export.")
+	fs.StringSliceVar(&downloadOpts.Triggers, "triggers", []string{}, "Trigger integration exports (must be enabled in project settings). Allowed values are amazons3, gcs, github, gitlab, bitbucket.")
+	fs.StringSliceVar(&downloadOpts.FilterRepositories, "filter-repositories", []string{}, "Pull requests will be created only for listed repositories (organization/repository format). Leave empty array to process all configured integrations by platform only.")
 	fs.BoolVar(&downloadOptsReplaceBreaks, "replace-breaks", true, "Enable to replace line breaks in exported translations with \\n.")
 	fs.BoolVar(&downloadOpts.DisableReferences, "disable-references", false, "Enable to skip automatic replace of key reference placeholders (e.g. [%key:hello_world%]) with their corresponding translations.")
 	fs.StringVar(&downloadOpts.PluralFormat, "plural-format", "", "Override the default plural format for the file type. Allowed values are json_string, icu, array, generic, symfony.")
