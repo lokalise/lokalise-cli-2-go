@@ -73,6 +73,9 @@ Run `lokalise2 --help` from the terminal to see the list of commands and subcomm
 * [lokalise2 translation-status](docs/lokalise2_translation-status.md)	 - Manage custom translation statuses
 * [lokalise2 webhook](docs/lokalise2_webhook.md)	 - Manage webhooks
 
+## Branches
+If you are using project branching feature in Lokalise, simply add branch name separated by semicolon to the project ID in any command to access the branch, i.e. `3002780358964f9bab5a92.87762498:feature/new-release`.
+
 ## Config file
 Optionally, you may rename included `config-example.yml` to `config.yml` and set various CLI tool parameters like token or timeouts.
 
