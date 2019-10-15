@@ -198,7 +198,7 @@ func init() {
 	fs.BoolVar(&downloadOpts.ICUNumeric, "icu-numeric", false, "If enabled, plural forms zero, one and two will be replaced with =0, =1 and =2 respectively. Only works for ICU plural format.")
 	fs.BoolVar(&downloadOpts.EscapePercent, "escape-percent", false, "Only works for printf placeholder format. When enabled, all universal percent placeholders \"[%]\" will be always exported as \"%%\".")
 	fs.StringVar(&downloadOpts.Indentation, "indentation", "", "Provide to override default indentation in supported files. Allowed values are default, 1sp, 2sp, 3sp, 4sp, 5sp, 6sp, 7sp, 8sp and tab.")
-	fs.BoolVar(&downloadOpts.YAMLIncludeRoot, "yaml-include-root", false, " (YAML export only). Enable to include language ISO code as root key.")
+	fs.BoolVar(&downloadOpts.YAMLIncludeRoot, "yaml-include-root", false, "(YAML export only). Enable to include language ISO code as root key.")
 	fs.BoolVar(&downloadOpts.JSONUnescapedSlashes, "json-unescaped-slashes", false, "(JSON export only). Enable to leave forward slashes unescaped.")
 	fs.StringVar(&downloadOpts.JavaPropertiesEncoding, "java-properties-encoding", "", "(Java Properties export only). Encoding for .properties files. Allowed values are utf-8 and latin-1.")
 	fs.StringVar(&downloadOpts.JavaPropertiesSeparator, "java-properties-separator", "", "(Java Properties export only). Separator for keys/values in .properties files. Allowed values are = and :.")

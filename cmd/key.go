@@ -188,7 +188,7 @@ func init() {
 }
 
 func flagKeyId(cmd *cobra.Command) {
-	cmd.Flags().Int64Var(&keyId, "key-id", 0, "A unique identifier of key (required).")
+	cmd.Flags().Int64Var(&keyId, "key-id", 0, "A unique identifier of the key (required).")
 	_ = cmd.MarkFlagRequired("key-id")
 }
 
