@@ -59,6 +59,7 @@ func Execute() {
 
 func init() {
 	// init API Token, used for all commands
+
 	if viper.GetString("token") == "" {
 		// if not found in config
 		rootCmd.PersistentFlags().StringVarP(&Token, "token", "t", "", "API token (required). You can create API tokens at https://lokalise.com/profile.")
