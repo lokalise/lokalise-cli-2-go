@@ -4,15 +4,11 @@ BINARY := lokalise2
 GIT_REV := $$(git rev-parse HEAD)
 PLATFORMS=darwin linux windows freebsd
 ARCHITECTURES=386 amd64
-VERSION=2.00
 
 run: build
 	$(info running...)
 	bin/$(BINARY)
 .PHONY: run
-
-# extended version:
-# go build -ldflags "-X ./config.Version=$(GIT_REV)" -o bin/$(BINARY) ./
 
 build_all:
 	$(foreach GOOS, $(PLATFORMS), \
