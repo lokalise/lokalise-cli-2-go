@@ -21,7 +21,7 @@ Translation providers are used for translation orders.
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Documentation is available at https://docs.lokalise.com/cli2
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 translation-provider list](lokalise2_translation-provider_list.md)	 - List all providers
 * [lokalise2 translation-provider retrieve](lokalise2_translation-provider_retrieve.md)	 - Retrieve a provider
 

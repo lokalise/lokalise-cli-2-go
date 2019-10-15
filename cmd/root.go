@@ -51,7 +51,7 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	//err := doc.GenMarkdownTree(rootCmd, "/tmp/md")
+	//err := doc.GenMarkdownTree(rootCmd, "./docs")
 	//if err != nil {
 	//	log.Fatal(err)
 	//}

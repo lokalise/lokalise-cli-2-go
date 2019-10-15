@@ -21,7 +21,7 @@ You may add unlimited number of contributors to your project. User roles include
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Documentation is available at https://docs.lokalise.com/cli2
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 contributor create](lokalise2_contributor_create.md)	 - Create a contributor
 * [lokalise2 contributor delete](lokalise2_contributor_delete.md)	 - Delete a contributor
 * [lokalise2 contributor list](lokalise2_contributor_list.md)	 - List all contributors

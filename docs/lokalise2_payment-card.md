@@ -20,7 +20,7 @@ Credit cards are used to pay for translation orders. Each user has their own car
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Documentation is available at https://docs.lokalise.com/cli2
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 payment-card create](lokalise2_payment-card_create.md)	 - Create a card
 * [lokalise2 payment-card delete](lokalise2_payment-card_delete.md)	 - Delete a card
 * [lokalise2 payment-card list](lokalise2_payment-card_list.md)	 - Lists all cards

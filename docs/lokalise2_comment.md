@@ -21,7 +21,7 @@ Comments can be used to give translators a context about the key, or as a discus
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Documentation is available at https://docs.lokalise.com/cli2
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 comment create](lokalise2_comment_create.md)	 - Add a comment
 * [lokalise2 comment delete](lokalise2_comment_delete.md)	 - Delete a comment
 * [lokalise2 comment list](lokalise2_comment_list.md)	 - List project comments

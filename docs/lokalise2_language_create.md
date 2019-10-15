@@ -6,7 +6,7 @@ Create languages
 
 Creates one or more languages in the project. Requires Manage languages admin right.
 
-	The language_iso is the identifer of one of the system languages. You are only required to include the language_iso attribute, however you may override the default language code, language name and plural forms as well.
+	The lang-iso is the identifer of one of the system languages. You are only required to include the lang-iso attribute, however you may override the default language code, language name and plural forms as well.
 
 
 ```
