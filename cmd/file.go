@@ -19,9 +19,10 @@ import (
 var (
 	filterFilename string
 
-	downloadOpts              lokalise.FileDownload
-	downloadOptsReplaceBreaks bool
-	downloadOptsLangMapping   string
+	downloadOpts                  lokalise.FileDownload
+	downloadOptsReplaceBreaks     bool
+	downloadOptsOriginalFilenames bool
+	downloadOptsLangMapping       string
 
 	downloadJsonOnly    bool
 	downloadDestination string
@@ -82,7 +83,7 @@ var fileUploadCmd = &cobra.Command{
 		}
 
 		for _, file := range files {
-			fmt.Println("Uploading", file + "...")
+			fmt.Println("Uploading", file+"...")
 			buf, err := ioutil.ReadFile(file)
 			if err != nil {
 				return err
@@ -118,6 +119,9 @@ var fileDownloadCmd = &cobra.Command{
 			downloadOpts.LanguageMapping = mappings
 		}
 
+		downloadOpts.ReplaceBreaks = &downloadOptsReplaceBreaks
+		downloadOpts.OriginalFilenames = &downloadOptsOriginalFilenames
+
 		if !downloadJsonOnly {
 			fmt.Print("Requesting... ")
 		}
@@ -134,7 +138,7 @@ var fileDownloadCmd = &cobra.Command{
 		if downloadJsonOnly {
 			return printJson(resp)
 		} else {
-			fmt.Println("Downloading", resp.BundleURL + "...")
+			fmt.Println("Downloading", resp.BundleURL+"...")
 		}
 
 		err = downloadAndUnzip(resp.BundleURL, downloadDestination, downloadUnzipTo)
@@ -167,7 +171,7 @@ func init() {
 	fs.StringVar(&downloadDestination, "dest", "./", "Destination folder for ZIP file.")
 	fs.StringVar(&downloadUnzipTo, "unzip-to", "./", "Unzip to this folder.")
 
-	fs.BoolVar(&downloadOpts.OriginalFilenames, "original-filenames", true, "Enable to use original filenames/formats. If set to false all keys will be export to a single file per language (default true).")
+	fs.BoolVar(&downloadOptsOriginalFilenames, "original-filenames", true, "Enable to use original filenames/formats. If set to false all keys will be export to a single file per language (default true).")
 	fs.StringVar(&downloadOpts.BundleStructure, "bundle-structure", "", "Bundle structure, used when original-filenames set to false. Allowed placeholders are %LANG_ISO%, %LANG_NAME%, %FORMAT% and %PROJECT_NAME%).")
 	fs.StringVar(&downloadOpts.DirectoryPrefix, "directory-prefix", "", "Directory prefix in the bundle, used when original_filenames set to true). Allowed placeholder is %LANG_ISO%.")
 	fs.BoolVar(&downloadOpts.AllPlatforms, "all-platforms", false, "Enable to include all platform keys. If disabled, only the keys, associated with the platform of the format will be exported.")
@@ -241,7 +245,7 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 		return err
 	}
 
-	fmt.Println("Unzipping to", unzipPath + "...")
+	fmt.Println("Unzipping to", unzipPath+"...")
 	err = unzip(zip.Name(), unzipPath)
 	if err != nil {
 		return err
