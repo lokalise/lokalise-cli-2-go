@@ -78,7 +78,7 @@ var webhookCreateCmd = &cobra.Command{
 var webhookUpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update a webhook",
-	Long: "Updates a webhook",
+	Long:  "Updates a configured webhook in the project. Requires Manage settings admin right.",
 	RunE: func(*cobra.Command, []string) error {
 		// preparing params
 		if eventLanguageMap != "" {
