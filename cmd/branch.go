@@ -50,20 +50,6 @@ var branchCreateCmd = &cobra.Command{
 	},
 }
 
-var branchRestoreCmd = &cobra.Command{
-	Use:   "restore",
-	Short: "Restore a branch",
-	Long:  "Restores project branch to a project copy. Requires Manage settings admin right and Admin role in the team.",
-	RunE: func(*cobra.Command, []string) error {
-
-		resp, err := Api.Branches().Restore(projectId, branchId)
-		if err != nil {
-			return err
-		}
-		return printJson(resp)
-	},
-}
-
 var branchDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a branch",
@@ -79,7 +65,7 @@ var branchDeleteCmd = &cobra.Command{
 }
 
 func init() {
-	branchCmd.AddCommand(branchListCmd, branchCreateCmd, branchRestoreCmd, branchDeleteCmd)
+	branchCmd.AddCommand(branchListCmd, branchCreateCmd, branchDeleteCmd)
 	rootCmd.AddCommand(branchCmd)
 
 	// general flags
@@ -89,7 +75,6 @@ func init() {
 	branchCreateCmd.Flags().StringVar(&branchName, "name", "", "Branch name.")
 
 	flagBranchId(branchDeleteCmd)
-	flagBranchId(branchRestoreCmd)
 }
 
 func flagBranchId(cmd *cobra.Command) {
