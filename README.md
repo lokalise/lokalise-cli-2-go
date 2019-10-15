@@ -1,7 +1,7 @@
 # Lokalise CLI v2
 
 ## Getting started
-Lokalise CLI v2 allows you to manipulate any object or data in your Lokalise workspace, which includes files, projects, keys, translations, comments, contributors, teams and more. 
+Lokalise CLI v2 allows you to manipulate any object or data in your [Lokalise](https://lokalise.com) workspace, which includes files, projects, keys, translations, comments, contributors, teams and more. 
 
 ## Whats new in v2?
 This version of CLI tool has been completely rebuilt from scratch and is **not compatible** with the v1 CLI command syntax. Instead of being just an upload/download tool this release supports all [Lokalise API v2](https://lokalise.com/api2docs/curl/) endpoints.
