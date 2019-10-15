@@ -43,7 +43,7 @@ All endpoints require the `--token` parameter. You can generate your API token i
 Parameters of type `strings` should be comma-delimited, i.e. `--include-tags=one,two`. 
 
 #### JSON objects
-Some parameters require a JSON-encoded object passed as string, i.e. `--languages='"[{\"lang_iso\":\"en\",\"custom_iso\":\"en-us\"},{\"lang_iso\":\"en_GB\",\"custom_iso\":\"en-gb\"}]"'`.
+Some parameters require a JSON-encoded object passed as string, i.e. `--languages='"[{\"lang_iso\":\"en\",\"custom_iso\":\"en-us\"},{\"lang_iso\":\"en_GB\",\"custom_iso\":\"en-gb\"}]"'`. There is an [online tool](https://tools.knowledgewalls.com/jsontostring) to help you with the escaping.
 
 ## Usage
 
