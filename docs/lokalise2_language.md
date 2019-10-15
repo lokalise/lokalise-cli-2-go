@@ -26,7 +26,7 @@ There are situations when it is necessary to export different language codes to 
 
 * [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 language create](lokalise2_language_create.md)	 - Create languages
-* [lokalise2 language delete](lokalise2_language_delete.md)	 - Delete a language.
+* [lokalise2 language delete](lokalise2_language_delete.md)	 - Delete a language
 * [lokalise2 language list](lokalise2_language_list.md)	 - List project languages
 * [lokalise2 language list-system](lokalise2_language_list-system.md)	 - List system languages
 * [lokalise2 language retrieve](lokalise2_language_retrieve.md)	 - Retrieve a language

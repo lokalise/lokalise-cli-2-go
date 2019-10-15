@@ -1,6 +1,6 @@
 ## lokalise2 language delete
 
-Delete a language.
+Delete a language
 
 ### Synopsis
 
