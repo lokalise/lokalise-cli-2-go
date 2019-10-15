@@ -22,7 +22,7 @@ var (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:     "lokalise2",
-	Short:   "Lokalise CLI v" + Version + ". Documentation is available at https://docs.lokalise.com/cli2",
+	Short:   "Lokalise CLI v" + Version + ". Docs at https://github.com/lokalise/lokalise-cli-2-go",
 	Version: Version,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
 		// init Api, runs like a middleware
