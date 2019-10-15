@@ -92,7 +92,7 @@ func init() {
 	fs = translationUpdateCmd.Flags()
 	fs.StringVar(&translationUpdate.Translation, "translation", "", "The actual translation content. Use a JSON object for plural keys (required).")
 	_ = translationUpdateCmd.MarkFlagRequired("translation")
-	fs.BoolVar(&translationUpdateIsFuzzy, "is-fuzzy", true, "Whether the Fuzzy flag is enabled. (Note: Fuzzy is called Unverified in the editor now).")
+	fs.BoolVar(&translationUpdateIsFuzzy, "is-fuzzy", false, "Whether the Fuzzy flag is enabled. (Note: Fuzzy is called Unverified in the editor now) .")
 	fs.BoolVar(&translationUpdate.IsReviewed, "is-reviewed", false, "Whether the Reviewed flag is enabled.")
 	fs.StringVar(&translationUpdate.CustomTranslationStatusIDs, "custom-translation-status-ids", "", "Custom translation status IDs to assign to translation (existing statuses will be replaced).")
 }

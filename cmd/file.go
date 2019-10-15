@@ -82,7 +82,7 @@ var fileUploadCmd = &cobra.Command{
 		}
 
 		for _, file := range files {
-			fmt.Println("file", file, "is in progress...")
+			fmt.Println("Uploading", file + "...")
 			buf, err := ioutil.ReadFile(file)
 			if err != nil {
 				return err
@@ -118,16 +118,27 @@ var fileDownloadCmd = &cobra.Command{
 			downloadOpts.LanguageMapping = mappings
 		}
 
+		if !downloadJsonOnly {
+			fmt.Print("Requesting... ")
+		}
+
 		resp, err := Api.Files().Download(projectId, downloadOpts)
 		if err != nil {
 			return err
 		}
 
+		if !downloadJsonOnly {
+			fmt.Println("OK")
+		}
+
 		if downloadJsonOnly {
 			return printJson(resp)
+		} else {
+			fmt.Println("Downloading", resp.BundleURL + "...")
 		}
 
 		err = downloadAndUnzip(resp.BundleURL, downloadDestination, downloadUnzipTo)
+
 		if err != nil {
 			return err
 		}
@@ -156,7 +167,7 @@ func init() {
 	fs.StringVar(&downloadDestination, "dest", "./", "Destination folder for ZIP file.")
 	fs.StringVar(&downloadUnzipTo, "unzip-to", "./", "Unzip to this folder.")
 
-	fs.BoolVar(&downloadOpts.OriginalFilenames, "original-filenames", true, "Enable to use original filenames/formats. If set to false all keys will be export to a single file per language.")
+	fs.BoolVar(&downloadOpts.OriginalFilenames, "original-filenames", true, "Enable to use original filenames/formats. If set to false all keys will be export to a single file per language (default true).")
 	fs.StringVar(&downloadOpts.BundleStructure, "bundle-structure", "", "Bundle structure, used when original-filenames set to false. Allowed placeholders are %LANG_ISO%, %LANG_NAME%, %FORMAT% and %PROJECT_NAME%).")
 	fs.StringVar(&downloadOpts.DirectoryPrefix, "directory-prefix", "", "Directory prefix in the bundle, used when original_filenames set to true). Allowed placeholder is %LANG_ISO%.")
 	fs.BoolVar(&downloadOpts.AllPlatforms, "all-platforms", false, "Enable to include all platform keys. If disabled, only the keys, associated with the platform of the format will be exported.")
@@ -174,7 +185,7 @@ func init() {
 	fs.StringSliceVar(&downloadOpts.IncludeProjectIDs, "include-pids", []string{}, "Other projects ID's, which keys should be included with this export.")
 	fs.StringSliceVar(&downloadOpts.Triggers, "triggers", []string{}, "Trigger integration exports (must be enabled in project settings). Allowed values are amazons3, gcs, github, gitlab, bitbucket.")
 	fs.StringSliceVar(&downloadOpts.FilterRepositories, "filter-repositories", []string{}, "Pull requests will be created only for listed repositories (organization/repository format). Leave empty array to process all configured integrations by platform only.")
-	fs.BoolVar(&downloadOptsReplaceBreaks, "replace-breaks", true, "Enable to replace line breaks in exported translations with \\n.")
+	fs.BoolVar(&downloadOptsReplaceBreaks, "replace-breaks", true, "Enable to replace line breaks in exported translations with \\n (default true).")
 	fs.BoolVar(&downloadOpts.DisableReferences, "disable-references", false, "Enable to skip automatic replace of key reference placeholders (e.g. [%key:hello_world%]) with their corresponding translations.")
 	fs.StringVar(&downloadOpts.PluralFormat, "plural-format", "", "Override the default plural format for the file type. Allowed values are json_string, icu, array, generic, symfony.")
 	fs.StringVar(&downloadOpts.PlaceholderFormat, "placeholder-format", "", "Override the default placeholder format for the file type. Allowed values are printf, ios, icu, net, symfony.")
@@ -196,11 +207,11 @@ func init() {
 	// force-filename is skipped because current time only single-file is supplied
 	fs.StringVar(&uploadOpts.LangISO, "lang-iso", "", "Language code of the translations in the file you are importing (required).")
 	_ = fileUploadCmd.MarkFlagRequired("lang-iso")
-	fs.BoolVar(&uploadOptsConvertPlaceholders, "convert-placeholders", true, "Enable to automatically convert placeholders to the Lokalise universal placeholders.")
+	fs.BoolVar(&uploadOptsConvertPlaceholders, "convert-placeholders", false, "Enable to automatically convert placeholders to the Lokalise universal placeholders.")
 	fs.BoolVar(&uploadOpts.DetectICUPlurals, "detect-icu-plurals", false, "Enable to automatically detect and parse ICU formatted plurals in your translations.")
 	fs.StringSliceVar(&uploadOpts.Tags, "tags", []string{}, "Tag keys with the specified tags. By default tags are applied to created and updated keys.")
-	fs.BoolVar(&uploadOptsTagInsertedKeys, "tag-inserted-keys", true, "Add specified tags to inserted keys.")
-	fs.BoolVar(&uploadOptsTagUpdatedKeys, "tag-updated-keys", true, "Add specified tags to updated keys.")
+	fs.BoolVar(&uploadOptsTagInsertedKeys, "tag-inserted-keys", true, "Add specified tags to inserted keys (default true).")
+	fs.BoolVar(&uploadOptsTagUpdatedKeys, "tag-updated-keys", true, "Add specified tags to updated keys (default true).")
 	fs.BoolVar(&uploadOpts.TagSkippedKeys, "tag-skipped-keys", false, "Add specified tags to skipped keys.")
 	fs.BoolVar(&uploadOpts.ReplaceModified, "replace-modified", false, "Enable to replace translations, that have been modified (in the file being uploaded).")
 	fs.BoolVar(&uploadOpts.SlashNToLinebreak, "slashn-to-linebreak", false, "Enable to replace \\n with a line break.")
@@ -230,6 +241,7 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 		return err
 	}
 
+	fmt.Println("Unzipping to", unzipPath + "...")
 	err = unzip(zip.Name(), unzipPath)
 	if err != nil {
 		return err
