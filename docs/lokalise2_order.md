@@ -21,7 +21,7 @@ Lokalise offers several human-powered translation providers, that can help trans
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 order create](lokalise2_order_create.md)	 - Create an order
 * [lokalise2 order list](lokalise2_order_list.md)	 - List all orders
 * [lokalise2 order retrieve](lokalise2_order_retrieve.md)	 - Retrieve an order

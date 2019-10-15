@@ -21,7 +21,7 @@ Manage screenshots
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 screenshot create](lokalise2_screenshot_create.md)	 - Create a screenshot
 * [lokalise2 screenshot delete](lokalise2_screenshot_delete.md)	 - Delete a screenshot
 * [lokalise2 screenshot list](lokalise2_screenshot_list.md)	 - List all screenshots

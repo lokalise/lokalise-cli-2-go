@@ -21,7 +21,7 @@ Custom translation statuses are used to provide a more efficient translation wor
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 translation-status create](lokalise2_translation-status_create.md)	 - Create a status
 * [lokalise2 translation-status delete](lokalise2_translation-status_delete.md)	 - Delete a status
 * [lokalise2 translation-status list](lokalise2_translation-status_list.md)	 - List all statuses
