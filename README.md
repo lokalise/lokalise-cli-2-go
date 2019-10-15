@@ -16,15 +16,15 @@ or get the binaries:
 - [lokalise2-2.00-darwin-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.00-darwin-amd64.tgz)
 - [lokalise2-2.00-darwin-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.00-darwin-386.tgz)
 
-#### Linux
+### Linux
 - [lokalise2-2.00-linux-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.00-linux-amd64.tgz)
 - [lokalise2-2.00-linux-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.00-linux-386.tgz)
 
-#### FreeBSD
+### FreeBSD
 - [lokalise2-2.00-freebsd-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.00-freebsd-amd64.tgz)
 - [lokalise2-2.00-freebsd-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.00-freebsd-386.tgz)
 
-#### Windows
+### Windows
 - [lokalise2-2.00-windows-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.00-windows-amd64.tgz)
 - [lokalise2-2.00-windows-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.00-windows-386.tgz)
 
