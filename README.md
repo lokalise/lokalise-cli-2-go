@@ -37,7 +37,7 @@ All endpoints require the `--token` parameter. You can generate your API token i
 ## Passing the flags
 
 #### Boolean
-`boolean` flags *must* be passed via the `=` sign, i.e. `--original-filenames=false`. 
+`boolean` flags **must** be passed via the `=` sign, i.e. `--original-filenames=false`. 
 
 #### Strings
 Parameters of type `strings` should be comma-delimited, i.e. `--include-tags=one,two`. 
