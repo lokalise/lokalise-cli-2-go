@@ -40,16 +40,15 @@ All endpoints require the `--token` parameter. You can generate your API token i
 ## Passing the flags
 
 #### Boolean
-`boolean` flags **must** be passed via the `=` sign, i.e. `--original-filenames=false`. 
+All `boolean` flags **must** be passed via the `=` sign, i.e. `--original-filenames=false`. 
 
 #### Strings
-Parameters of type `strings` should be comma-delimited, i.e. `--include-tags=one,two`. 
+Flags of type `strings` should be comma-delimited, i.e. `--include-tags=one,two`. 
 
 #### JSON objects
-Some parameters require a JSON-encoded object passed as string, i.e. `--languages='"[{\"lang_iso\":\"en\",\"custom_iso\":\"en-us\"},{\"lang_iso\":\"en_GB\",\"custom_iso\":\"en-gb\"}]"'`. There is an [online tool](https://tools.knowledgewalls.com/jsontostring) to help you with the escaping.
+Some flags require a JSON-encoded object passed as string, i.e. `--languages='"[{\"lang_iso\":\"en\",\"custom_iso\":\"en-us\"},{\"lang_iso\":\"en_GB\",\"custom_iso\":\"en-gb\"}]"'`. There is an [online tool](https://tools.knowledgewalls.com/jsontostring) to help you with the escaping.
 
 ## Usage
-
 Run `lokalise2 --help` from the terminal to see the list of commands and subcommands. Run `lokalise2 command subcommand --help` to see the help page.
 
 ### Commands
@@ -73,3 +72,12 @@ Run `lokalise2 --help` from the terminal to see the list of commands and subcomm
 * [lokalise2 translation-provider](docs/lokalise2_translation-provider.md)	 - List translation providers
 * [lokalise2 translation-status](docs/lokalise2_translation-status.md)	 - Manage custom translation statuses
 * [lokalise2 webhook](docs/lokalise2_webhook.md)	 - Manage webhooks
+
+## Config file
+Optionally, you may rename included `config-example.yml` to `config.yml` and set various CLI tool parameters like token or timeouts.
+
+## Changes
+
+**2.00 (October 15, 2019)**
+
+Initial release. 
