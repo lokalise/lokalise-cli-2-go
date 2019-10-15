@@ -46,4 +46,22 @@ Parameters of type `strings` should be comma-delimited, i.e. `--include-tags=one
 Some parameters require a JSON-encoded object passed as string, i.e. `--languages='"[{\"lang_iso\":\"en\",\"custom_iso\":\"en-us\"},{\"lang_iso\":\"en_GB\",\"custom_iso\":\"en-gb\"}]"'`.
 
 ## Usage
-Refer to the [CLI tool reference](docs/lokalise2.md) for usage.
+* [lokalise2 branch](docs/lokalise2_branch.md)	 - Manage branches
+* [lokalise2 comment](docs/lokalise2_comment.md)	 - Manage key comments
+* [lokalise2 contributor](docs/lokalise2_contributor.md)	 - Manage project contributors
+* [lokalise2 file](docs/lokalise2_file.md)	 - Upload and download files
+* [lokalise2 key](docs/lokalise2_key.md)	 - Manage keys
+* [lokalise2 language](docs/lokalise2_language.md)	 - Manage languages
+* [lokalise2 order](docs/lokalise2_order.md)	 - Manage orders
+* [lokalise2 payment-card](docs/lokalise2_payment-card.md)	 - Manage payment cards
+* [lokalise2 project](docs/lokalise2_project.md)	 - Manage projects
+* [lokalise2 screenshot](docs/lokalise2_screenshot.md)	 - Manage screenshots
+* [lokalise2 snapshot](docs/lokalise2_snapshot.md)	 - Manage snapshots
+* [lokalise2 task](docs/lokalise2_task.md)	 - Manage tasks
+* [lokalise2 team](docs/lokalise2_team.md)	 - List teams
+* [lokalise2 team-user](docs/lokalise2_team-user.md)	 - Manage team users
+* [lokalise2 team-user-group](docs/lokalise2_team-user-group.md)	 - Manage team user groups
+* [lokalise2 translation](docs/lokalise2_translation.md)	 - Manage translations
+* [lokalise2 translation-provider](docs/lokalise2_translation-provider.md)	 - List translation providers
+* [lokalise2 translation-status](docs/lokalise2_translation-status.md)	 - Manage custom translation statuses
+* [lokalise2 webhook](docs/lokalise2_webhook.md)	 - Manage webhooks
