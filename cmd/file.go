@@ -33,6 +33,7 @@ var (
 	uploadOptsConvertPlaceholders bool
 	uploadOptsTagInsertedKeys     bool
 	uploadOptsTagUpdatedKeys      bool
+	uploadOptsSlashNToLinebreak   bool
 
 	uploadFile string
 )
@@ -76,6 +77,7 @@ var fileUploadCmd = &cobra.Command{
 		uploadOpts.ConvertPlaceholders = &uploadOptsConvertPlaceholders
 		uploadOpts.TagInsertedKeys = &uploadOptsTagInsertedKeys
 		uploadOpts.TagUpdatedKeys = &uploadOptsTagUpdatedKeys
+		uploadOpts.SlashNToLinebreak = &uploadOptsSlashNToLinebreak
 
 		files, err := filepath.Glob(uploadFile)
 		if err != nil {
@@ -218,7 +220,7 @@ func init() {
 	fs.BoolVar(&uploadOptsTagUpdatedKeys, "tag-updated-keys", true, "Add specified tags to updated keys (default true).")
 	fs.BoolVar(&uploadOpts.TagSkippedKeys, "tag-skipped-keys", false, "Add specified tags to skipped keys.")
 	fs.BoolVar(&uploadOpts.ReplaceModified, "replace-modified", false, "Enable to replace translations, that have been modified (in the file being uploaded).")
-	fs.BoolVar(&uploadOpts.SlashNToLinebreak, "slashn-to-linebreak", false, "Enable to replace \\n with a line break.")
+	fs.BoolVar(&uploadOptsSlashNToLinebreak, "slashn-to-linebreak", true, "Enable to replace \\n with a line break (default true).")
 	fs.BoolVar(&uploadOpts.KeysToValues, "keys-to-values", false, "Enable to automatically replace values with key names.")
 	fs.BoolVar(&uploadOpts.DistinguishByFile, "distinguish-by-file", false, "Enable to allow keys with similar names to coexist, in case they are assigned to differrent filenames.")
 	fs.BoolVar(&uploadOpts.ApplyTM, "apply-tm", false, "Enable to automatically apply 100% translation memory matches.")
