@@ -46,6 +46,11 @@ Parameters of type `strings` should be comma-delimited, i.e. `--include-tags=one
 Some parameters require a JSON-encoded object passed as string, i.e. `--languages='"[{\"lang_iso\":\"en\",\"custom_iso\":\"en-us\"},{\"lang_iso\":\"en_GB\",\"custom_iso\":\"en-gb\"}]"'`.
 
 ## Usage
+
+Run `lokalise2 --help` from the terminal to see the list of commands and subcommands. Run `lokalise2 command subcommand --help` to see the help page.
+
+### Commands
+
 * [lokalise2 branch](docs/lokalise2_branch.md)	 - Manage branches
 * [lokalise2 comment](docs/lokalise2_comment.md)	 - Manage key comments
 * [lokalise2 contributor](docs/lokalise2_contributor.md)	 - Manage project contributors
