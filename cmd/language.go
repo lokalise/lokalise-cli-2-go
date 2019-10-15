@@ -108,7 +108,7 @@ var languageUpdateCmd = &cobra.Command{
 
 var languageDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete a language.",
+	Short: "Delete a language",
 	Long:  "Deletes a language from the project. Requires Manage languages admin right.",
 	RunE: func(*cobra.Command, []string) error {
 

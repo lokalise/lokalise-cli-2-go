@@ -6,6 +6,8 @@ Lokalise CLI v2 allows you to manipulate any object or data in your Lokalise wor
 
 ## Installation
 
+Get the binaries for your platform, unarchive and put into any executable folder. All set! 
+
 ### MacOS
 Install using Homebrew:
 ```
