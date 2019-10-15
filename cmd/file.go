@@ -152,6 +152,11 @@ var fileDownloadCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.SetHelpCommand(&cobra.Command{
+		Use:    "no-help",
+		Hidden: true,
+	})
+
 	fileCmd.AddCommand(fileListCmd, fileUploadCmd, fileDownloadCmd)
 	rootCmd.AddCommand(fileCmd)
 

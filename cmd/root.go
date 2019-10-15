@@ -3,11 +3,10 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-
 	"github.com/lokalise/go-lokalise-api"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"os"
 )
 
 const (
@@ -52,6 +51,10 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	//err := doc.GenMarkdownTree(rootCmd, "/tmp/md")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 }
 
 func init() {
