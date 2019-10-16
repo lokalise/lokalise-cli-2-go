@@ -46,7 +46,7 @@ All `boolean` flags **must** be passed via the `=` sign, i.e. `--original-filena
 Flags of type `strings` should be comma-delimited, i.e. `--include-tags=one,two`. 
 
 #### JSON objects
-Some flags require a JSON-encoded object passed as string, i.e. `--languages='"[{\"lang_iso\":\"en\",\"custom_iso\":\"en-us\"},{\"lang_iso\":\"en_GB\",\"custom_iso\":\"en-gb\"}]"'`. There is an [online tool](https://tools.knowledgewalls.com/jsontostring) to help you with the escaping.
+Some flags require a JSON-encoded object passed as string, i.e. `--languages='[{"lang_iso":"en","custom_iso":"en-us"},{"lang_iso":"en_GB","custom_iso":"en-gb"}]'`. There is an [online tool](https://tools.knowledgewalls.com/jsontostring) to help you with the escaping.
 
 ## Usage
 Run `lokalise2 --help` from the terminal to see the list of commands and subcommands. Run `lokalise2 command subcommand --help` to see the help page.
