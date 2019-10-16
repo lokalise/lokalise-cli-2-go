@@ -91,8 +91,8 @@ lokalise2 \
     --token <token> \
     --project-id <project_id> \
     file upload \
-    --format json \
-    --unzip-to ./locales
+    --file /tmp/en.json \
+    --lang-iso en
 ```
 
 ## Branches
