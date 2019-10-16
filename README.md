@@ -73,6 +73,28 @@ Run `lokalise2 --help` from the terminal to see the list of commands and subcomm
 * [lokalise2 translation-status](docs/lokalise2_translation-status.md)	 - Manage custom translation statuses
 * [lokalise2 webhook](docs/lokalise2_webhook.md)	 - Manage webhooks
 
+### Examples
+
+#### Download files from Lokalise
+```bash
+lokalise2 \
+    --token <token> \
+    --project-id <project_id> \
+    file download \
+    --format json \
+    --unzip-to ./locales
+```
+
+#### Upload a file to Lokalise
+```bash
+lokalise2 \
+    --token <token> \
+    --project-id <project_id> \
+    file upload \
+    --format json \
+    --unzip-to ./locales
+```
+
 ## Branches
 If you are using project branching feature in Lokalise, simply add branch name separated by semicolon to the project ID in any command to access the branch, i.e. `3002780358964f9bab5a92.87762498:feature/new-release`.
 
