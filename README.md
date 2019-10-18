@@ -1,4 +1,4 @@
-# Lokalise CLI v2
+# Lokalise CLI v2 (beta)
 
 ## Getting started
 Lokalise CLI v2 allows you to manipulate any object or data in your [Lokalise](https://lokalise.com) workspace, which includes files, projects, keys, translations, comments, contributors, teams and more. 
