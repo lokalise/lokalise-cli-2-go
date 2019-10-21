@@ -1,6 +1,6 @@
 # build directory
 bin/
-dist/
+dist/*
 !dist/publish.sh
 .idea/
 .DS_Store
