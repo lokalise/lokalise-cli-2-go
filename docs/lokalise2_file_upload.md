@@ -20,6 +20,7 @@ lokalise2 file upload [flags]
       --distinguish-by-file    Enable to allow keys with similar names to coexist, in case they are assigned to differrent filenames.
       --file string            Path to local file (required).
   -h, --help                   help for upload
+      --include-path           Include relative directory name in the filename when uploading.
       --keys-to-values         Enable to automatically replace values with key names.
       --lang-iso string        Language code of the translations in the file you are importing (required).
       --replace-modified       Enable to replace translations, that have been modified (in the file being uploaded).

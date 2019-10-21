@@ -4,6 +4,7 @@ dist/*
 !dist/publish.sh
 .idea/
 .DS_Store
+test/
 
 # config file
 config.*

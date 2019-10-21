@@ -5,12 +5,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/urfave/cli"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/lokalise/go-lokalise-api"
 	"github.com/spf13/cobra"
@@ -35,6 +37,7 @@ var (
 	uploadOptsTagInsertedKeys     bool
 	uploadOptsTagUpdatedKeys      bool
 	uploadOptsSlashNToLinebreak   bool
+	uploadIncludePath             bool
 
 	uploadFile string
 )
@@ -80,27 +83,37 @@ var fileUploadCmd = &cobra.Command{
 		uploadOpts.TagUpdatedKeys = &uploadOptsTagUpdatedKeys
 		uploadOpts.SlashNToLinebreak = &uploadOptsSlashNToLinebreak
 
-		files, err := filepath.Glob(uploadFile)
-		if err != nil {
-			return err
-		}
+		fileMasks := strings.Split(uploadFile, ",")
 
-		for _, file := range files {
-			fmt.Println("Uploading", file+"...")
-			buf, err := ioutil.ReadFile(file)
+		for _, mask := range fileMasks {
+			files, err := filepath.Glob(mask)
 			if err != nil {
-				return err
+				return cli.NewExitError("ERROR: file glob pattern not valid", 5)
 			}
 
-			uploadOpts.Data = base64.StdEncoding.EncodeToString(buf)
-			uploadOpts.Filename = path.Base(file)
+			for _, file := range files {
+				fmt.Println("Uploading", file+"...")
 
-			resp, err := f.Upload(projectId, uploadOpts)
-			if err != nil {
-				return err
+				buf, err := ioutil.ReadFile(file)
+				if err != nil {
+					return err
+				}
+
+				uploadOpts.Data = base64.StdEncoding.EncodeToString(buf)
+
+				if uploadIncludePath {
+					uploadOpts.Filename = file
+				} else {
+					uploadOpts.Filename = path.Base(file)
+				}
+
+				resp, err := f.Upload(projectId, uploadOpts)
+				if err != nil {
+					return err
+				}
+
+				_ = printJson(resp)
 			}
-
-			_ = printJson(resp)
 		}
 
 		return nil
@@ -212,7 +225,7 @@ func init() {
 	fs = fileUploadCmd.Flags()
 	fs.StringVar(&uploadFile, "file", "", "Path to local file (required).")
 	_ = fileUploadCmd.MarkFlagRequired("file")
-	// force-filename is skipped because current time only single-file is supplied
+	fs.BoolVar(&uploadIncludePath, "include-path", false, "Include relative directory name in the filename when uploading.")
 	fs.StringVar(&uploadOpts.LangISO, "lang-iso", "", "Language code of the translations in the file you are importing (required).")
 	_ = fileUploadCmd.MarkFlagRequired("lang-iso")
 	fs.BoolVar(&uploadOptsConvertPlaceholders, "convert-placeholders", false, "Enable to automatically convert placeholders to the Lokalise universal placeholders.")

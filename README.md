@@ -16,20 +16,20 @@ brew tap lokalise/cli-2
 brew install lokalise2
 ```
 or get the binaries:
-- [lokalise2-2.01-darwin-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.01-darwin-amd64.tgz)
-- [lokalise2-2.01-darwin-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.01-darwin-386.tgz)
+- [lokalise2-2.02-darwin-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.02-darwin-amd64.tgz)
+- [lokalise2-2.02-darwin-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.02-darwin-386.tgz)
 
 ### Linux
-- [lokalise2-2.01-linux-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.01-linux-amd64.tgz)
-- [lokalise2-2.01-linux-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.01-linux-386.tgz)
+- [lokalise2-2.02-linux-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.02-linux-amd64.tgz)
+- [lokalise2-2.02-linux-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.02-linux-386.tgz)
 
 ### FreeBSD
-- [lokalise2-2.01-freebsd-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.01-freebsd-amd64.tgz)
-- [lokalise2-2.01-freebsd-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.01-freebsd-386.tgz)
+- [lokalise2-2.02-freebsd-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.02-freebsd-amd64.tgz)
+- [lokalise2-2.02-freebsd-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.02-freebsd-386.tgz)
 
 ### Windows
-- [lokalise2-2.01-windows-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.01-windows-amd64.tgz)
-- [lokalise2-2.01-windows-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.01-windows-386.tgz)
+- [lokalise2-2.02-windows-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.02-windows-amd64.tgz)
+- [lokalise2-2.02-windows-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.02-windows-386.tgz)
 
 ### Docker
 See [DockerHub](https://hub.docker.com/r/lokalise/lokalise-cli-2) for more information.
