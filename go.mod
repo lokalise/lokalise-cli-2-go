@@ -9,4 +9,6 @@ require (
 	golang.org/x/net v0.0.0-20191014212845-da9a3fd4c582 // indirect
 )
 
+replace github.com/lokalise/go-lokalise-api => ../go-lokalise-api
+
 go 1.13

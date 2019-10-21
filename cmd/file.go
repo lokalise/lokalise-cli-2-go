@@ -19,10 +19,11 @@ import (
 var (
 	filterFilename string
 
-	downloadOpts                  lokalise.FileDownload
-	downloadOptsReplaceBreaks     bool
-	downloadOptsOriginalFilenames bool
-	downloadOptsLangMapping       string
+	downloadOpts                   lokalise.FileDownload
+	downloadOptsReplaceBreaks      bool
+	downloadOptsOriginalFilenames  bool
+	downloadOptsLangMapping        string
+	downloadOptsIncludeDescription bool
 
 	downloadJsonOnly    bool
 	downloadDestination string
@@ -123,6 +124,7 @@ var fileDownloadCmd = &cobra.Command{
 
 		downloadOpts.ReplaceBreaks = &downloadOptsReplaceBreaks
 		downloadOpts.OriginalFilenames = &downloadOptsOriginalFilenames
+		downloadOpts.IncludeDescription = &downloadOptsIncludeDescription
 
 		if !downloadJsonOnly {
 			fmt.Print("Requesting... ")
@@ -187,7 +189,7 @@ func init() {
 	fs.StringVar(&downloadOpts.ExportSort, "export-sort", "", "Export key sort mode. Allowed value are first_added, last_added, last_updated, a_z, z_a.")
 	fs.StringVar(&downloadOpts.ExportEmptyAs, "export-empty-as", "", "Select how you would like empty translations to be exported. Allowed values are empty to keep empty, base to replace with the base language value, or skip to omit.")
 	fs.BoolVar(&downloadOpts.IncludeComments, "include-comments", false, "Enable to include key comments and description in exported file (if supported by the format).")
-	fs.BoolVar(&downloadOpts.IncludeDescription, "include-description", false, "Enable to include key description in exported file (if supported by the format).")
+	fs.BoolVar(&downloadOptsIncludeDescription, "include-description", true, "Enable to include key description in exported file (if supported by the format) (default true).")
 	fs.StringSliceVar(&downloadOpts.IncludeProjectIDs, "include-pids", []string{}, "Other projects ID's, which keys should be included with this export.")
 	fs.StringSliceVar(&downloadOpts.Triggers, "triggers", []string{}, "Trigger integration exports (must be enabled in project settings). Allowed values are amazons3, gcs, github, gitlab, bitbucket.")
 	fs.StringSliceVar(&downloadOpts.FilterRepositories, "filter-repositories", []string{}, "Pull requests will be created only for listed repositories (organization/repository format). Leave empty array to process all configured integrations by platform only.")

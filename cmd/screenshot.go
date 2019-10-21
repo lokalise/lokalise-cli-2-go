@@ -17,6 +17,9 @@ var (
 	newScreenshotFile   string
 	newScreenshotOcr    bool
 	newScreenshotKeyIds []uint
+
+	UpdateScreenshot       lokalise.UpdateScreenshot
+	UpdateScreenshotKeyIds []uint
 )
 
 // screenshotCmd represents the screenshot command
@@ -90,7 +93,11 @@ var screenshotUpdateCmd = &cobra.Command{
 	Long:  "Updates properties of a screenshot. Requires Manage screenshots admin right.",
 	RunE: func(*cobra.Command, []string) error {
 
-		resp, err := Api.Screenshots().Update(projectId, screenshotId, lokalise.UpdateScreenshot{})
+		for _, id := range UpdateScreenshotKeyIds {
+			UpdateScreenshot.KeyIDs = append(UpdateScreenshot.KeyIDs, int64(id))
+		}
+
+		resp, err := Api.Screenshots().Update(projectId, screenshotId, UpdateScreenshot)
 		if err != nil {
 			return err
 		}
@@ -132,6 +139,13 @@ func init() {
 	fs.BoolVar(&newScreenshotOcr, "ocr", true, "Try to recognize translations on the image and attach screenshot to all possible keys (default true).")
 	fs.UintSliceVar(&newScreenshotKeyIds, "key-ids", []uint{}, "Attach the screenshot to key IDs specified.")
 	fs.StringSliceVar(&newScreenshot.Tags, "tags", []string{}, "List of tags to add to the uploaded screenshot.")
+
+	// Update
+	fs = screenshotUpdateCmd.Flags()
+	fs.StringVar(&UpdateScreenshot.Title, "title", "", "Screenshot title")
+	fs.StringVar(&UpdateScreenshot.Description, "description", "", "Screenshot description.")
+	fs.UintSliceVar(&UpdateScreenshotKeyIds, "key-ids", []uint{}, "Attach the screenshot to key IDs specified.")
+	fs.StringSliceVar(&UpdateScreenshot.Tags, "tags", []string{}, "List of tags to add to the uploaded screenshot.")
 
 	// Other
 	flagScreenshotId(screenshotUpdateCmd)
