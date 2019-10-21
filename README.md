@@ -103,10 +103,11 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 
 ## Changes
 
+**2.01 (October 21, 2019)**
+
+Endpoint parameter fixes.
+
 **2.00 (October 15, 2019)**
 
 Initial release. 
 
-**2.01 (October 21, 2019)**
-
-Endpoint parameter fixes.
