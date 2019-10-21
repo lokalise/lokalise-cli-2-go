@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	orderId  int64
+	orderId  string
 	newOrder lokalise.CreateOrder
 )
 
@@ -73,9 +73,11 @@ func init() {
 	flagTeamId(orderCmd)
 
 	// Create
-	flagProjectId(orderCreateCmd, false)
-	flagCardId(orderCreateCmd)
 	fs := orderCreateCmd.Flags()
+	fs.StringVar(&newOrder.ProjectID, "project-id", "", "Project identifier. (required).")
+	_ = orderCreateCmd.MarkFlagRequired("project-id")
+	fs.Int64Var(&newOrder.CardID, "card-id", 0, "Card identifier that should be used for payment. (required).")
+	_ = orderCreateCmd.MarkFlagRequired("card-id")
 	fs.StringVar(&newOrder.Briefing, "briefing", "", "Order briefing (required).")
 	_ = orderCreateCmd.MarkFlagRequired("briefing")
 	fs.StringVar(&newOrder.SourceLangISO, "source-language-iso", "", "Source language code of the order (required).")
@@ -96,6 +98,6 @@ func init() {
 }
 
 func flagOrderId(cmd *cobra.Command) {
-	cmd.Flags().Int64Var(&orderId, "order-id", 0, "A unique identifier of order (required).")
+	cmd.Flags().StringVar(&orderId, "order-id", "", "A unique identifier of order (required).")
 	_ = cmd.MarkFlagRequired("order-id")
 }
