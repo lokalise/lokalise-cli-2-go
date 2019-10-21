@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # brew install go
 # go get ./...
-# for docs update, uncomment generator in root.go
 
 export VERSION=2.01
 
@@ -17,13 +16,18 @@ fi
 
 echo "Building..."
 cd ..
+rm -rf dist/*.tgz
 make build_all
 cd dist
 
 echo "Uploading to S3..."
 s3cmd put --access_key=${AWS_ACCESS_KEY} --secret_key=${AWS_SECRET} *.tgz s3://lokalise-assets/cli2/
 
-echo "Readme update..."
+echo "Docs & Readme update..."
+cd ..
+make
+bin/lokalise2 gendocs
+cd dist
 sed -i.bu "19s/.*/- [lokalise2-${VERSION}-darwin-amd64.tgz](https:\/\/s3-eu-west-1.amazonaws.com\/lokalise-assets\/cli2\/lokalise2-${VERSION}-darwin-amd64.tgz)/g" ../README.md
 sed -i.bu "20s/.*/- [lokalise2-${VERSION}-darwin-386.tgz](https:\/\/s3-eu-west-1.amazonaws.com\/lokalise-assets\/cli2\/lokalise2-${VERSION}-darwin-386.tgz)/g" ../README.md
 sed -i.bu "23s/.*/- [lokalise2-${VERSION}-linux-amd64.tgz](https:\/\/s3-eu-west-1.amazonaws.com\/lokalise-assets\/cli2\/lokalise2-${VERSION}-linux-amd64.tgz)/g" ../README.md

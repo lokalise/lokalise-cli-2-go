@@ -123,7 +123,7 @@ func init() {
 	_ = webhookCreateCmd.MarkFlagRequired("url")
 	fs.StringSliceVar(&newWebhook.Events, "events", []string{}, "List of events to subscribe to (required, see https://docs.lokalise.com/en/articles/3184756-webhooks).")
 	_ = webhookCreateCmd.MarkFlagRequired("events")
-	fs.StringVar(&eventLanguageMap, "event-lang-map", "", "Map the event with an array of languages iso codes. Omit this parameter for all languages in the project.")
+	fs.StringVar(&eventLanguageMap, "event-lang-map", "", "Map the event with an array of languages iso codes. Omit this parameter for all languages in the project. JSON, see https://lokalise.com/api2docs/curl/#resource-webhooks")
 
 	// Update
 	fs = webhookUpdateCmd.Flags()
