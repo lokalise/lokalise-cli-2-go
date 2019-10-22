@@ -2,7 +2,7 @@ module github.com/lokalise/lokalise-cli-2-go
 
 require (
 	github.com/go-resty/resty/v2 v2.1.0 // indirect
-	github.com/lokalise/go-lokalise-api v0.0.0-20191022105801-adf2bfe2b84b
+	github.com/lokalise/go-lokalise-api v0.0.0-20191022114932-fc31d4e49687
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.4.0

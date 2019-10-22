@@ -2,7 +2,7 @@
 # brew install go
 # go get ./...
 
-export VERSION=2.02
+export VERSION=2.03
 
 if [ -z "${AWS_ACCESS_KEY}" ]; then
       echo "AWS_ACCESS_KEY is empty, aborting"
