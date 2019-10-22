@@ -132,6 +132,10 @@ var teamUserGroupAddMembersCmd = &cobra.Command{
 		// preparing options
 		var ul []int64
 
+		for _, key := range usersList {
+			 ul = append(ul, int64(key))
+		}
+
 		resp, err := Api.TeamUserGroups().AddMembers(teamId, groupId, ul)
 		if err != nil {
 			return err
@@ -146,6 +150,10 @@ var teamUserGroupRemoveMembersCmd = &cobra.Command{
 	RunE: func(*cobra.Command, []string) error {
 		// preparing options
 		var ul []int64
+
+		for _, key := range usersList {
+			ul = append(ul, int64(key))
+		}
 
 		resp, err := Api.TeamUserGroups().AddMembers(teamId, groupId, ul)
 		if err != nil {
@@ -189,7 +197,7 @@ func init() {
 	fs.BoolVar(&newGroup.IsAdmin, "is-admin", false, "Whether the group has Admin access to the project (required).")
 	_ = teamUserGroupCreateCmd.MarkFlagRequired("is-admin")
 	fs.StringSliceVar(&newGroup.AdminRights, "admin-rights", []string{}, "List of group administrative permissions. Required if group has admin rights.")
-	fs.StringVar(&groupLanguages, "languages", "", "List of languages. Required if group doesn't have admin rights.")
+	fs.StringVar(&groupLanguages, "languages", "", "List of languages. Required if group doesn't have admin rights. JSON, see https://lokalise.com/api2docs/curl/#transition-create-a-group-post")
 
 	// Retrieve, delete
 	flagGroupId(teamUserGroupRetrieveCmd)
