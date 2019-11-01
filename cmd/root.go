@@ -6,6 +6,7 @@ import (
 	"github.com/lokalise/go-lokalise-api"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"log"
 	"os"
@@ -129,4 +130,15 @@ func repeatableList(
 	}
 
 	return nil
+}
+
+// checkFlag checks if flag with a given name was among the ones being activated
+func checkFlag(fs *pflag.FlagSet, name string) (wasSet bool) {
+	fs.Visit(func(f *pflag.Flag) {
+		if f.Name == name {
+			wasSet = true
+		}
+	})
+
+	return
 }
