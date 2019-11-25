@@ -36,7 +36,7 @@ dockers:
     image_templates:
       - "lokalise/lokalise-cli-2:latest"
       - "lokalise/lokalise-cli-2:{{ .Tag }}"
-    skip_push: true
+    skip_push: false
     dockerfile: Dockerfile
 
 brews:
@@ -46,7 +46,7 @@ brews:
     folder: Formula
     homepage: "https://docs.lokalise.com/cli2"
     description: "Lokalise CLI v2"
-    skip_upload: true
+    skip_upload: false
 
 checksum:
   name_template: 'checksums.txt'
