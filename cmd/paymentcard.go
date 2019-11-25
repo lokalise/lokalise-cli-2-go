@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/lokalise/go-lokalise-api"
+	"github.com/lokalise/go-lokalise-api/v2"
 	"github.com/spf13/cobra"
 )
 
