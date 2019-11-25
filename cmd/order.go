@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/lokalise/go-lokalise-api"
+	"github.com/lokalise/go-lokalise-api/v2"
 	"github.com/spf13/cobra"
 )
 
@@ -84,7 +84,7 @@ func init() {
 	_ = orderCreateCmd.MarkFlagRequired("source-language-iso")
 	fs.StringSliceVar(&newOrder.TargetLangISOs, "target-language-isos", []string{}, "List of target languages (required).")
 	_ = orderCreateCmd.MarkFlagRequired("target-language-isos")
-	fs.StringSliceVar(&newOrder.Keys, "keys", []string{}, "List of keys identifiers, included in the order (required).")
+	fs.IntSliceVar(&newOrder.Keys, "keys", []int{}, "List of keys identifiers, included in the order (required).")
 	_ = orderCreateCmd.MarkFlagRequired("keys")
 	fs.StringVar(&newOrder.ProviderSlug, "provider-slug", "", "Translation provider slug (required).")
 	_ = orderCreateCmd.MarkFlagRequired("provider-slug")

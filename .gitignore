@@ -8,6 +8,3 @@ test/
 
 # config file
 config.*
-
-# temporary disabled
-go.sum
