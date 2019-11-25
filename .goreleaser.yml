@@ -29,16 +29,6 @@ archives:
       386: i386
       amd64: x86_64
 
-dockers:
-  - goos: linux
-    binaries:
-      - lokalise2
-    image_templates:
-      - "lokalise/lokalise-cli-2:latest"
-      - "lokalise/lokalise-cli-2:{{ .Tag }}"
-    skip_push: false
-    dockerfile: Dockerfile
-
 brews:
   - github:
       owner: lokalise
