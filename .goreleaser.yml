@@ -1,0 +1,55 @@
+builds:
+  - env:
+      - CGO_ENABLED=0
+    binary:
+      lokalise2
+    goos:
+      - darwin
+      - windows
+      - linux
+      - freebsd
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+    goarm:
+      - 6
+      - 7
+    ignore:
+      - goos: darwin
+        goarch: 386
+
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      freebsd: FreeBSD
+      386: i386
+      amd64: x86_64
+
+dockers:
+  - goos: linux
+    binaries:
+      - lokalise2
+    image_templates:
+      - "lokalise/lokalise-cli-2:latest"
+      - "lokalise/lokalise-cli-2:{{ .Tag }}"
+    skip_push: true
+    dockerfile: Dockerfile
+
+brews:
+  - github:
+      owner: lokalise
+      name: homebrew-cli-2
+    folder: Formula
+    homepage: "https://docs.lokalise.com/cli2"
+    description: "Lokalise CLI v2"
+    skip_upload: true
+
+checksum:
+  name_template: 'checksums.txt'
+
+changelog:
+  sort: asc
