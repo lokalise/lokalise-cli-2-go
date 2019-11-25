@@ -11,25 +11,15 @@ Get the binaries for your platform, unarchive and put into any executable folder
 
 ### MacOS
 Install using Homebrew:
-```
+```console
 brew tap lokalise/cli-2
 brew install lokalise2
 ```
-or get the binaries:
-- [lokalise2-2.03-darwin-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.03-darwin-amd64.tgz)
-- [lokalise2-2.03-darwin-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.03-darwin-386.tgz)
-
-### Linux
-- [lokalise2-2.03-linux-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.03-linux-amd64.tgz)
-- [lokalise2-2.03-linux-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.03-linux-386.tgz)
-
-### FreeBSD
-- [lokalise2-2.03-freebsd-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.03-freebsd-amd64.tgz)
-- [lokalise2-2.03-freebsd-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.03-freebsd-386.tgz)
-
-### Windows
-- [lokalise2-2.03-windows-amd64.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.03-windows-amd64.tgz)
-- [lokalise2-2.03-windows-386.tgz](https://s3-eu-west-1.amazonaws.com/lokalise-assets/cli2/lokalise2-2.03-windows-386.tgz)
+### Linux (including Raspberry Pi)
+Get the binaries using our installer script:
+```console
+curl -sfL https://raw.githubusercontent.com/lokalise/lokalise-cli-2-go/master/install.sh | sh
+```
 
 ### Docker
 See [DockerHub](https://hub.docker.com/r/lokalise/lokalise-cli-2) for more information.
