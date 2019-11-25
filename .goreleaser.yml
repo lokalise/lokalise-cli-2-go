@@ -37,6 +37,7 @@ brews:
     homepage: "https://docs.lokalise.com/cli2"
     description: "Lokalise CLI v2"
     skip_upload: false
+    name: lokalise2
 
 checksum:
   name_template: 'checksums.txt'
