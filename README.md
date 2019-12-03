@@ -15,11 +15,28 @@ Install using Homebrew:
 brew tap lokalise/cli-2
 brew install lokalise2
 ```
-### Linux (including Raspberry Pi)
-Get the binaries using our installer script:
+Direct download:
+
+- [lokalise-cli-2-go_2.1.0_Darwin_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Darwin_x86_64.tar.gz)
+
+
+### Linux
+Get the binaries (including for Raspberry Pi) using our installer script:
 ```console
 curl -sfL https://raw.githubusercontent.com/lokalise/lokalise-cli-2-go/master/install.sh | sh
 ```
+Direct download:
+
+- [lokalise-cli-2-go_2.1.0_Linux_i386.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Linux_i386.tar.gz)
+- [lokalise-cli-2-go_2.1.0_Linux_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Linux_x86_64.tar.gz)
+
+### FreeBSD
+- [lokalise-cli-2-go_2.1.0_FreeBSD_i386.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_FreeBSD_i386.tar.gz)
+- [lokalise-cli-2-go_2.1.0_FreeBSD_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_FreeBSD_x86_64.tar.gz)
+
+### Windows
+- [lokalise-cli-2-go_2.1.0_Windows_i386.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Windows_i386.tar.gz)
+- [lokalise-cli-2-go_2.1.0_Windows_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Windows_x86_64.tar.gz)
 
 ### Docker
 See [DockerHub](https://hub.docker.com/r/lokalise/lokalise-cli-2) for more information.
@@ -92,6 +109,10 @@ If you are using project branching feature in Lokalise, simply add branch name s
 Optionally, you may rename included `config-example.yml` to `config.yml` and set various CLI tool parameters like token or timeouts.
 
 ## Changes
+
+**2.1.0 (November 25, 2019)**
+
+Updated go-lokalise-api library version, bug fixes, switched binary building to goreleaser
 
 **2.03 (October 22, 2019)**
 
