@@ -35,8 +35,8 @@ Direct download:
 - [lokalise-cli-2-go_2.1.0_FreeBSD_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_FreeBSD_x86_64.tar.gz)
 
 ### Windows
-- [lokalise-cli-2-go_2.1.0_Windows_i386.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Windows_i386.tar.gz)
-- [lokalise-cli-2-go_2.1.0_Windows_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Windows_x86_64.tar.gz)
+- [lokalise-cli-2-go_2.1.0_Windows_i386.zip](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Windows_i386.zip)
+- [lokalise-cli-2-go_2.1.0_Windows_x86_64.zip](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Windows_x86_64.zip)
 
 ### Docker
 See [DockerHub](https://hub.docker.com/r/lokalise/lokalise-cli-2) for more information.
