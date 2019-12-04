@@ -7,7 +7,9 @@ run: build
 .PHONY: run
 
 release:
-	goreleaser release
+	git tag ${tag}
+	git push origin ${tag}
+	goreleaser release  --rm-dist --skip-validate --skip-publish
 .PHONY: release
 
 build: clean
@@ -20,3 +22,7 @@ clean:
 	rm -rf ./bin/*
 	rm -rf ./dist/*
 .PHONY: clean
+
+docs: build
+	bin/lokalise2 gendocs
+.PHONY: docs
