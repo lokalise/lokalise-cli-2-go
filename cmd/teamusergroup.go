@@ -133,7 +133,7 @@ var teamUserGroupAddMembersCmd = &cobra.Command{
 		var ul []int64
 
 		for _, key := range usersList {
-			 ul = append(ul, int64(key))
+			ul = append(ul, int64(key))
 		}
 
 		resp, err := Api.TeamUserGroups().AddMembers(teamId, groupId, ul)

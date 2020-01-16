@@ -66,16 +66,11 @@ func Execute() {
 }
 
 func init() {
-	// init API Token, used for all commands
+	cobra.OnInitialize(parseConfig)
 
-	if viper.GetString("token") == "" {
-		// if not found in config
-		rootCmd.PersistentFlags().StringVarP(&Token, "token", "t", "", "API token (required). You can create API tokens at https://lokalise.com/profile.")
-		_ = rootCmd.MarkPersistentFlagRequired("token")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./config.yml)")
+	rootCmd.PersistentFlags().StringVarP(&Token, "token", "t", "", "API token. You can create API tokens at https://lokalise.com/profile.")
 
-	} else {
-		rootCmd.PersistentFlags().StringVarP(&Token, "token", "t", "", "API token (override value from config if desired).")
-	}
 	// binding
 	_ = viper.BindPFlag("token", rootCmd.PersistentFlags().Lookup("token"))
 }
