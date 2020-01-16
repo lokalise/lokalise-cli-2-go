@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	branchId    int64
+	branchId   int64
 	branchName string
 )
 
