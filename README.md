@@ -106,7 +106,7 @@ lokalise2 \
 If you are using project branching feature in Lokalise, simply add branch name separated by semicolon to the project ID in any command to access the branch, i.e. `3002780358964f9bab5a92.87762498:feature/new-release`.
 
 ## Config file
-Optionally, you may rename included `config-example.yml` to `config.yml` and set various CLI tool parameters like token or timeouts.
+Optionally, you may rename included `config-example.yml` to `config.yml` and set various CLI tool parameters like token or timeouts. You can specify a config file location using `--config` parameter.
 
 ## Changes
 
