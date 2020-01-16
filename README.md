@@ -17,7 +17,7 @@ brew install lokalise2
 ```
 Direct download:
 
-- [lokalise-cli-2-go_2.1.0_Darwin_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Darwin_x86_64.tar.gz)
+- [Lokalise2_Darwin_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/Lokalise2_Darwin_x86_64.tar.gz)
 
 
 ### Linux
@@ -27,16 +27,16 @@ curl -sfL https://raw.githubusercontent.com/lokalise/lokalise-cli-2-go/master/in
 ```
 Direct download:
 
-- [lokalise-cli-2-go_2.1.0_Linux_i386.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Linux_i386.tar.gz)
-- [lokalise-cli-2-go_2.1.0_Linux_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Linux_x86_64.tar.gz)
+- [Lokalise2_Linux_i386.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/Lokalise2_Linux_i386.tar.gz)
+- [Lokalise2_Linux_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/Lokalise2_Linux_x86_64.tar.gz)
 
 ### FreeBSD
-- [lokalise-cli-2-go_2.1.0_FreeBSD_i386.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_FreeBSD_i386.tar.gz)
-- [lokalise-cli-2-go_2.1.0_FreeBSD_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_FreeBSD_x86_64.tar.gz)
+- [Lokalise2_FreeBSD_i386.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/Lokalise2_FreeBSD_i386.tar.gz)
+- [Lokalise2_FreeBSD_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/Lokalise2_FreeBSD_x86_64.tar.gz)
 
 ### Windows
-- [lokalise-cli-2-go_2.1.0_Windows_i386.zip](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Windows_i386.zip)
-- [lokalise-cli-2-go_2.1.0_Windows_x86_64.zip](https://github.com/lokalise/lokalise-cli-2-go/releases/download/v2.1.0/lokalise-cli-2-go_2.1.0_Windows_x86_64.zip)
+- [Lokalise2_Windows_i386.zip](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/Lokalise2_Windows_i386.zip)
+- [Lokalise2_Windows_x86_64.zip](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/Lokalise2_Windows_x86_64.zip)
 
 ### Docker
 See [DockerHub](https://hub.docker.com/r/lokalise/lokalise-cli-2) for more information.
@@ -109,6 +109,9 @@ If you are using project branching feature in Lokalise, simply add branch name s
 Optionally, you may rename included `config-example.yml` to `config.yml` and set various CLI tool parameters like token or timeouts. You can specify a config file location using `--config` parameter.
 
 ## Changes
+**2.2.0 (January 16, 2020)**
+
+Added possibility to specify a configuration file with a --config flag 
 
 **2.1.0 (November 25, 2019)**
 
