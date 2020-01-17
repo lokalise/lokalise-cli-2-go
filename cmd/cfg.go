@@ -24,5 +24,7 @@ func parseConfig() {
 	}
 
 	Token = viper.GetString("token")
-	projectId = viper.GetString("project-id")
+	if viper.GetString("project-id") != "" {
+		projectId = viper.GetString("project-id")
+	}
 }
