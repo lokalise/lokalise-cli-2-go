@@ -22,10 +22,6 @@ builds:
 
 archives:
   - replacements:
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
-      freebsd: FreeBSD
       386: i386
       amd64: x86_64
 
@@ -33,7 +29,9 @@ archives:
       - goos: windows
         format: zip
 
-    name_template: "Lokalise2_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: "lokalise2_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    files:
+      - none*
 
 brews:
   - github:
