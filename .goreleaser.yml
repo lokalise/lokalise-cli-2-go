@@ -48,3 +48,16 @@ checksum:
 
 changelog:
   sort: asc
+
+dockers:
+  -
+    goos: linux
+    goarch: amd64
+    goarm: ''
+    binaries:
+      - lokalise2
+    image_templates:
+      - "lokalise/lokalise-cli-2:latest"
+      - "lokalise/lokalise-cli-2:{{ .Tag }}"
+    skip_push: true
+    dockerfile: Dockerfile
