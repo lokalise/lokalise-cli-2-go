@@ -136,7 +136,7 @@ func init() {
 	_ = screenshotCreateCmd.MarkFlagRequired("file")
 	fs.StringVar(&newScreenshot.Title, "title", "", "Screenshot title")
 	fs.StringVar(&newScreenshot.Description, "description", "", "Screenshot description.")
-	fs.BoolVar(&newScreenshotOcr, "ocr", true, "Try to recognize translations on the image and attach screenshot to all possible keys (default true).")
+	fs.BoolVar(&newScreenshotOcr, "ocr", true, "Try to recognize translations on the image and attach screenshot to all possible keys (default true). Use --ocr=false to disable.")
 	fs.UintSliceVar(&newScreenshotKeyIds, "key-ids", []uint{}, "Attach the screenshot to key IDs specified.")
 	fs.StringSliceVar(&newScreenshot.Tags, "tags", []string{}, "List of tags to add to the uploaded screenshot.")
 
