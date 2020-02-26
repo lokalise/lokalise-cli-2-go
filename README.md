@@ -111,7 +111,7 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 ## Changes
 **2.3.0 (February 26, 2020)**
 
-Added --hidden-from-contributors flag for file upload action
+Added `--hidden-from-contributors` flag for file upload action
 
 **2.2.3 (February 7, 2020)**
 
