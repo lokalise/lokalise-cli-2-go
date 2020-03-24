@@ -244,7 +244,7 @@ func init() {
 	fs.BoolVar(&uploadOpts.ReplaceModified, "replace-modified", false, "Enable to replace translations, that have been modified (in the file being uploaded).")
 	fs.BoolVar(&uploadOptsSlashNToLinebreak, "slashn-to-linebreak", true, "Enable to replace \\n with a line break (default true). Use --slashn-to-linebreak=false to disable.")
 	fs.BoolVar(&uploadOpts.KeysToValues, "keys-to-values", false, "Enable to automatically replace values with key names.")
-	fs.BoolVar(&uploadOpts.DistinguishByFile, "distinguish-by-file", false, "Enable to allow keys with similar names to coexist, in case they are assigned to differrent filenames.")
+	fs.BoolVar(&uploadOpts.DistinguishByFile, "distinguish-by-file", false, "Enable to allow keys with similar names to coexist, in case they are assigned to different filenames.")
 	fs.BoolVar(&uploadOpts.ApplyTM, "apply-tm", false, "Enable to automatically apply 100% translation memory matches.")
 	fs.BoolVar(&uploadOpts.HiddenFromContributors, "hidden-from-contributors", false, "Enable to automatically set newly created keys as 'Hidden from contributors'")
 	fs.BoolVar(&uploadOpts.CleanupMode, "cleanup-mode", false, "Enable to delete all keys with all language translations that are not present in the uploaded file. You may want to make a snapshot of the project before importing new file, just in case.")
@@ -253,11 +253,11 @@ func init() {
 //noinspection GoUnhandledErrorResult
 func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	fileName := path.Base(srcUrl)
-	zip, err := os.Create(path.Join(destPath, fileName))
+	zipFile, err := os.Create(path.Join(destPath, fileName))
 	if err != nil {
 		return err
 	}
-	defer zip.Close()
+	defer zipFile.Close()
 
 	resp, err := http.Get(srcUrl)
 	if err != nil {
@@ -265,19 +265,19 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	}
 	defer resp.Body.Close()
 
-	_, err = io.Copy(zip, resp.Body)
+	_, err = io.Copy(zipFile, resp.Body)
 	if err != nil {
 		return err
 	}
 
 	fmt.Println("Unzipping to", unzipPath+"...")
-	err = unzip(zip.Name(), unzipPath)
+	err = unzip(zipFile.Name(), unzipPath)
 	if err != nil {
 		return err
 	}
 
 	if !downloadKeepZip {
-		_ = os.Remove(zip.Name())
+		_ = os.Remove(zipFile.Name())
 	}
 
 	return nil
@@ -301,13 +301,13 @@ func unzip(src, dest string) error {
 		}
 		defer rc.Close()
 
-		path := filepath.Join(dest, f.Name)
+		filePath := filepath.Join(dest, f.Name)
 
 		if f.FileInfo().IsDir() {
-			os.MkdirAll(path, f.Mode())
+			os.MkdirAll(filePath, f.Mode())
 		} else {
-			os.MkdirAll(filepath.Dir(path), f.Mode())
-			f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+			os.MkdirAll(filepath.Dir(filePath), f.Mode())
+			f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
 			if err != nil {
 				return err
 			}
