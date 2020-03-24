@@ -248,6 +248,10 @@ func init() {
 	fs.BoolVar(&uploadOpts.ApplyTM, "apply-tm", false, "Enable to automatically apply 100% translation memory matches.")
 	fs.BoolVar(&uploadOpts.HiddenFromContributors, "hidden-from-contributors", false, "Enable to automatically set newly created keys as 'Hidden from contributors'")
 	fs.BoolVar(&uploadOpts.CleanupMode, "cleanup-mode", false, "Enable to delete all keys with all language translations that are not present in the uploaded file. You may want to make a snapshot of the project before importing new file, just in case.")
+	fs.Int64SliceVar(&uploadOpts.CustomTranslationStatusIds, "custom-translation-status-ids", []int64{}, "Custom translation status IDs to be added to translations. By default statuses are applied to created and updated translations.")
+	fs.BoolVar(uploadOpts.CustomTranslationStatusInsertedKeys, "custom-translation-status-inserted-keys", true, "Add specified custom translation statuses to inserted keys (default true). Use --custom-translation-status-inserted-keys=false to disable.")
+	fs.BoolVar(uploadOpts.CustomTranslationStatusUpdatedKeys, "custom-translation-status-updated-keys", true, "Add specified custom translation statuses to updated keys (default true). Use --custom-translation-status-updated-keys=false to disable.")
+	fs.BoolVar(uploadOpts.CustomTranslationStatusSkippedKeys, "custom-translation-status-skipped-keys", false, "Add specified custom translation statuses to skipped keys.")
 }
 
 //noinspection GoUnhandledErrorResult
