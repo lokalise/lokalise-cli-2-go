@@ -13,23 +13,27 @@ lokalise2 file upload [flags]
 ### Options
 
 ```
-      --apply-tm                   Enable to automatically apply 100% translation memory matches.
-      --cleanup-mode               Enable to delete all keys with all language translations that are not present in the uploaded file. You may want to make a snapshot of the project before importing new file, just in case.
-      --convert-placeholders       Enable to automatically convert placeholders to the Lokalise universal placeholders.
-      --detect-icu-plurals         Enable to automatically detect and parse ICU formatted plurals in your translations.
-      --distinguish-by-file        Enable to allow keys with similar names to coexist, in case they are assigned to differrent filenames.
-      --file string                Path to local file (required).
-  -h, --help                       help for upload
-      --hidden-from-contributors   Enable to automatically set newly created keys as 'Hidden from contributors'
-      --include-path               Include relative directory name in the filename when uploading.
-      --keys-to-values             Enable to automatically replace values with key names.
-      --lang-iso string            Language code of the translations in the file you are importing (required).
-      --replace-modified           Enable to replace translations, that have been modified (in the file being uploaded).
-      --slashn-to-linebreak        Enable to replace \n with a line break (default true). Use --slashn-to-linebreak=false to disable. (default true)
-      --tag-inserted-keys          Add specified tags to inserted keys (default true). Use --tag-inserted-keys=false to disable (default true)
-      --tag-skipped-keys           Add specified tags to skipped keys.
-      --tag-updated-keys           Add specified tags to updated keys (default true). Use tag-updated-keys=false to disable (default true)
-      --tags strings               Tag keys with the specified tags. By default tags are applied to created and updated keys.
+      --apply-tm                                   Enable to automatically apply 100% translation memory matches.
+      --cleanup-mode                               Enable to delete all keys with all language translations that are not present in the uploaded file. You may want to make a snapshot of the project before importing new file, just in case.
+      --convert-placeholders                       Enable to automatically convert placeholders to the Lokalise universal placeholders.
+      --custom-translation-status-ids int64Slice   Custom translation status IDs to be added to translations. By default statuses are applied to created and updated translations. (default [])
+      --custom-translation-status-inserted-keys    Add specified custom translation statuses to inserted keys (default true). Use --custom-translation-status-inserted-keys=false to disable. (default true)
+      --custom-translation-status-skipped-keys     Add specified custom translation statuses to skipped keys.
+      --custom-translation-status-updated-keys     Add specified custom translation statuses to updated keys (default true). Use --custom-translation-status-updated-keys=false to disable. (default true)
+      --detect-icu-plurals                         Enable to automatically detect and parse ICU formatted plurals in your translations.
+      --distinguish-by-file                        Enable to allow keys with similar names to coexist, in case they are assigned to different filenames.
+      --file string                                Path to local file (required).
+  -h, --help                                       help for upload
+      --hidden-from-contributors                   Enable to automatically set newly created keys as 'Hidden from contributors'
+      --include-path                               Include relative directory name in the filename when uploading.
+      --keys-to-values                             Enable to automatically replace values with key names.
+      --lang-iso string                            Language code of the translations in the file you are importing (required).
+      --replace-modified                           Enable to replace translations, that have been modified (in the file being uploaded).
+      --slashn-to-linebreak                        Enable to replace \n with a line break (default true). Use --slashn-to-linebreak=false to disable. (default true)
+      --tag-inserted-keys                          Add specified tags to inserted keys (default true). Use --tag-inserted-keys=false to disable (default true)
+      --tag-skipped-keys                           Add specified tags to skipped keys.
+      --tag-updated-keys                           Add specified tags to updated keys (default true). Use tag-updated-keys=false to disable (default true)
+      --tags strings                               Tag keys with the specified tags. By default tags are applied to created and updated keys.
 ```
 
 ### Options inherited from parent commands
@@ -44,4 +48,4 @@ lokalise2 file upload [flags]
 
 * [lokalise2 file](lokalise2_file.md)	 - Upload and download files
 
-###### Auto generated by spf13/cobra on 26-Feb-2020
+###### Auto generated by spf13/cobra on 30-Apr-2020

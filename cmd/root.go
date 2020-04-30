@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	Version          = "2.3.0"
+	Version          = "2.3.1"
 	DefaultPageLimit = 5000
 )
 
