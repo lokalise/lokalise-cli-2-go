@@ -26,3 +26,9 @@ clean:
 docs: build
 	bin/lokalise2 gendocs
 .PHONY: docs
+
+
+push-alpine:
+	docker build -f Dockerfile.alpine -t lokalise/lokalise-cli-2:alpine .
+	docker push lokalise/lokalise-cli-2:alpine
+.PHONY: push-alpine
