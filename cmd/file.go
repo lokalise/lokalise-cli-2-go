@@ -33,12 +33,16 @@ var (
 	downloadUnzipTo     string
 	downloadKeepZip     bool
 
-	uploadOpts                    lokalise.FileUpload
-	uploadOptsConvertPlaceholders bool
-	uploadOptsTagInsertedKeys     bool
-	uploadOptsTagUpdatedKeys      bool
-	uploadOptsSlashNToLinebreak   bool
-	uploadIncludePath             bool
+	uploadOpts                                    lokalise.FileUpload
+	uploadOptsConvertPlaceholders                 bool
+	uploadOptsTagInsertedKeys                     bool
+	uploadOptsTagUpdatedKeys                      bool
+	uploadOptsSlashNToLinebreak                   bool
+	uploadOptsCustomTranslationStatusInsertedKeys bool
+	uploadOptsCustomTranslationStatusUpdatedKeys  bool
+	uploadOptsCustomTranslationStatusSkippedKeys  bool
+
+	uploadIncludePath bool
 
 	uploadFile string
 )
@@ -83,6 +87,9 @@ var fileUploadCmd = &cobra.Command{
 		uploadOpts.TagInsertedKeys = &uploadOptsTagInsertedKeys
 		uploadOpts.TagUpdatedKeys = &uploadOptsTagUpdatedKeys
 		uploadOpts.SlashNToLinebreak = &uploadOptsSlashNToLinebreak
+		uploadOpts.CustomTranslationStatusInsertedKeys = &uploadOptsCustomTranslationStatusInsertedKeys
+		uploadOpts.CustomTranslationStatusUpdatedKeys = &uploadOptsCustomTranslationStatusUpdatedKeys
+		uploadOpts.CustomTranslationStatusSkippedKeys = &uploadOptsCustomTranslationStatusSkippedKeys
 
 		fileMasks := strings.Split(uploadFile, ",")
 
@@ -249,9 +256,9 @@ func init() {
 	fs.BoolVar(&uploadOpts.HiddenFromContributors, "hidden-from-contributors", false, "Enable to automatically set newly created keys as 'Hidden from contributors'")
 	fs.BoolVar(&uploadOpts.CleanupMode, "cleanup-mode", false, "Enable to delete all keys with all language translations that are not present in the uploaded file. You may want to make a snapshot of the project before importing new file, just in case.")
 	fs.Int64SliceVar(&uploadOpts.CustomTranslationStatusIds, "custom-translation-status-ids", []int64{}, "Custom translation status IDs to be added to translations. By default statuses are applied to created and updated translations.")
-	fs.BoolVar(uploadOpts.CustomTranslationStatusInsertedKeys, "custom-translation-status-inserted-keys", true, "Add specified custom translation statuses to inserted keys (default true). Use --custom-translation-status-inserted-keys=false to disable.")
-	fs.BoolVar(uploadOpts.CustomTranslationStatusUpdatedKeys, "custom-translation-status-updated-keys", true, "Add specified custom translation statuses to updated keys (default true). Use --custom-translation-status-updated-keys=false to disable.")
-	fs.BoolVar(uploadOpts.CustomTranslationStatusSkippedKeys, "custom-translation-status-skipped-keys", false, "Add specified custom translation statuses to skipped keys.")
+	fs.BoolVar(&uploadOptsCustomTranslationStatusInsertedKeys, "custom-translation-status-inserted-keys", true, "Add specified custom translation statuses to inserted keys (default true). Use --custom-translation-status-inserted-keys=false to disable.")
+	fs.BoolVar(&uploadOptsCustomTranslationStatusUpdatedKeys, "custom-translation-status-updated-keys", true, "Add specified custom translation statuses to updated keys (default true). Use --custom-translation-status-updated-keys=false to disable.")
+	fs.BoolVar(&uploadOptsCustomTranslationStatusSkippedKeys, "custom-translation-status-skipped-keys", false, "Add specified custom translation statuses to skipped keys.")
 }
 
 //noinspection GoUnhandledErrorResult
