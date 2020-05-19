@@ -60,4 +60,4 @@ dockers:
       - "lokalise/lokalise-cli-2:latest"
       - "lokalise/lokalise-cli-2:{{ .Tag }}"
     skip_push: true
-    dockerfile: Dockerfile
+    dockerfile: Dockerfile.goreleaser
