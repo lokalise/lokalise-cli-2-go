@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/urfave/cli"
 	"io"
@@ -13,10 +14,14 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/lokalise/go-lokalise-api/v2"
 	"github.com/spf13/cobra"
 )
+
+const poolingFrequency = 2 * time.Second
 
 var (
 	filterFilename string
@@ -39,6 +44,9 @@ var (
 	uploadOptsTagUpdatedKeys      bool
 	uploadOptsSlashNToLinebreak   bool
 	uploadIncludePath             bool
+
+	uploadPooling bool
+	uploadPoolingTimeout time.Duration
 
 	uploadFile string
 )
@@ -86,6 +94,8 @@ var fileUploadCmd = &cobra.Command{
 
 		fileMasks := strings.Split(uploadFile, ",")
 
+		var wg sync.WaitGroup
+
 		for _, mask := range fileMasks {
 			files, err := filepath.Glob(mask)
 			if err != nil {
@@ -113,9 +123,49 @@ var fileUploadCmd = &cobra.Command{
 					return err
 				}
 
-				_ = printJson(resp)
+				if !uploadPooling {
+					_ = printJson(resp)
+				} else {
+					errs := make(chan error, 1)
+					wg.Add(1)
+					go func(resp lokalise.FileUploadResponse) {
+						defer wg.Done()
+						defer close(errs)
+
+						poolUntil := time.Now().Add(uploadPoolingTimeout)
+						q := Api.QueuedProcesses()
+						for {
+							if time.Now().After(poolUntil)  {
+								errs <- errors.New("pooling time exceeded limit")
+								break
+							}
+
+							queuedResp, err := q.Retrieve(resp.ProjectID, resp.Process.ID)
+							if err != nil {
+								errs <- err
+								break
+							}
+
+							if queuedResp.Process.Status == "finished" ||
+								queuedResp.Process.Status == "failed" ||
+								queuedResp.Process.Status == "cancelled" {
+								_ = printJson(queuedResp)
+								break
+							}
+
+							time.Sleep(poolingFrequency)
+						}
+					}(resp)
+
+					poolingError := <-errs
+					if poolingError != nil {
+						return poolingError
+					}
+				}
 			}
 		}
+
+		wg.Wait()
 
 		return nil
 	},
@@ -248,6 +298,8 @@ func init() {
 	fs.BoolVar(&uploadOpts.ApplyTM, "apply-tm", false, "Enable to automatically apply 100% translation memory matches.")
 	fs.BoolVar(&uploadOpts.HiddenFromContributors, "hidden-from-contributors", false, "Enable to automatically set newly created keys as 'Hidden from contributors'")
 	fs.BoolVar(&uploadOpts.CleanupMode, "cleanup-mode", false, "Enable to delete all keys with all language translations that are not present in the uploaded file. You may want to make a snapshot of the project before importing new file, just in case.")
+	fs.BoolVar(&uploadPooling, "pool", false, "Enable to wait until background file upload finishes with result")
+	fs.DurationVar(&uploadPoolingTimeout, "pool-timeout",30 * time.Second, "Specify custom file upload pooling duration")
 }
 
 //noinspection GoUnhandledErrorResult

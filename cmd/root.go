@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	Version          = "2.3.0"
+	Version          = "3.0.0"
 	DefaultPageLimit = 5000
 )
 
@@ -42,6 +42,7 @@ var rootCmd = &cobra.Command{
 			lokalise.WithRetryTimeout(viper.GetDuration("retry-timeout")),
 			lokalise.WithConnectionTimeout(viper.GetDuration("connection-timeout")),
 			lokalise.WithPageLimit(perPage),
+lokalise.WithBaseURL("https://lokalise.local/api2"),
 		)
 		return err
 	},
