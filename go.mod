@@ -8,6 +8,6 @@ require (
 	github.com/urfave/cli v1.22.1
 )
 
-replace github.com/lokalise/go-lokalise-api/v2 => ../go-lokalise-api
+//replace github.com/lokalise/go-lokalise-api => ../go-lokalise-api
 
 go 1.13
