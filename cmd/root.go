@@ -42,7 +42,6 @@ var rootCmd = &cobra.Command{
 			lokalise.WithRetryTimeout(viper.GetDuration("retry-timeout")),
 			lokalise.WithConnectionTimeout(viper.GetDuration("connection-timeout")),
 			lokalise.WithPageLimit(perPage),
-lokalise.WithBaseURL("https://lokalise.local/api2"),
 		)
 		return err
 	},
