@@ -113,7 +113,7 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 
 Changed file upload to use queued processing.
 Added `--pool` flag to obtain the upload result.
-Added `--pool-timeout` flag to configure the upload pooling duration.
+Added `--pool-timeout` flag to configure the upload pooling maximum duration.
 
 **2.3.0 (February 26, 2020)**
 
