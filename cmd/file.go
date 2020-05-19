@@ -33,12 +33,16 @@ var (
 	downloadUnzipTo     string
 	downloadKeepZip     bool
 
-	uploadOpts                    lokalise.FileUpload
-	uploadOptsConvertPlaceholders bool
-	uploadOptsTagInsertedKeys     bool
-	uploadOptsTagUpdatedKeys      bool
-	uploadOptsSlashNToLinebreak   bool
-	uploadIncludePath             bool
+	uploadOpts                                    lokalise.FileUpload
+	uploadOptsConvertPlaceholders                 bool
+	uploadOptsTagInsertedKeys                     bool
+	uploadOptsTagUpdatedKeys                      bool
+	uploadOptsSlashNToLinebreak                   bool
+	uploadOptsCustomTranslationStatusInsertedKeys bool
+	uploadOptsCustomTranslationStatusUpdatedKeys  bool
+	uploadOptsCustomTranslationStatusSkippedKeys  bool
+
+	uploadIncludePath bool
 
 	uploadFile string
 )
@@ -83,6 +87,9 @@ var fileUploadCmd = &cobra.Command{
 		uploadOpts.TagInsertedKeys = &uploadOptsTagInsertedKeys
 		uploadOpts.TagUpdatedKeys = &uploadOptsTagUpdatedKeys
 		uploadOpts.SlashNToLinebreak = &uploadOptsSlashNToLinebreak
+		uploadOpts.CustomTranslationStatusInsertedKeys = &uploadOptsCustomTranslationStatusInsertedKeys
+		uploadOpts.CustomTranslationStatusUpdatedKeys = &uploadOptsCustomTranslationStatusUpdatedKeys
+		uploadOpts.CustomTranslationStatusSkippedKeys = &uploadOptsCustomTranslationStatusSkippedKeys
 
 		fileMasks := strings.Split(uploadFile, ",")
 
@@ -244,20 +251,24 @@ func init() {
 	fs.BoolVar(&uploadOpts.ReplaceModified, "replace-modified", false, "Enable to replace translations, that have been modified (in the file being uploaded).")
 	fs.BoolVar(&uploadOptsSlashNToLinebreak, "slashn-to-linebreak", true, "Enable to replace \\n with a line break (default true). Use --slashn-to-linebreak=false to disable.")
 	fs.BoolVar(&uploadOpts.KeysToValues, "keys-to-values", false, "Enable to automatically replace values with key names.")
-	fs.BoolVar(&uploadOpts.DistinguishByFile, "distinguish-by-file", false, "Enable to allow keys with similar names to coexist, in case they are assigned to differrent filenames.")
+	fs.BoolVar(&uploadOpts.DistinguishByFile, "distinguish-by-file", false, "Enable to allow keys with similar names to coexist, in case they are assigned to different filenames.")
 	fs.BoolVar(&uploadOpts.ApplyTM, "apply-tm", false, "Enable to automatically apply 100% translation memory matches.")
 	fs.BoolVar(&uploadOpts.HiddenFromContributors, "hidden-from-contributors", false, "Enable to automatically set newly created keys as 'Hidden from contributors'")
 	fs.BoolVar(&uploadOpts.CleanupMode, "cleanup-mode", false, "Enable to delete all keys with all language translations that are not present in the uploaded file. You may want to make a snapshot of the project before importing new file, just in case.")
+	fs.Int64SliceVar(&uploadOpts.CustomTranslationStatusIds, "custom-translation-status-ids", []int64{}, "Custom translation status IDs to be added to translations. By default statuses are applied to created and updated translations.")
+	fs.BoolVar(&uploadOptsCustomTranslationStatusInsertedKeys, "custom-translation-status-inserted-keys", true, "Add specified custom translation statuses to inserted keys (default true). Use --custom-translation-status-inserted-keys=false to disable.")
+	fs.BoolVar(&uploadOptsCustomTranslationStatusUpdatedKeys, "custom-translation-status-updated-keys", true, "Add specified custom translation statuses to updated keys (default true). Use --custom-translation-status-updated-keys=false to disable.")
+	fs.BoolVar(&uploadOptsCustomTranslationStatusSkippedKeys, "custom-translation-status-skipped-keys", false, "Add specified custom translation statuses to skipped keys.")
 }
 
 //noinspection GoUnhandledErrorResult
 func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	fileName := path.Base(srcUrl)
-	zip, err := os.Create(path.Join(destPath, fileName))
+	zipFile, err := os.Create(path.Join(destPath, fileName))
 	if err != nil {
 		return err
 	}
-	defer zip.Close()
+	defer zipFile.Close()
 
 	resp, err := http.Get(srcUrl)
 	if err != nil {
@@ -265,19 +276,19 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	}
 	defer resp.Body.Close()
 
-	_, err = io.Copy(zip, resp.Body)
+	_, err = io.Copy(zipFile, resp.Body)
 	if err != nil {
 		return err
 	}
 
 	fmt.Println("Unzipping to", unzipPath+"...")
-	err = unzip(zip.Name(), unzipPath)
+	err = unzip(zipFile.Name(), unzipPath)
 	if err != nil {
 		return err
 	}
 
 	if !downloadKeepZip {
-		_ = os.Remove(zip.Name())
+		_ = os.Remove(zipFile.Name())
 	}
 
 	return nil
@@ -301,13 +312,13 @@ func unzip(src, dest string) error {
 		}
 		defer rc.Close()
 
-		path := filepath.Join(dest, f.Name)
+		filePath := filepath.Join(dest, f.Name)
 
 		if f.FileInfo().IsDir() {
-			os.MkdirAll(path, f.Mode())
+			os.MkdirAll(filePath, f.Mode())
 		} else {
-			os.MkdirAll(filepath.Dir(path), f.Mode())
-			f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+			os.MkdirAll(filepath.Dir(filePath), f.Mode())
+			f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
 			if err != nil {
 				return err
 			}
