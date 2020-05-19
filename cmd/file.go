@@ -45,7 +45,7 @@ var (
 	uploadOptsSlashNToLinebreak   bool
 	uploadIncludePath             bool
 
-	uploadPooling bool
+	uploadPooling        bool
 	uploadPoolingTimeout time.Duration
 
 	uploadFile string
@@ -135,7 +135,7 @@ var fileUploadCmd = &cobra.Command{
 						poolUntil := time.Now().Add(uploadPoolingTimeout)
 						q := Api.QueuedProcesses()
 						for {
-							if time.Now().After(poolUntil)  {
+							if time.Now().After(poolUntil) {
 								errs <- errors.New("pooling time exceeded limit")
 								break
 							}
@@ -299,7 +299,7 @@ func init() {
 	fs.BoolVar(&uploadOpts.HiddenFromContributors, "hidden-from-contributors", false, "Enable to automatically set newly created keys as 'Hidden from contributors'")
 	fs.BoolVar(&uploadOpts.CleanupMode, "cleanup-mode", false, "Enable to delete all keys with all language translations that are not present in the uploaded file. You may want to make a snapshot of the project before importing new file, just in case.")
 	fs.BoolVar(&uploadPooling, "pool", false, "Enable to wait until background file upload finishes with result")
-	fs.DurationVar(&uploadPoolingTimeout, "pool-timeout",30 * time.Second, "Specify custom file upload pooling duration")
+	fs.DurationVar(&uploadPoolingTimeout, "pool-timeout", 30*time.Second, "Specify custom file upload pooling maximum duration. Default: 30s")
 }
 
 //noinspection GoUnhandledErrorResult
