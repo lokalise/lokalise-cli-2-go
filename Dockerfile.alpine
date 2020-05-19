@@ -15,5 +15,5 @@ FROM alpine:3.10
 RUN apk --update add ca-certificates
 COPY --from=builder /bin/lokalise2 /bin/lokalise2
 
-ENV PATH=/bin
+ENV PATH="/bin:${PATH}"
 CMD ["/bin/lokalise2"]
