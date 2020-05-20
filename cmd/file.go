@@ -293,7 +293,7 @@ func init() {
 	fs.BoolVar(&uploadIncludePath, "include-path", false, "Include relative directory name in the filename when uploading.")
 	fs.StringVar(&uploadOpts.LangISO, "lang-iso", "", "Language code of the translations in the file you are importing (required).")
 	_ = fileUploadCmd.MarkFlagRequired("lang-iso")
-	fs.BoolVar(&uploadOptsConvertPlaceholders, "convert-placeholders", false, "Enable to automatically convert placeholders to the Lokalise universal placeholders.")
+	fs.BoolVar(&uploadOptsConvertPlaceholders, "convert-placeholders", true, "Enable to automatically convert placeholders to the Lokalise universal placeholders.")
 	fs.BoolVar(&uploadOpts.DetectICUPlurals, "detect-icu-plurals", false, "Enable to automatically detect and parse ICU formatted plurals in your translations.")
 	fs.StringSliceVar(&uploadOpts.Tags, "tags", []string{}, "Tag keys with the specified tags. By default tags are applied to created and updated keys.")
 	fs.BoolVar(&uploadOptsTagInsertedKeys, "tag-inserted-keys", true, "Add specified tags to inserted keys (default true). Use --tag-inserted-keys=false to disable")
