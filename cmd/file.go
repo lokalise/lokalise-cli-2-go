@@ -17,7 +17,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lokalise/go-lokalise-api/v2"
+	"github.com/lokalise/go-lokalise-api/v3"
 	"github.com/spf13/cobra"
 )
 
@@ -89,6 +89,7 @@ var fileUploadCmd = &cobra.Command{
 	Long:  "Imports a localization file to the project. Requires Upload files admin right. List of supported file formats is available here https://docs.lokalise.com/en/collections/652248-supported-file-formats",
 	RunE: func(*cobra.Command, []string) error {
 		f := Api.Files()
+		q := Api.QueuedProcesses()
 
 		// preparing opts
 		uploadOpts.ConvertPlaceholders = &uploadOptsConvertPlaceholders
@@ -140,7 +141,6 @@ var fileUploadCmd = &cobra.Command{
 						defer close(errs)
 
 						poolUntil := time.Now().Add(uploadPoolingTimeout)
-						q := Api.QueuedProcesses()
 						for {
 							if time.Now().After(poolUntil) {
 								errs <- errors.New("pooling time exceeded limit")
