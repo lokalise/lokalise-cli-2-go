@@ -133,41 +133,42 @@ var fileUploadCmd = &cobra.Command{
 
 				if !uploadPooling {
 					_ = printJson(resp)
-				} else {
-					errs := make(chan error, 1)
-					wg.Add(1)
-					go func(resp lokalise.FileUploadResponse) {
-						defer wg.Done()
-						defer close(errs)
+					continue
+				}
 
-						poolUntil := time.Now().Add(uploadPoolingTimeout)
-						for {
-							if time.Now().After(poolUntil) {
-								errs <- errors.New("pooling time exceeded limit")
-								break
-							}
+				errs := make(chan error, 1)
+				wg.Add(1)
+				go func(resp lokalise.FileUploadResponse) {
+					defer wg.Done()
+					defer close(errs)
 
-							queuedResp, err := q.Retrieve(resp.ProjectID, resp.Process.ID)
-							if err != nil {
-								errs <- err
-								break
-							}
-
-							if queuedResp.Process.Status == "finished" ||
-								queuedResp.Process.Status == "failed" ||
-								queuedResp.Process.Status == "cancelled" {
-								_ = printJson(queuedResp)
-								break
-							}
-
-							time.Sleep(poolingFrequency)
+					poolUntil := time.Now().Add(uploadPoolingTimeout)
+					for {
+						if time.Now().After(poolUntil) {
+							errs <- errors.New("pooling time exceeded limit")
+							break
 						}
-					}(resp)
 
-					poolingError := <-errs
-					if poolingError != nil {
-						return poolingError
+						queuedResp, err := q.Retrieve(resp.ProjectID, resp.Process.ID)
+						if err != nil {
+							errs <- err
+							break
+						}
+
+						if queuedResp.Process.Status == "finished" ||
+							queuedResp.Process.Status == "failed" ||
+							queuedResp.Process.Status == "cancelled" {
+							_ = printJson(queuedResp)
+							break
+						}
+
+						time.Sleep(poolingFrequency)
 					}
+				}(resp)
+
+				poolingError := <-errs
+				if poolingError != nil {
+					return poolingError
 				}
 			}
 		}
