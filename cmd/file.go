@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/urfave/cli"
 	"io"
@@ -13,10 +14,14 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
+	"time"
 
-	"github.com/lokalise/go-lokalise-api/v2"
+	"github.com/lokalise/go-lokalise-api/v3"
 	"github.com/spf13/cobra"
 )
+
+const poolingFrequency = 2 * time.Second
 
 var (
 	filterFilename string
@@ -43,6 +48,9 @@ var (
 	uploadOptsCustomTranslationStatusSkippedKeys  bool
 
 	uploadIncludePath bool
+
+	uploadPooling        bool
+	uploadPoolingTimeout time.Duration
 
 	uploadFile string
 )
@@ -81,6 +89,7 @@ var fileUploadCmd = &cobra.Command{
 	Long:  "Imports a localization file to the project. Requires Upload files admin right. List of supported file formats is available here https://docs.lokalise.com/en/collections/652248-supported-file-formats",
 	RunE: func(*cobra.Command, []string) error {
 		f := Api.Files()
+		q := Api.QueuedProcesses()
 
 		// preparing opts
 		uploadOpts.ConvertPlaceholders = &uploadOptsConvertPlaceholders
@@ -92,6 +101,8 @@ var fileUploadCmd = &cobra.Command{
 		uploadOpts.CustomTranslationStatusSkippedKeys = &uploadOptsCustomTranslationStatusSkippedKeys
 
 		fileMasks := strings.Split(uploadFile, ",")
+
+		var wg sync.WaitGroup
 
 		for _, mask := range fileMasks {
 			files, err := filepath.Glob(mask)
@@ -120,9 +131,49 @@ var fileUploadCmd = &cobra.Command{
 					return err
 				}
 
-				_ = printJson(resp)
+				if !uploadPooling {
+					_ = printJson(resp)
+					continue
+				}
+
+				errs := make(chan error, 1)
+				wg.Add(1)
+				go func(resp lokalise.FileUploadResponse) {
+					defer wg.Done()
+					defer close(errs)
+
+					poolUntil := time.Now().Add(uploadPoolingTimeout)
+					for {
+						if time.Now().After(poolUntil) {
+							errs <- errors.New("pooling time exceeded limit")
+							break
+						}
+
+						queuedResp, err := q.Retrieve(resp.ProjectID, resp.Process.ID)
+						if err != nil {
+							errs <- err
+							break
+						}
+
+						if queuedResp.Process.Status == "finished" ||
+							queuedResp.Process.Status == "failed" ||
+							queuedResp.Process.Status == "cancelled" {
+							_ = printJson(queuedResp)
+							break
+						}
+
+						time.Sleep(poolingFrequency)
+					}
+				}(resp)
+
+				poolingError := <-errs
+				if poolingError != nil {
+					return poolingError
+				}
 			}
 		}
+
+		wg.Wait()
 
 		return nil
 	},
@@ -259,6 +310,8 @@ func init() {
 	fs.BoolVar(&uploadOptsCustomTranslationStatusInsertedKeys, "custom-translation-status-inserted-keys", true, "Add specified custom translation statuses to inserted keys (default true). Use --custom-translation-status-inserted-keys=false to disable.")
 	fs.BoolVar(&uploadOptsCustomTranslationStatusUpdatedKeys, "custom-translation-status-updated-keys", true, "Add specified custom translation statuses to updated keys (default true). Use --custom-translation-status-updated-keys=false to disable.")
 	fs.BoolVar(&uploadOptsCustomTranslationStatusSkippedKeys, "custom-translation-status-skipped-keys", false, "Add specified custom translation statuses to skipped keys.")
+	fs.BoolVar(&uploadPooling, "pool", false, "Enable to wait until background file upload finishes with result")
+	fs.DurationVar(&uploadPoolingTimeout, "pool-timeout", 30*time.Second, "Specify custom file upload pooling maximum duration. Default: 30s")
 }
 
 //noinspection GoUnhandledErrorResult
