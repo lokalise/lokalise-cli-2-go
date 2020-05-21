@@ -15,7 +15,7 @@ lokalise2 file upload [flags]
 ```
       --apply-tm                                   Enable to automatically apply 100% translation memory matches.
       --cleanup-mode                               Enable to delete all keys with all language translations that are not present in the uploaded file. You may want to make a snapshot of the project before importing new file, just in case.
-      --convert-placeholders                       Enable to automatically convert placeholders to the Lokalise universal placeholders.
+      --convert-placeholders                       Enable to automatically convert placeholders to the Lokalise universal placeholders. (default true)
       --custom-translation-status-ids int64Slice   Custom translation status IDs to be added to translations. By default statuses are applied to created and updated translations. (default [])
       --custom-translation-status-inserted-keys    Add specified custom translation statuses to inserted keys (default true). Use --custom-translation-status-inserted-keys=false to disable. (default true)
       --custom-translation-status-skipped-keys     Add specified custom translation statuses to skipped keys.

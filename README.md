@@ -109,11 +109,13 @@ If you are using project branching feature in Lokalise, simply add branch name s
 Optionally, you may rename included `config-example.yml` to `config.yml` and set various CLI tool parameters like token or timeouts. You can specify a config file location using `--config` parameter.
 
 ## Changes
-**2.3.2 (May 19, 2020)**
+**3.0.0 (May 21, 2020)**
 
-Changed file upload to use queued processing.
-Added `--pool` flag to obtain the upload result.
-Added `--pool-timeout` flag to configure the upload pooling maximum duration.
+- Added queued process [commands](docs/lokalise2_queued-process.md)
+- Changed file upload to use queued processing
+  - Added `--pool` flag to obtain the upload result
+  - Added `--pool-timeout` flag to configure the upload pooling maximum duration
+  - Changed `--convert-placeholders` default value to `true`
 
 **2.3.1 (April 30, 2020)**
 
