@@ -3,7 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/lokalise/go-lokalise-api/v2"
+	"github.com/lokalise/go-lokalise-api/v3"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"github.com/spf13/pflag"
@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	Version          = "2.4.0"
+	Version          = "3.0.0"
 	DefaultPageLimit = 5000
 )
 
