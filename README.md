@@ -113,8 +113,8 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 **2.5.1 (May 28, 2020)**
 
 - Fix flag naming typo for file upload
- - Changed `--pool` to `--poll`
- - Changed `--pool-timeout` to `--poll` 
+  - Changed `--pool` to `--poll`
+  - Changed `--pool-timeout` to `--poll` 
   
 **2.5.0 (May 28, 2020)**
 
