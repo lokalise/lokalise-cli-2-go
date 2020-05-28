@@ -69,6 +69,7 @@ Run `lokalise2 --help` from the terminal to see the list of commands and subcomm
 * [lokalise2 order](docs/lokalise2_order.md)	 - Manage orders
 * [lokalise2 payment-card](docs/lokalise2_payment-card.md)	 - Manage payment cards
 * [lokalise2 project](docs/lokalise2_project.md)	 - Manage projects
+* [lokalise2 queued-process](docs/lokalise2_queued-process.md)	 - Manage queued processes
 * [lokalise2 screenshot](docs/lokalise2_screenshot.md)	 - Manage screenshots
 * [lokalise2 snapshot](docs/lokalise2_snapshot.md)	 - Manage snapshots
 * [lokalise2 task](docs/lokalise2_task.md)	 - Manage tasks
