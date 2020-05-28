@@ -21,7 +21,7 @@ Lokalise is a project-based translation management system. We recommend to keep 
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.5.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.5.1. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 project create](lokalise2_project_create.md)	 - Create a project
 * [lokalise2 project delete](lokalise2_project_delete.md)	 - Delete a project
 * [lokalise2 project empty](lokalise2_project_empty.md)	 - Empty a project

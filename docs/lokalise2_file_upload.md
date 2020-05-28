@@ -28,8 +28,8 @@ lokalise2 file upload [flags]
       --include-path                               Include relative directory name in the filename when uploading.
       --keys-to-values                             Enable to automatically replace values with key names.
       --lang-iso string                            Language code of the translations in the file you are importing (required).
-      --pool                                       Enable to wait until background file upload finishes with result
-      --pool-timeout duration                      Specify custom file upload pooling maximum duration. Default: 30s (default 30s)
+      --poll                                       Enable to wait until background file upload finishes with result
+      --poll-timeout duration                      Specify custom file upload polling maximum duration. Default: 30s (default 30s)
       --replace-modified                           Enable to replace translations, that have been modified (in the file being uploaded).
       --slashn-to-linebreak                        Enable to replace \n with a line break (default true). Use --slashn-to-linebreak=false to disable. (default true)
       --tag-inserted-keys                          Add specified tags to inserted keys (default true). Use --tag-inserted-keys=false to disable (default true)

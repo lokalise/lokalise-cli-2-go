@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const poolingFrequency = 2 * time.Second
+const pollingFrequency = 2 * time.Second
 
 var (
 	filterFilename string
@@ -49,8 +49,8 @@ var (
 
 	uploadIncludePath bool
 
-	uploadPooling        bool
-	uploadPoolingTimeout time.Duration
+	uploadPolling        bool
+	uploadPollingTimeout time.Duration
 
 	uploadFile string
 )
@@ -131,7 +131,7 @@ var fileUploadCmd = &cobra.Command{
 					return err
 				}
 
-				if !uploadPooling {
+				if !uploadPolling {
 					_ = printJson(resp)
 					continue
 				}
@@ -142,10 +142,10 @@ var fileUploadCmd = &cobra.Command{
 					defer wg.Done()
 					defer close(errs)
 
-					poolUntil := time.Now().Add(uploadPoolingTimeout)
+					pollUntil := time.Now().Add(uploadPollingTimeout)
 					for {
-						if time.Now().After(poolUntil) {
-							errs <- errors.New("pooling time exceeded limit")
+						if time.Now().After(pollUntil) {
+							errs <- errors.New("polling time exceeded limit")
 							break
 						}
 
@@ -162,13 +162,13 @@ var fileUploadCmd = &cobra.Command{
 							break
 						}
 
-						time.Sleep(poolingFrequency)
+						time.Sleep(pollingFrequency)
 					}
 				}(resp)
 
-				poolingError := <-errs
-				if poolingError != nil {
-					return poolingError
+				pollingError := <-errs
+				if pollingError != nil {
+					return pollingError
 				}
 			}
 		}
@@ -310,8 +310,8 @@ func init() {
 	fs.BoolVar(&uploadOptsCustomTranslationStatusInsertedKeys, "custom-translation-status-inserted-keys", true, "Add specified custom translation statuses to inserted keys (default true). Use --custom-translation-status-inserted-keys=false to disable.")
 	fs.BoolVar(&uploadOptsCustomTranslationStatusUpdatedKeys, "custom-translation-status-updated-keys", true, "Add specified custom translation statuses to updated keys (default true). Use --custom-translation-status-updated-keys=false to disable.")
 	fs.BoolVar(&uploadOptsCustomTranslationStatusSkippedKeys, "custom-translation-status-skipped-keys", false, "Add specified custom translation statuses to skipped keys.")
-	fs.BoolVar(&uploadPooling, "pool", false, "Enable to wait until background file upload finishes with result")
-	fs.DurationVar(&uploadPoolingTimeout, "pool-timeout", 30*time.Second, "Specify custom file upload pooling maximum duration. Default: 30s")
+	fs.BoolVar(&uploadPolling, "poll", false, "Enable to wait until background file upload finishes with result")
+	fs.DurationVar(&uploadPollingTimeout, "poll-timeout", 30*time.Second, "Specify custom file upload polling maximum duration. Default: 30s")
 }
 
 //noinspection GoUnhandledErrorResult

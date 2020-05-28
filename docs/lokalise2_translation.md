@@ -22,7 +22,7 @@ Manage translations
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.5.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.5.1. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 translation list](lokalise2_translation_list.md)	 - List all translations
 * [lokalise2 translation retrieve](lokalise2_translation_retrieve.md)	 - Retrieve a translation 
 * [lokalise2 translation update](lokalise2_translation_update.md)	 - Update a translation
