@@ -22,7 +22,7 @@ Manage webhooks
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.5.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.5.1. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 webhook create](lokalise2_webhook_create.md)	 - Create a webhook
 * [lokalise2 webhook delete](lokalise2_webhook_delete.md)	 - Delete a webhook
 * [lokalise2 webhook list](lokalise2_webhook_list.md)	 - List all webhooks
