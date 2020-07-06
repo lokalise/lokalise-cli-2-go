@@ -255,7 +255,7 @@ func init() {
 
 	fs.BoolVar(&downloadOptsOriginalFilenames, "original-filenames", true, "Enable to use original filenames/formats. If set to false (--original-filenames=false) all keys will be export to a single file per language (default true).")
 	fs.StringVar(&downloadOpts.BundleStructure, "bundle-structure", "", "Bundle structure, used when original-filenames set to false. Allowed placeholders are %LANG_ISO%, %LANG_NAME%, %FORMAT% and %PROJECT_NAME%).")
-	fs.StringVar(&downloadOptsDirectoryPrefix, "directory-prefix", "", "Directory prefix in the bundle, used when original_filenames set to true). Allowed placeholder is %LANG_ISO%.")
+	fs.StringVar(&downloadOptsDirectoryPrefix, "directory-prefix", "", "Directory prefix in the bundle (used when original-filenames set to true). Allowed placeholder is %LANG_ISO%.")
 	fs.BoolVar(&downloadOpts.AllPlatforms, "all-platforms", false, "Enable to include all platform keys. If disabled, only the keys, associated with the platform of the format will be exported.")
 	fs.StringSliceVar(&downloadOpts.FilterLangs, "filter-langs", []string{}, "List of languages to export. Omit this parameter for all languages.")
 	fs.StringSliceVar(&downloadOpts.FilterData, "filter-data", []string{}, "Narrow export data range. Allowed values are translated or untranslated, reviewed (or reviewed_only), last_reviewed_only, nonfuzzy and nonhidden. (Note: Fuzzy is called Unverified in the editor now).")
