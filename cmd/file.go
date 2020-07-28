@@ -312,6 +312,7 @@ func init() {
 	fs.BoolVar(&uploadOptsCustomTranslationStatusSkippedKeys, "custom-translation-status-skipped-keys", false, "Add specified custom translation statuses to skipped keys.")
 	fs.BoolVar(&uploadPolling, "poll", false, "Enable to wait until background file upload finishes with result")
 	fs.DurationVar(&uploadPollingTimeout, "poll-timeout", 30*time.Second, "Specify custom file upload polling maximum duration. Default: 30s")
+	fs.BoolVar(&uploadOpts.SkipDetectLangIso, "skip-detect-lang-iso", false, "Skip automatic language detection by filename. Default: false")
 }
 
 //noinspection GoUnhandledErrorResult
