@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/urfave/cli"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -107,7 +106,7 @@ var fileUploadCmd = &cobra.Command{
 		for _, mask := range fileMasks {
 			files, err := filepath.Glob(mask)
 			if err != nil {
-				return cli.NewExitError("ERROR: file glob pattern not valid", 5)
+				return errors.New(fmt.Sprintf("Invalid file mask: '%s'", mask))
 			}
 
 			for _, file := range files {
