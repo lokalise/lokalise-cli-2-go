@@ -313,28 +313,35 @@ func init() {
 	fs.DurationVar(&uploadPollingTimeout, "poll-timeout", 30*time.Second, "Specify custom file upload polling maximum duration. Default: 30s")
 }
 
-//noinspection GoUnhandledErrorResult
 func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	fileName := path.Base(srcUrl)
 	zipFile, err := os.Create(path.Join(destPath, fileName))
 	if err != nil {
 		return err
 	}
-	defer zipFile.Close()
 
 	resp, err := http.Get(srcUrl)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	_, err = io.Copy(zipFile, resp.Body)
 	if err != nil {
 		return err
 	}
 
+	err = resp.Body.Close()
+	if err != nil {
+		return err
+	}
+
 	fmt.Println("Unzipping to", unzipPath+"...")
 	err = unzip(zipFile.Name(), unzipPath)
+	if err != nil {
+		return err
+	}
+
+	err = zipFile.Close()
 	if err != nil {
 		return err
 	}
