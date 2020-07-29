@@ -106,7 +106,7 @@ var fileUploadCmd = &cobra.Command{
 		for _, mask := range fileMasks {
 			files, err := filepath.Glob(mask)
 			if err != nil {
-				return errors.New(fmt.Sprintf("Invalid file mask: '%s'", mask))
+				return fmt.Errorf("invalid file mask: '%s'", mask)
 			}
 
 			for _, file := range files {
