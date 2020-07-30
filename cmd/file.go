@@ -180,7 +180,7 @@ var fileUploadCmd = &cobra.Command{
 		wg.Wait()
 
 		if !filesProcessed {
-			return errors.New("no files processed")
+			return errors.New("invalid file specified")
 		}
 
 		return nil
