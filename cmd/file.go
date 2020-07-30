@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/urfave/cli"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -103,13 +102,18 @@ var fileUploadCmd = &cobra.Command{
 		fileMasks := strings.Split(uploadFile, ",")
 
 		var wg sync.WaitGroup
-
+		filesProcessed := false
 		for _, mask := range fileMasks {
 			files, err := filepath.Glob(mask)
 			if err != nil {
-				return cli.NewExitError("ERROR: file glob pattern not valid", 5)
+				return fmt.Errorf("invalid file mask: '%s'", mask)
 			}
 
+			if len(files) == 0 {
+				break
+			}
+
+			filesProcessed = true
 			for _, file := range files {
 				fmt.Println("Uploading", file+"...")
 
@@ -174,6 +178,10 @@ var fileUploadCmd = &cobra.Command{
 		}
 
 		wg.Wait()
+
+		if !filesProcessed {
+			return errors.New("invalid file specified")
+		}
 
 		return nil
 	},
@@ -312,30 +320,38 @@ func init() {
 	fs.BoolVar(&uploadOptsCustomTranslationStatusSkippedKeys, "custom-translation-status-skipped-keys", false, "Add specified custom translation statuses to skipped keys.")
 	fs.BoolVar(&uploadPolling, "poll", false, "Enable to wait until background file upload finishes with result")
 	fs.DurationVar(&uploadPollingTimeout, "poll-timeout", 30*time.Second, "Specify custom file upload polling maximum duration. Default: 30s")
+	fs.BoolVar(&uploadOpts.SkipDetectLangIso, "skip-detect-lang-iso", false, "Skip automatic language detection by filename. Default: false")
 }
 
-//noinspection GoUnhandledErrorResult
 func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	fileName := path.Base(srcUrl)
 	zipFile, err := os.Create(path.Join(destPath, fileName))
 	if err != nil {
 		return err
 	}
-	defer zipFile.Close()
 
 	resp, err := http.Get(srcUrl)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	_, err = io.Copy(zipFile, resp.Body)
 	if err != nil {
 		return err
 	}
 
+	err = resp.Body.Close()
+	if err != nil {
+		return err
+	}
+
 	fmt.Println("Unzipping to", unzipPath+"...")
 	err = unzip(zipFile.Name(), unzipPath)
+	if err != nil {
+		return err
+	}
+
+	err = zipFile.Close()
 	if err != nil {
 		return err
 	}
@@ -355,7 +371,7 @@ func unzip(src, dest string) error {
 	}
 	defer r.Close()
 
-	os.MkdirAll(dest, 0755)
+	_ = os.MkdirAll(dest, 0755)
 
 	// Closure to address file descriptors issue with all the deferred .Close() methods
 	extractAndWriteFile := func(f *zip.File) error {
@@ -368,9 +384,9 @@ func unzip(src, dest string) error {
 		filePath := filepath.Join(dest, f.Name)
 
 		if f.FileInfo().IsDir() {
-			os.MkdirAll(filePath, f.Mode())
+			_ = os.MkdirAll(filePath, f.Mode())
 		} else {
-			os.MkdirAll(filepath.Dir(filePath), f.Mode())
+			_ = os.MkdirAll(filepath.Dir(filePath), f.Mode())
 			f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
 			if err != nil {
 				return err

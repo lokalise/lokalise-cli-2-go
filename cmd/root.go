@@ -3,17 +3,18 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/lokalise/go-lokalise-api/v3"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"log"
-	"os"
 )
 
 const (
-	Version          = "2.5.1"
+	Version          = "2.5.2"
 	DefaultPageLimit = 5000
 )
 
@@ -34,15 +35,20 @@ var rootCmd = &cobra.Command{
 			perPage = DefaultPageLimit
 		}
 
-		Api, err = lokalise.New(
-			viper.GetString("token"),
-
+		ClientOptions := []lokalise.ClientOption{
 			lokalise.WithDebug(viper.GetBool("debug")),
 			lokalise.WithRetryCount(viper.GetInt("retry-count")),
 			lokalise.WithRetryTimeout(viper.GetDuration("retry-timeout")),
 			lokalise.WithConnectionTimeout(viper.GetDuration("connection-timeout")),
 			lokalise.WithPageLimit(perPage),
-		)
+		}
+
+		if viper.GetString("api-url") != "" {
+			ClientOptions = append(ClientOptions, lokalise.WithBaseURL(viper.GetString("api-url")))
+		}
+
+		Api, err = lokalise.New(viper.GetString("token"), ClientOptions...)
+
 		return err
 	},
 }
