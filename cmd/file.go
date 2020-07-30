@@ -102,13 +102,18 @@ var fileUploadCmd = &cobra.Command{
 		fileMasks := strings.Split(uploadFile, ",")
 
 		var wg sync.WaitGroup
-
+		filesProcessed := false
 		for _, mask := range fileMasks {
 			files, err := filepath.Glob(mask)
 			if err != nil {
 				return fmt.Errorf("invalid file mask: '%s'", mask)
 			}
 
+			if len(files) == 0 {
+				break
+			}
+
+			filesProcessed = true
 			for _, file := range files {
 				fmt.Println("Uploading", file+"...")
 
@@ -173,6 +178,10 @@ var fileUploadCmd = &cobra.Command{
 		}
 
 		wg.Wait()
+
+		if !filesProcessed {
+			return errors.New("invalid file specified")
+		}
 
 		return nil
 	},
