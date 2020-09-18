@@ -35,6 +35,12 @@ Direct download:
 - [lokalise2_freebsd_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_freebsd_x86_64.tar.gz)
 
 ### Windows
+Install using [`scoop`](https://scoop.sh):
+```console
+scoop bucket add extras
+scoop install lokalise2
+```
+Direct download:
 - [lokalise2_windows_i386.zip](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_windows_i386.zip)
 - [lokalise2_windows_x86_64.zip](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_windows_x86_64.zip)
 
