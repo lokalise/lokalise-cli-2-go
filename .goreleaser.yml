@@ -57,7 +57,9 @@ dockers:
     binaries:
       - lokalise2
     image_templates:
-      - "lokalise/lokalise-cli-2:latest"
-      - "lokalise/lokalise-cli-2:{{ .Tag }}"
+      - "docker.io/lokalise/lokalise-cli-2:latest"
+      - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}"
+      - "ghcr.io/lokalise/lokalise-cli-2:latest"
+      - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}"
     skip_push: false
     dockerfile: Dockerfile.goreleaser
