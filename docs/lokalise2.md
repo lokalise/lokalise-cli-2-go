@@ -1,10 +1,10 @@
 ## lokalise2
 
-Lokalise CLI v2.5.2. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+Lokalise CLI. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 
 ### Synopsis
 
-Lokalise CLI v2.5.2. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+Lokalise CLI. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 
 ### Options
 
