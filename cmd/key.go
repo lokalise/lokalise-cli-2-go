@@ -168,7 +168,7 @@ func init() {
 	fs.StringVar(&newKey.Context, "context", "", "Optional context of the key (used with some file formats).")
 	fs.IntVar(&newKey.CharLimit, "char-limit", 0, "Maximum allowed number of characters in translations for this key.")
 	fs.StringVar(&newKey.CustomAttributes, "custom-attributes", "", "JSON containing custom attributes (if any).")
-	flagUseAutomations(keyCreateCmd, "Whether to run automations on the new key translations.")
+	fs.BoolVar(&useAutomations, "use-automations", true, "Whether to run automations on the new key translations.")
 
 	// Update
 	flagKeyId(keyUpdateCmd)
@@ -186,7 +186,6 @@ func init() {
 	fs.StringVar(&newKey.Context, "context", "", "Optional context of the key (used with some file formats).")
 	fs.IntVar(&newKey.CharLimit, "char-limit", 0, "Maximum allowed number of characters in translations for this key.")
 	fs.StringVar(&newKey.CustomAttributes, "custom-attributes", "", "JSON containing custom attributes (if any).")
-	flagUseAutomations(keyUpdateCmd, "Whether to run automations on the updated key translations.")
 
 	// retrieve, delete
 	flagKeyId(keyRetrieveCmd)
@@ -198,10 +197,6 @@ func init() {
 func flagKeyId(cmd *cobra.Command) {
 	cmd.Flags().Int64Var(&keyId, "key-id", 0, "A unique identifier of the key (required).")
 	_ = cmd.MarkFlagRequired("key-id")
-}
-
-func flagUseAutomations(cmd *cobra.Command, desc string) {
-	cmd.Flags().BoolVar(&useAutomations, "use-automations", true, desc)
 }
 
 func newKeyFillFields() error {
