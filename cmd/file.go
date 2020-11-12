@@ -321,6 +321,7 @@ func init() {
 	fs.BoolVar(&uploadPolling, "poll", false, "Enable to wait until background file upload finishes with result")
 	fs.DurationVar(&uploadPollingTimeout, "poll-timeout", 30*time.Second, "Specify custom file upload polling maximum duration. Default: 30s")
 	fs.BoolVar(&uploadOpts.SkipDetectLangIso, "skip-detect-lang-iso", false, "Skip automatic language detection by filename. Default: false")
+	fs.BoolVar(&uploadOpts.UseAutomations, "use-automations", true, "Whether to run automations for this upload.")
 }
 
 func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
