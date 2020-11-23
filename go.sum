@@ -61,8 +61,6 @@ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORN
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/lokalise/go-lokalise-api/v3 v3.0.3 h1:6Efk0rgRjO2P/cfpDXnESAEqxjaT2GWYtZaJr9QPuxo=
-github.com/lokalise/go-lokalise-api/v3 v3.0.3/go.mod h1:STLXSf6OiwRdBRpK+BtA6deHh1Qjb69mYnI99HnMRHo=
 github.com/lokalise/go-lokalise-api/v3 v3.0.4 h1:NoZNZwj1RK/JF53lVC2ZXuHyK94pZl+VIWlvoCa7+0E=
 github.com/lokalise/go-lokalise-api/v3 v3.0.4/go.mod h1:STLXSf6OiwRdBRpK+BtA6deHh1Qjb69mYnI99HnMRHo=
 github.com/magiconair/properties v1.8.0 h1:LLgXmsheXeRoUOBOjtwPQCWIYqM/LU1ayDtDePerRcY=
