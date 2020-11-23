@@ -129,7 +129,7 @@ var fileUploadCmd = &cobra.Command{
 				if uploadIncludePath {
 					uploadOpts.Filename = file
 				} else {
-					uploadOpts.Filename = path.Base(file)
+					uploadOpts.Filename = filepath.Base(file)
 				}
 
 				resp, err := f.Upload(projectId, uploadOpts)
