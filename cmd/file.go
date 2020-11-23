@@ -99,6 +99,7 @@ var fileUploadCmd = &cobra.Command{
 		uploadOpts.CustomTranslationStatusInsertedKeys = &uploadOptsCustomTranslationStatusInsertedKeys
 		uploadOpts.CustomTranslationStatusUpdatedKeys = &uploadOptsCustomTranslationStatusUpdatedKeys
 		uploadOpts.CustomTranslationStatusSkippedKeys = &uploadOptsCustomTranslationStatusSkippedKeys
+		uploadOpts.UseAutomations = &uploadOptsUseAutomations
 
 		fileMasks := strings.Split(uploadFile, ",")
 
