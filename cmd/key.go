@@ -17,6 +17,8 @@ var (
 	newKeyFilenames    string
 	newKeyComments     []string
 	newKeyTranslations string
+
+	useAutomations bool
 )
 
 // keyCmd represents the key command
@@ -65,7 +67,11 @@ var keyCreateCmd = &cobra.Command{
 		}
 
 		k := Api.Keys()
-		resp, err := k.Create(projectId, []lokalise.NewKey{newKey})
+		resp, err := k.Create(
+			projectId,
+			[]lokalise.NewKey{newKey},
+			lokalise.WithAutomations(useAutomations),
+		)
 		if err != nil {
 			return err
 		}
@@ -162,6 +168,7 @@ func init() {
 	fs.StringVar(&newKey.Context, "context", "", "Optional context of the key (used with some file formats).")
 	fs.IntVar(&newKey.CharLimit, "char-limit", 0, "Maximum allowed number of characters in translations for this key.")
 	fs.StringVar(&newKey.CustomAttributes, "custom-attributes", "", "JSON containing custom attributes (if any).")
+	fs.BoolVar(&useAutomations, "use-automations", true, "Whether to run automations on the new key translations.")
 
 	// Update
 	flagKeyId(keyUpdateCmd)
