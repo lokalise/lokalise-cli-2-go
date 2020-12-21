@@ -22,7 +22,7 @@ Manage tasks
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.7.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.6.3. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 task create](lokalise2_task_create.md)	 - Create a task
 * [lokalise2 task delete](lokalise2_task_delete.md)	 - Delete a task
 * [lokalise2 task list](lokalise2_task_list.md)	 - List all tasks

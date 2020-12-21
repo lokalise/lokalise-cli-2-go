@@ -22,7 +22,7 @@ Lokalise is a project-oriented translation management system, which means we sto
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.7.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.6.3. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 file download](lokalise2_file_download.md)	 - Download files
 * [lokalise2 file list](lokalise2_file_list.md)	 - List all files
 * [lokalise2 file upload](lokalise2_file_upload.md)	 - Upload a file

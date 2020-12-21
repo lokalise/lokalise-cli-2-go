@@ -22,7 +22,7 @@ Manage queued processes. Some heavy actions are processed asynchronously. Queued
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.7.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.6.3. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 queued-process list](lokalise2_queued-process_list.md)	 - Lists all queued processes for a project
 * [lokalise2 queued-process retrieve](lokalise2_queued-process_retrieve.md)	 - Retrieve a process for a project
 

@@ -22,7 +22,7 @@ Manage branches
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.7.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.6.3. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 branch create](lokalise2_branch_create.md)	 - Create a branch
 * [lokalise2 branch delete](lokalise2_branch_delete.md)	 - Delete a branch
 * [lokalise2 branch list](lokalise2_branch_list.md)	 - List all branches

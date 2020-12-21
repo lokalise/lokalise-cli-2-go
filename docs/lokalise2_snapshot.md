@@ -22,7 +22,7 @@ Manage snapshots
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.7.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.6.3. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 snapshot create](lokalise2_snapshot_create.md)	 - Create a snapshot
 * [lokalise2 snapshot delete](lokalise2_snapshot_delete.md)	 - Delete a snapshot
 * [lokalise2 snapshot list](lokalise2_snapshot_list.md)	 - List all snapshots

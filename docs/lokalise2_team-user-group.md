@@ -22,7 +22,7 @@ Manage team user groups
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.7.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v2.6.3. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 team-user-group add-members](lokalise2_team-user-group_add-members.md)	 - Add members to the group
 * [lokalise2 team-user-group add-projects](lokalise2_team-user-group_add-projects.md)	 - Add projects to the group
 * [lokalise2 team-user-group create](lokalise2_team-user-group_create.md)	 - Create a new user group
