@@ -279,7 +279,7 @@ func init() {
 	fs.BoolVar(&downloadOpts.IncludeComments, "include-comments", false, "Enable to include key comments and description in exported file (if supported by the format).")
 	fs.BoolVar(&downloadOptsIncludeDescription, "include-description", true, "Enable to include key description in exported file (if supported by the format) (default true). Use --include-description=false to disable.")
 	fs.StringSliceVar(&downloadOpts.IncludeProjectIDs, "include-pids", []string{}, "Other projects ID's, which keys should be included with this export.")
-	fs.StringSliceVar(&downloadOpts.Triggers, "triggers", []string{}, "Trigger integration exports (must be enabled in project settings). Allowed values are amazons3, gcs, github, gitlab, bitbucket.")
+	fs.StringSliceVar(&downloadOpts.Triggers, "triggers", []string{}, "Trigger integration exports (must be enabled in project settings). Allowed values are amazons3, gcs, github, github-enterprise, gitlab, bitbucket, bitbucket-enterprise.")
 	fs.StringSliceVar(&downloadOpts.FilterRepositories, "filter-repositories", []string{}, "Pull requests will be created only for listed repositories (organization/repository format). Leave empty array to process all configured integrations by platform only.")
 	fs.BoolVar(&downloadOptsReplaceBreaks, "replace-breaks", true, "Enable to replace line breaks in exported translations with \\n (default true). Use --replace-breaks=false to disable.")
 	fs.BoolVar(&downloadOpts.DisableReferences, "disable-references", false, "Enable to skip automatic replace of key reference placeholders (e.g. [%key:hello_world%]) with their corresponding translations.")
