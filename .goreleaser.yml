@@ -34,7 +34,7 @@ archives:
       - none*
 
 brews:
-  - github:
+  - tap:
       owner: lokalise
       name: homebrew-cli-2
     folder: Formula
