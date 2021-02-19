@@ -130,7 +130,7 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 
 **2.6.0 (August 5, 2020)**
           
-- Added BDS-Clause-3 license
+- Added BSD-Clause-3 license
 
 **2.5.2 (July 28, 2020)**
           
