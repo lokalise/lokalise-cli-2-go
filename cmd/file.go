@@ -155,7 +155,7 @@ var fileUploadCmd = &cobra.Command{
 							break
 						}
 
-						queuedResp, err := q.Retrieve(resp.ProjectID, resp.Process.ID)
+						queuedResp, err := q.Retrieve(projectId, resp.Process.ID)
 						if err != nil {
 							errs <- err
 							break
