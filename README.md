@@ -45,7 +45,9 @@ Direct download:
 - [lokalise2_windows_x86_64.zip](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_windows_x86_64.zip)
 
 ### Docker
-See [DockerHub](https://hub.docker.com/r/lokalise/lokalise-cli-2) for more information.
+Docker image could be downloaded from the following registries:
+- [DockerHub](https://hub.docker.com/r/lokalise/lokalise-cli-2)
+- [GitHub Container Registry](https://github.com/orgs/lokalise/packages/container/package/lokalise-cli-2)
 
 ## Tokens
 All endpoints require the `--token` parameter. You can generate your API token in [Personal profile](https://lokalise.com/profile). Note, the token is personal and mimics your access level on team and project level. If you require a user-independent API token, create a separate user in your team (e.g. API user), set proper access rights and use this user's token.
