@@ -200,7 +200,9 @@ func flagKeyId(cmd *cobra.Command) {
 }
 
 func newKeyFillFields() error {
-	newKey.KeyName = newKeyName
+	if newKeyName != "" {
+		newKey.KeyName = newKeyName
+	}
 
 	if newKeyFilenames != "" {
 		ps := lokalise.PlatformStrings{}
