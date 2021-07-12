@@ -4,7 +4,7 @@ Upload a file
 
 ### Synopsis
 
-Imports a localization file to the project. Requires Upload files admin right. List of supported file formats is available here https://docs.lokalise.com/en/collections/652248-supported-file-formats
+Imports a localization file to the project. Requires Upload files admin right. List of supported file formats is available here https://docs.lokalise.com/supported-file-formats
 
 ```
 lokalise2 file upload [flags]
