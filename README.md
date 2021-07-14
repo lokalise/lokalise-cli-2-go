@@ -118,7 +118,12 @@ If you are using project branching feature in Lokalise, simply add branch name s
 Optionally, you may rename included `config-example.yml` to `config.yml` and set various CLI tool parameters like token or timeouts. You can specify a config file location using `--config` parameter.
 
 ## Changes
-**2.6.5 (Mar 15, 2021)**
+**2.6.6 (Jul 12, 2021)**
+
+- Fixed `--key-name` parameter being optional for key update
+- Updated documentation link to supported file formats
+
+**2.6.5 (Jul 12, 2021)**
 
 - Added note for file download `--disable-references` flag
 
