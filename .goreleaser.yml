@@ -42,6 +42,8 @@ brews:
     description: "Lokalise CLI v2"
     skip_upload: false
     name: lokalise2
+    install: |
+      bin.install "lokalise2"
 
 checksum:
   name_template: 'checksums.txt'
