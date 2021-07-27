@@ -1,6 +1,6 @@
 module github.com/lokalise/lokalise-cli-2-go
 
-go 1.13
+go 1.16
 
 require (
 	github.com/go-resty/resty/v2 v2.2.0 // indirect
