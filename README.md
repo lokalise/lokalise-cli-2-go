@@ -117,6 +117,11 @@ If you are using project branching feature in Lokalise, simply add branch name s
 ## Config file
 Optionally, you may rename included `config-example.yml` to `config.yml` and set various CLI tool parameters like token or timeouts. You can specify a config file location using `--config` parameter.
 
+## Rate limits
+[Access to all endpoints is limited](https://app.lokalise.com/api2docs/curl/#resource-rate-limits) to 6 requests per second from 14 September, 2021. This limit is applied per API token and per IP address. If you exceed the limit, a 429 HTTP status code will be returned and the corresponding exception will be raised that you should handle properly. To handle such errors, we recommend an exponential backoff mechanism with a limited number of retries.
+
+Only one concurrent request per token is allowed.
+
 ## Changes
 **2.6.7 (Jul 27, 2021)**
 
