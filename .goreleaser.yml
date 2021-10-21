@@ -1,8 +1,9 @@
 builds:
-  - env:
+  -
+    id: lokalise2
+    env:
       - CGO_ENABLED=0
-    binary:
-      lokalise2
+    binary: lokalise2
     goos:
       - darwin
       - windows
