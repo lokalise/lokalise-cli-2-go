@@ -123,6 +123,10 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 Only one concurrent request per token is allowed.
 
 ## Changes
+**2.6.8 (Oct 21, 2021)**
+
+- Updated Lokalise GO SDK to v3.2.0
+
 **2.6.7 (Jul 27, 2021)**
 
 - Added binaries for Apple M1
