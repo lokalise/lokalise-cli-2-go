@@ -8,5 +8,5 @@ require (
 	github.com/spf13/cobra v0.0.6
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.4.0
-	golang.org/x/net v0.0.0-20200320220750-118fecf932d8 // indirect
+	golang.org/x/net v0.7.0 // indirect
 )
