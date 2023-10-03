@@ -123,7 +123,14 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 Only one concurrent request per token is allowed.
 
 ## Changes
-**2.6.8 (Oct 21, 2021)**
+**2.6.9 (Oct 03, 2023)**
+
+- Updated Lokalise GO SDK to v3.4.0
+- Upgraded Go to v1.21
+- Upgraded Docker images to Alpine 3.18
+- Multi arch Docker images
+
+  **2.6.8 (Oct 21, 2021)**
 
 - Updated Lokalise GO SDK to v3.2.0
 

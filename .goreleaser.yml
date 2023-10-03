@@ -39,7 +39,7 @@ brews:
       owner: lokalise
       name: homebrew-cli-2
     folder: Formula
-    homepage: "https://docs.lokalise.com/cli2"
+    homepage: "https://github.com/lokalise/lokalise-cli-2-go"
     description: "Lokalise CLI v2"
     skip_upload: false
     name: lokalise2
@@ -53,16 +53,36 @@ changelog:
   sort: asc
 
 dockers:
-  -
-    goos: linux
+  - image_templates:
+      - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-amd64"
+      - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-amd64"
+    use: buildx
     goarch: amd64
-    goarm: ''
-    ids:
-      - lokalise2
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--platform=linux/amd64"
+  - image_templates:
+      - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-arm64v8"
+      - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-arm64v8"
+    use: buildx
+    goarch: arm64
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--platform=linux/arm64/v8"
+docker_manifests:
+  - name_template: "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}"
     image_templates:
-      - "docker.io/lokalise/lokalise-cli-2:latest"
-      - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}"
-      - "ghcr.io/lokalise/lokalise-cli-2:latest"
-      - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}"
-    skip_push: false
-    dockerfile: Dockerfile.goreleaser
+      - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-arm64v8"
+      - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-amd64"
+  - name_template: "docker.io/lokalise/lokalise-cli-2:latest"
+    image_templates:
+      - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-arm64v8"
+      - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-amd64"
+  - name_template: "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}"
+    image_templates:
+      - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-arm64v8"
+      - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-amd64"
+  - name_template: "ghcr.io/lokalise/lokalise-cli-2:latest"
+    image_templates:
+      - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-arm64v8"
+      - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-amd64"

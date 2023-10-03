@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -119,7 +118,7 @@ var fileUploadCmd = &cobra.Command{
 			for _, file := range files {
 				fmt.Println("Uploading", file+"...")
 
-				buf, err := ioutil.ReadFile(file)
+				buf, err := os.ReadFile(file)
 				if err != nil {
 					return err
 				}
@@ -366,7 +365,7 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	return nil
 }
 
-//noinspection GoUnhandledErrorResult
+// noinspection GoUnhandledErrorResult
 func unzip(src, dest string) error {
 	r, err := zip.OpenReader(src)
 	if err != nil {
