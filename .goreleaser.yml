@@ -26,7 +26,7 @@ archives:
       - goos: windows
         format: zip
 
-    name_template: "lokalise2_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: 'lokalise2_{{ .Os }}_{{ if eq .Arch "386" }}i386{{ else }}{{ if eq .Arch "amd64" }}x86_64{{ else }}{{ .Arch }}{{ end }}{{ end }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     files:
       - none*
 
