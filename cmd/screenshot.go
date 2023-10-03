@@ -3,7 +3,6 @@ package cmd
 import (
 	"encoding/base64"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -176,7 +175,7 @@ func screenshotToBase64(path string) (string, error) {
 		return "", fmt.Errorf("unsupported image type: expected image/png or image/jpeg, got %s", cType)
 	}
 
-	buf, _ := ioutil.ReadFile(path)
+	buf, _ := os.ReadFile(path)
 	imgBase64Str := base64.StdEncoding.EncodeToString(buf)
 	return fmt.Sprintf("data:%s;base64,%s", cType, imgBase64Str), nil
 }
