@@ -282,7 +282,7 @@ func init() {
 	fs.StringSliceVar(&downloadOpts.FilterRepositories, "filter-repositories", []string{}, "Pull requests will be created only for listed repositories (organization/repository format). Leave empty array to process all configured integrations by platform only.")
 	fs.BoolVar(&downloadOptsReplaceBreaks, "replace-breaks", true, "Enable to replace line breaks in exported translations with \\n (default true). Use --replace-breaks=false to disable.")
 	fs.BoolVar(&downloadOpts.DisableReferences, "disable-references", false, "Enable to skip automatic replace of key reference placeholders (e.g. [%key:hello_world%]) with their corresponding translations. In case you have this disabled and are still getting references, make sure the permissions of the projects are configured right.")
-	fs.StringVar(&downloadOpts.PluralFormat, "plural-format", "", "Override the default plural format for the file type. Allowed values are json_string, icu, array, generic, symfony, i18next.")
+	fs.StringVar(&downloadOpts.PluralFormat, "plural-format", "", "Override the default plural format for the file type. Allowed values are json_string, icu, array, generic, symfony, i18next, i18next_v4.")
 	fs.StringVar(&downloadOpts.PlaceholderFormat, "placeholder-format", "", "Override the default placeholder format for the file type. Allowed values are printf, ios, icu, net, symfony, i18n, raw.")
 	fs.StringVar(&downloadOpts.WebhookURL, "webhook-url", "", "Once the export is complete, sends a HTTP POST with the generated bundle URL to the specified URL.")
 	fs.StringVar(&downloadOptsLangMapping, "language-mapping", "", "List of languages to override default iso codes for this export (JSON, see https://lokalise.com/api2docs/curl/#transition-download-files-post).")
