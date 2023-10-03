@@ -130,7 +130,7 @@ Only one concurrent request per token is allowed.
 - Upgraded Docker images to Alpine 3.18
 - Multi arch Docker images
 
-  **2.6.8 (Oct 21, 2021)**
+**2.6.8 (Oct 21, 2021)**
 
 - Updated Lokalise GO SDK to v3.2.0
 
