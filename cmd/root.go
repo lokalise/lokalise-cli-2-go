@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	Version          = "2.6.8"
+	Version          = "2.6.11"
 	DefaultPageLimit = 5000
 )
 
@@ -51,6 +51,7 @@ var rootCmd = &cobra.Command{
 
 		return err
 	},
+	DisableAutoGenTag: true,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -75,7 +76,7 @@ func init() {
 	cobra.OnInitialize(parseConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./config.yml)")
-	rootCmd.PersistentFlags().StringVarP(&Token, "token", "t", "", "API token. You can create API tokens at https://lokalise.com/profile.")
+	rootCmd.PersistentFlags().StringVarP(&Token, "token", "t", "", "API token. You can create API tokens at https://app.lokalise.com/profile.")
 
 	// binding
 	_ = viper.BindPFlag("token", rootCmd.PersistentFlags().Lookup("token"))
