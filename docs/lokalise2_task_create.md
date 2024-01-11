@@ -21,7 +21,6 @@ lokalise2 task create [flags]
       --do-lock-translations                 If set to 1, will lock translations for non-assigned project members.
       --due-date Y-m-d H:i:s                 Due date in Y-m-d H:i:s format. Example: `2018-12-24 23:59:59`.
   -h, --help                                 help for create
-      --initial-tm-leverage                  Enable to calculate and save initial TM leverage with this task.
       --keys ints                            List of keys identifiers, included in task. Required if parent_task_id is not specified.
       --languages users                      List of languages in the task. One of users or `groups` must be provided (JSON, required, see https://lokalise.com/api2docs/curl/#transition-create-a-task-post).
       --parent-task-id int                   If task_type is review, it can have a parent task. Current task will be opened when parent task is closed.

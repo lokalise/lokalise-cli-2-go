@@ -59,7 +59,7 @@ var translationUpdateCmd = &cobra.Command{
 	Long:  "Updates a translation.",
 	RunE: func(*cobra.Command, []string) error {
 		// processing opts
-		translationUpdate.IsFuzzy = &translationUpdateIsFuzzy
+		translationUpdate.IsUnverified = &translationUpdateIsFuzzy
 
 		resp, err := Api.Translations().Update(projectId, translationId, translationUpdate)
 		if err != nil {
@@ -79,9 +79,9 @@ func init() {
 	// List
 	fs := translationListCmd.Flags()
 	fs.Uint8Var(&translationListOpts.DisableReferences, "disable-references", 0, "Whether to disable key references.")
-	fs.StringVar(&translationListOpts.FilterLangID, "filter-lang-id", "", "Return translations only for presented language ID.")
+	fs.Int64Var(&translationListOpts.FilterLangID, "filter-lang-id", 0, "Return translations only for presented language ID.")
 	fs.Uint8Var(&translationListOpts.FilterIsReviewed, "filter-is-reviewed", 0, "Filter translations which are reviewed.")
-	fs.Uint8Var(&translationListOpts.FilterFuzzy, "filter-fuzzy", 0, "Filter translations which are unverified (fuzzy).")
+	fs.Uint8Var(&translationListOpts.FilterUnverified, "filter-fuzzy", 0, "Filter translations which are unverified (fuzzy).")
 	fs.StringVar(&translationListOpts.FilterQAIssues, "filter-qa-issues", "", "One or more QA issues to filter by. Possible values are spelling_and_grammar, placeholders, html, url_count, url, email_count, email, brackets, numbers, leading_whitespace, trailing_whitespace, double_space and special_placeholder.")
 
 	// Retrieve
