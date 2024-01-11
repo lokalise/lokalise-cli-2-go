@@ -294,6 +294,7 @@ func init() {
 	fs.StringVar(&downloadOpts.JavaPropertiesEncoding, "java-properties-encoding", "", "(Java Properties export only). Encoding for .properties files. Allowed values are utf-8 and latin-1.")
 	fs.StringVar(&downloadOpts.JavaPropertiesSeparator, "java-properties-separator", "", "(Java Properties export only). Separator for keys/values in .properties files. Allowed values are = and :.")
 	fs.StringVar(&downloadOpts.BundleDescription, "bundle-description", "", "Description of the created bundle. Applies to ios_sdk or android_sdk OTA SDK bundles.")
+	fs.BoolVar(&downloadOpts.Compact, "compact", false, "Export the minimum required structure for use in production. Don't include metadata such as context, comments and screenshots.")
 
 	// Upload
 	fs = fileUploadCmd.Flags()
