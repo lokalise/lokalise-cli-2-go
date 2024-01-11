@@ -17,6 +17,7 @@ lokalise2 file download [flags]
       --all-platforms                           Enable to include all platform keys. If disabled, only the keys, associated with the platform of the format will be exported.
       --bundle-description string               Description of the created bundle. Applies to ios_sdk or android_sdk OTA SDK bundles.
       --bundle-structure string                 Bundle structure, used when original-filenames set to false. Allowed placeholders are %LANG_ISO%, %LANG_NAME%, %FORMAT% and %PROJECT_NAME%).
+      --compact                                 Export the minimum required structure for use in production. Don't include metadata such as context, comments and screenshots.
       --custom-translation-status-ids strings   Only translations attributed to selected custom statuses will be included. Leave empty for all.
       --dest string                             Destination folder for ZIP file. (default "./")
       --directory-prefix string                 Directory prefix in the bundle (used when original-filenames set to true). Allowed placeholder is %LANG_ISO%.
