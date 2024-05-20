@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
-	"github.com/lokalise/go-lokalise-api/v3"
+	"github.com/lokalise/go-lokalise-api/v4"
 	"github.com/spf13/cobra"
 )
 
@@ -35,8 +35,8 @@ var taskListCmd = &cobra.Command{
 	RunE: func(*cobra.Command, []string) error {
 		t := Api.Tasks()
 		pageOpts := lokalise.TaskListOptions{
-			Title: filterTitle,
-			Limit: t.ListOpts().Limit,
+			FilterTitle: filterTitle,
+			Limit:       t.ListOpts().Limit,
 		}
 
 		return repeatableList(
@@ -137,7 +137,6 @@ func init() {
 	_ = taskCreateCmd.MarkFlagRequired("languages")
 	fs.BoolVar(&autoCloseLang, "auto-close-languages", true, "Whether languages should be closed automatically upon completion of the last item (default true). Use --auto-close-languages=false to disable.")
 	fs.BoolVar(&autoCloseTask, "auto-close-task", true, "Whether the task should be automatically closed upon all language completion (default true). Use --auto-close-task=false to disable.")
-	fs.BoolVar(&newTask.InitialTMLeverage, "initial-tm-leverage", false, "Enable to calculate and save initial TM leverage with this task.")
 	fs.StringVar(&taskType, "task-type", "", "Specify if task type is `translation` (default) or `review`.")
 	fs.Int64Var(&newTask.ParentTaskID, "parent-task-id", 0, "If task_type is review, it can have a parent task. Current task will be opened when parent task is closed.")
 	fs.StringSliceVar(&newTask.ClosingTags, "closing-tags", []string{}, "Tags that will be added to affected keys when task is closed.")
