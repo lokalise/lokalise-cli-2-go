@@ -3,14 +3,13 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"os"
-
 	"github.com/lokalise/go-lokalise-api/v4"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+	"log"
+	"os"
 )
 
 const (
@@ -101,6 +100,12 @@ func printPageHeader(cur, total int64) {
 	}
 }
 
+func printCursorHeader(currentCursor string, nextCursor string) {
+	if viper.GetBool("debug") {
+		fmt.Printf("\n=============\n Cursor %s, next %s \n-------------\n", currentCursor, nextCursor)
+	}
+}
+
 // handy function for processing List response for all commands
 func repeatableList(
 	forwardPage func(page int64),
@@ -128,6 +133,32 @@ func repeatableList(
 		}
 	} else {
 		_ = printJson(resp)
+	}
+
+	return nil
+}
+
+// handy function for processing List response using cursor pagination for all commands
+func repeatableCursorList(
+	forwardCursor func(cursor string),
+	list func() (lokalise.CursorPager, error),
+) error {
+	cursor := ""
+
+	for {
+		forwardCursor(cursor)
+		resp, err := list()
+		if err != nil {
+			return err
+		}
+
+		printCursorHeader(cursor, resp.NextCursor())
+		_ = printJson(resp)
+
+		if !resp.HasNextCursor() {
+			break
+		}
+		cursor = resp.NextCursor()
 	}
 
 	return nil

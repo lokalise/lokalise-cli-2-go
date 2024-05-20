@@ -43,12 +43,13 @@ var keyListCmd = &cobra.Command{
 			keyListOpts.FilterUntranslated = "1"
 		}
 
-		return repeatableList(
-			func(p int64) {
-				keyListOpts.Page = uint(p)
+		return repeatableCursorList(
+			func(cursor string) {
+				keyListOpts.Pagination = lokalise.PaginationCursor
+				keyListOpts.Cursor = cursor
 				k.SetListOptions(keyListOpts)
 			},
-			func() (lokalise.PageCounter, error) {
+			func() (lokalise.CursorPager, error) {
 				return k.List(projectId)
 			},
 		)
