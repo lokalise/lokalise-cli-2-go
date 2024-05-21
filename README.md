@@ -123,6 +123,14 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 Only one concurrent request per token is allowed.
 
 ## Changes
+**2.6.11 (May 21, 2024)**
+
+- Fix versioning issues
+
+**2.6.10 (Oct 03, 2023)**
+
+- Fix binary paths for goreleaser
+
 **2.6.9 (Oct 03, 2023)**
 
 - Updated Lokalise GO SDK to v3.4.0
