@@ -80,3 +80,16 @@ docker_manifests:
     image_templates:
       - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-arm64v8"
       - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-amd64"
+
+release:
+  github:
+    owner: lokalise
+    name: lokalise-cli-2-go
+  draft: true
+  replace_existing_draft: true
+  replace_existing_artifacts: true
+  target_commitish: "{{ .Commit }}"
+  prerelease: auto
+  make_latest: true
+  mode: append
+  name_template: "Release {{ .Tag }}"
