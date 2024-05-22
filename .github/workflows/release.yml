@@ -37,7 +37,7 @@ jobs:
         with:
           distribution: goreleaser
           version: '~> v1'
-          args: release --skip-publish --skip-validate --rm-dist
+          args: release --clean --skip-publish --skip-validate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       -
