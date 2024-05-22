@@ -7,16 +7,9 @@ on:
     tags:
       - "*"
 
-permissions:
-  contents: write
-  packages: write
-
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
       - name: Login to Github Container registry
         uses: docker/login-action@v3
