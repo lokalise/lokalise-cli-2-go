@@ -123,6 +123,10 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 Only one concurrent request per token is allowed.
 
 ## Changes
+**2.6.14 (May 29, 2024)**
+
+- Fix module versioning
+
 **2.6.13 (May 29, 2024)**
 
 - Add GH action for automated full gorelease process

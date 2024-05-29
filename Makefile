@@ -9,7 +9,6 @@ run: build
 release:
 	git tag ${tag}
 	git push origin ${tag}
-	goreleaser release  --rm-dist --skip-validate --skip-publish
 .PHONY: release
 
 build: clean
