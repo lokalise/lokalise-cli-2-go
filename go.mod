@@ -3,7 +3,7 @@ module github.com/lokalise/lokalise-cli-2-go
 go 1.21
 
 require (
-	github.com/lokalise/go-lokalise-api/v3 v3.4.0
+	github.com/lokalise/go-lokalise-api/v4 v4.0.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.16.0
