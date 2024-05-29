@@ -34,6 +34,7 @@ brews:
   - tap:
       owner: lokalise
       name: homebrew-cli-2
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
     folder: Formula
     homepage: "https://github.com/lokalise/lokalise-cli-2-go"
     description: "Lokalise CLI v2"
