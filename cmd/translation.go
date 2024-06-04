@@ -27,12 +27,13 @@ var translationListCmd = &cobra.Command{
 		t := Api.Translations()
 		translationListOpts.Limit = t.ListOpts().Limit
 
-		return repeatableList(
-			func(p int64) {
-				translationListOpts.Page = uint(p)
+		return repeatableCursorList(
+			func(cursor string) {
+				translationListOpts.Pagination = lokalise.PaginationCursor
+				translationListOpts.Cursor = cursor
 				t.SetListOptions(translationListOpts)
 			},
-			func() (lokalise.PageCounter, error) {
+			func() (lokalise.CursorPager, error) {
 				return t.List(projectId)
 			},
 		)
