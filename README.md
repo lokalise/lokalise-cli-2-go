@@ -123,6 +123,10 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 Only one concurrent request per token is allowed.
 
 ## Changes
+**3.0.0 (Jun 04, 2024)**
+- Upgraded lokalise-go-api to v4, which includes breaking changes
+- Added support for cursor based pagination for Keys and Translations endpoints
+
 **2.6.14 (May 29, 2024)**
 
 - Fix module versioning
