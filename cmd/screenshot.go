@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/lokalise/go-lokalise-api/v3"
+	"github.com/lokalise/go-lokalise-api/v4"
 	"github.com/spf13/cobra"
 )
 
