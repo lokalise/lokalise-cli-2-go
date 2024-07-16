@@ -58,7 +58,7 @@ var (
 var fileCmd = &cobra.Command{
 	Use:   "file",
 	Short: "Upload and download files",
-	Long:  "Lokalise is a project-oriented translation management system, which means we store all keys and translations in the database and can generate files in any format you require. Assigning a key to one or more platforms means including the key in the export routine for file formats, associated with this platform, e.g. if a key is assigned to iOS platform it would get included with strings and xliff format exports. In addition to assign keys to platforms you may assign keys to files and have different filename depending on the platform. List of supported file formats is available here https://docs.lokalise.com/supported-file-formats.",
+	Long:  "Lokalise is a project-oriented translation management system, which means we store all keys and translations in the database and can generate files in any format you require. Assigning a key to one or more platforms means including the key in the export routine for file formats, associated with this platform, e.g. if a key is assigned to iOS platform it would get included with strings and xliff format exports. In addition to assign keys to platforms you may assign keys to files and have different filename depending on the platform. List of supported file formats is available here https://docs.lokalise.com/en/collections/2909121-keys-and-files#supported-file-formats.",
 }
 
 var fileListCmd = &cobra.Command{
@@ -85,7 +85,7 @@ var fileListCmd = &cobra.Command{
 var fileUploadCmd = &cobra.Command{
 	Use:   "upload",
 	Short: "Upload a file",
-	Long:  "Imports a localization file to the project. Requires Upload files admin right. List of supported file formats is available here https://docs.lokalise.com/supported-file-formats",
+	Long:  "Imports a localization file to the project. Requires Upload files admin right. List of supported file formats is available here https://docs.lokalise.com/en/collections/2909121-keys-and-files#supported-file-formats.",
 	RunE: func(*cobra.Command, []string) error {
 		f := Api.Files()
 		q := Api.QueuedProcesses()
