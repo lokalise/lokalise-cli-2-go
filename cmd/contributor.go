@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"encoding/json"
-
 	"github.com/lokalise/go-lokalise-api/v4"
+
 	"github.com/spf13/cobra"
 )
 
@@ -139,17 +139,23 @@ func init() {
 	_ = contributorCreateCmd.MarkFlagRequired("email")
 	fs.StringVar(&contributorCreate.Fullname, "fullname", "", "Full name (only valid for inviting users, who previously did not have an account in Lokalise).")
 	fs.BoolVar(&contributorCreate.IsAdmin, "is-admin", false, "Whether the user has Admin access to the project.")
+	_ = fs.MarkDeprecated("is-admin", "--is-admin is deprecated and will be removed. Use admin-rights to set permissions to the user.")
 	fs.BoolVar(&contributorCreate.IsReviewer, "is-reviewer", false, "Whether the user has Reviewer access to the project.")
+	_ = fs.MarkDeprecated("is-reviewer", "--is-reviewer is deprecated and will be removed. Use admin-rights to set permissions to the user.")
+	fs.Int64Var(&contributorCreate.RoleId, "role-id", 0, "Permission template id for the contributor. By setting this admin_rights will be ignored and a template will be assigned with predefined permission set.")
 	fs.StringVar(&contributorLanguages, "languages", "", "List of languages, accessible to the user. Required if is_admin is set to false (JSON, see https://lokalise.com/api2docs/curl/#transition-create-contributors-post).")
-	fs.StringSliceVar(&contributorCreate.AdminRights, "admin-rights", []string{}, "Custom list of user permissions. Possible values are upload, activity, download, settings, statistics, keys, screenshots, contributors, languages. Omitted or empty parameter will set default admin rights for user role.")
+	fs.StringSliceVar(&contributorCreate.AdminRights, "admin-rights", []string{}, "Custom list of user permissions. Possible values are activity, contributors, branches_create, branches_main_modify, branches_merge, custom_status_modify, download, glossary, glossary_edit, glossary_delete, keys, manage_languages, review, screenshots, settings, statistics, tasks, upload. Omitted or empty parameter will set no rights for the user.")
 
 	// Update
 	flagContributorId(contributorUpdateCmd)
 	fs = contributorUpdateCmd.Flags()
-	fs.BoolVar(&permissionUpdate.IsAdmin, "is-admin", false, "Whether the user has Admin access to the project.")
-	fs.BoolVar(&permissionUpdate.IsReviewer, "is-reviewer", false, "Whether the user has Reviewer access to the project.")
+	fs.BoolVar(&permissionUpdate.IsAdmin, "is-admin", false, "Whether the user has Admin access to the project. Deprecated.")
+	_ = fs.MarkDeprecated("is-admin", "--is-admin is deprecated and will be removed. Use admin-rights to set permissions to the user.")
+	fs.BoolVar(&permissionUpdate.IsReviewer, "is-reviewer", false, "Whether the user has Reviewer access to the project. Deprecated.")
+	_ = fs.MarkDeprecated("is-reviewer", "--is-reviewer is deprecated and will be removed. Use admin-rights to set permissions to the user.")
 	fs.StringVar(&contributorLanguages, "languages", "", "List of languages, accessible to the user (JSON, see https://lokalise.com/api2docs/curl/#transition-update-a-contributor-put).")
-	fs.StringSliceVar(&permissionUpdate.AdminRights, "admin-rights", []string{}, "Custom list of user permissions. Possible values are upload, activity, download, settings, statistics, keys, screenshots, contributors, languages. Empty parameter will set default admin rights for user role.")
+	fs.StringSliceVar(&permissionUpdate.AdminRights, "admin-rights", []string{}, "Custom list of user permissions. Possible values are activity, contributors, branches_create, branches_main_modify, branches_merge, custom_status_modify, download, glossary, glossary_edit, glossary_delete, keys, manage_languages, review, screenshots, settings, statistics, tasks, upload. Empty parameter will set no rights for the user.")
+	fs.Int64Var(&permissionUpdate.RoleId, "role-id", 0, "Permission template id for the contributor. By setting this admin_rights will be ignored and a template will be assigned with predefined permission set.")
 
 	// Retrieve, delete
 	flagContributorId(contributorRetrieveCmd)
