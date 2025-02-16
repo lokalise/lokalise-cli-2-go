@@ -242,8 +242,66 @@ var fileDownloadCmd = &cobra.Command{
 	},
 }
 
+var fileAsyncDownloadCmd = &cobra.Command{
+	Use:   "async-download",
+	Short: "Asynchronous file download",
+	Long:  "Initiates a file download, polls for completion, and retrieves the file once ready.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Println("Initializing download...")
+
+		// Call /init endpoint
+		processID, err := Api.Files().InitDownload(projectId, downloadOpts)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("Process started with ID: %s\n", processID)
+
+		// Polling loop
+		for {
+			time.Sleep(pollingFrequency)
+			fmt.Println("Checking download status...")
+
+			statusResp, err := Api.QueuedProcesses().Retrieve(projectId, processID)
+			if err != nil {
+				return err
+			}
+
+			if statusResp.Process.Status == "finished" {
+				fmt.Println("Download ready!")
+				break
+			} else if statusResp.Process.Status == "failed" {
+				return fmt.Errorf("Download process failed")
+			}
+
+			if statusResp.Process.Details.ItemsToProcess != nil && *statusResp.Process.Details.ItemsToProcess > 0 {
+				if statusResp.Process.Details.ItemsProcessed != nil {
+					progress := (float64(*statusResp.Process.Details.ItemsProcessed) / float64(*statusResp.Process.Details.ItemsToProcess)) * 100
+					fmt.Printf("Progress: %.2f%%\n", progress)
+				}
+			}
+		}
+
+		// Get file from response URL
+		fileURL := statusResp.Process.Details.DownloadUrl
+		if fileURL == "" {
+			return fmt.Errorf("Download URL not found")
+		}
+		fmt.Printf("Downloading file: %s\n", fileURL)
+
+		err = downloadAndUnzip(fileURL, downloadDestination, downloadUnzipTo)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println("Download completed successfully.")
+		return nil
+	},
+}
+
+
 func init() {
-	fileCmd.AddCommand(fileListCmd, fileUploadCmd, fileDownloadCmd)
+	fileCmd.AddCommand(fileListCmd, fileUploadCmd, fileDownloadCmd, fileAsyncDownloadCmd)
 	rootCmd.AddCommand(fileCmd)
 
 	// general flags
@@ -258,6 +316,48 @@ func init() {
 	_ = fileDownloadCmd.MarkFlagRequired("format")
 
 	fs.BoolVar(&downloadJsonOnly, "json-only", false, "Should only the API JSON response be returned.")
+	fs.BoolVar(&downloadKeepZip, "keep-zip", false, "Keep or delete ZIP file after being unpacked.")
+	fs.StringVar(&downloadDestination, "dest", "./", "Destination folder for ZIP file.")
+	fs.StringVar(&downloadUnzipTo, "unzip-to", "./", "Unzip to this folder.")
+
+	fs.BoolVar(&downloadOptsOriginalFilenames, "original-filenames", true, "Enable to use original filenames/formats. If set to false (--original-filenames=false) all keys will be export to a single file per language (default true).")
+	fs.StringVar(&downloadOpts.BundleStructure, "bundle-structure", "", "Bundle structure, used when original-filenames set to false. Allowed placeholders are %LANG_ISO%, %LANG_NAME%, %FORMAT% and %PROJECT_NAME%).")
+	fs.StringVar(&downloadOptsDirectoryPrefix, "directory-prefix", "", "Directory prefix in the bundle (used when original-filenames set to true). Allowed placeholder is %LANG_ISO%.")
+	fs.BoolVar(&downloadOpts.AllPlatforms, "all-platforms", false, "Enable to include all platform keys. If disabled, only the keys, associated with the platform of the format will be exported.")
+	fs.StringSliceVar(&downloadOpts.FilterLangs, "filter-langs", []string{}, "List of languages to export. Omit this parameter for all languages.")
+	fs.StringSliceVar(&downloadOpts.FilterData, "filter-data", []string{}, "Narrow export data range. Allowed values are translated or untranslated, reviewed (or reviewed_only), last_reviewed_only, nonfuzzy and nonhidden. (Note: Fuzzy is called Unverified in the editor now).")
+	fs.StringSliceVar(&downloadOpts.FilterFilenames, "filter-filenames", []string{}, "Only keys attributed to selected files will be included. Leave empty for all.")
+	fs.BoolVar(&downloadOpts.AddNewlineEOF, "add-newline-eof", false, "Enable to add new line at end of file (if supported by format).")
+	fs.StringSliceVar(&downloadOpts.CustomTranslationStatusIDs, "custom-translation-status-ids", []string{}, "Only translations attributed to selected custom statuses will be included. Leave empty for all.")
+	fs.StringSliceVar(&downloadOpts.IncludeTags, "include-tags", []string{}, "Narrow export range to tags specified.")
+	fs.StringSliceVar(&downloadOpts.ExcludeTags, "exclude-tags", []string{}, "Specify to exclude keys with these tags.")
+	fs.StringVar(&downloadOpts.ExportSort, "export-sort", "", "Export key sort mode. Allowed value are first_added, last_added, last_updated, a_z, z_a.")
+	fs.StringVar(&downloadOpts.ExportEmptyAs, "export-empty-as", "", "Select how you would like empty translations to be exported. Allowed values are empty to keep empty, base to replace with the base language value, or skip to omit.")
+	fs.BoolVar(&downloadOpts.IncludeComments, "include-comments", false, "Enable to include key comments and description in exported file (if supported by the format).")
+	fs.BoolVar(&downloadOptsIncludeDescription, "include-description", true, "Enable to include key description in exported file (if supported by the format) (default true). Use --include-description=false to disable.")
+	fs.StringSliceVar(&downloadOpts.IncludeProjectIDs, "include-pids", []string{}, "Other projects ID's, which keys should be included with this export.")
+	fs.StringSliceVar(&downloadOpts.Triggers, "triggers", []string{}, "Trigger integration exports (must be enabled in project settings). Allowed values are amazons3, gcs, github, github-enterprise, gitlab, bitbucket, bitbucket-enterprise.")
+	fs.StringSliceVar(&downloadOpts.FilterRepositories, "filter-repositories", []string{}, "Pull requests will be created only for listed repositories (organization/repository format). Leave empty array to process all configured integrations by platform only.")
+	fs.BoolVar(&downloadOptsReplaceBreaks, "replace-breaks", true, "Enable to replace line breaks in exported translations with \\n (default true). Use --replace-breaks=false to disable.")
+	fs.BoolVar(&downloadOpts.DisableReferences, "disable-references", false, "Enable to skip automatic replace of key reference placeholders (e.g. [%key:hello_world%]) with their corresponding translations. In case you have this disabled and are still getting references, make sure the permissions of the projects are configured right.")
+	fs.StringVar(&downloadOpts.PluralFormat, "plural-format", "", "Override the default plural format for the file type. Allowed values are json_string, icu, array, generic, symfony, i18next.")
+	fs.StringVar(&downloadOpts.PlaceholderFormat, "placeholder-format", "", "Override the default placeholder format for the file type. Allowed values are printf, ios, icu, net, symfony, i18n, raw.")
+	fs.StringVar(&downloadOpts.WebhookURL, "webhook-url", "", "Once the export is complete, sends a HTTP POST with the generated bundle URL to the specified URL.")
+	fs.StringVar(&downloadOptsLangMapping, "language-mapping", "", "List of languages to override default iso codes for this export (JSON, see https://lokalise.com/api2docs/curl/#transition-download-files-post).")
+	fs.BoolVar(&downloadOpts.ICUNumeric, "icu-numeric", false, "If enabled, plural forms zero, one and two will be replaced with =0, =1 and =2 respectively. Only works for ICU plural format.")
+	fs.BoolVar(&downloadOpts.EscapePercent, "escape-percent", false, "Only works for printf placeholder format. When enabled, all universal percent placeholders \"[%]\" will be always exported as \"%%\".")
+	fs.StringVar(&downloadOpts.Indentation, "indentation", "", "Provide to override default indentation in supported files. Allowed values are default, 1sp, 2sp, 3sp, 4sp, 5sp, 6sp, 7sp, 8sp and tab.")
+	fs.BoolVar(&downloadOpts.YAMLIncludeRoot, "yaml-include-root", false, "(YAML export only). Enable to include language ISO code as root key.")
+	fs.BoolVar(&downloadOpts.JSONUnescapedSlashes, "json-unescaped-slashes", false, "(JSON export only). Enable to leave forward slashes unescaped.")
+	fs.StringVar(&downloadOpts.JavaPropertiesEncoding, "java-properties-encoding", "", "(Java Properties export only). Encoding for .properties files. Allowed values are utf-8 and latin-1.")
+	fs.StringVar(&downloadOpts.JavaPropertiesSeparator, "java-properties-separator", "", "(Java Properties export only). Separator for keys/values in .properties files. Allowed values are = and :.")
+	fs.StringVar(&downloadOpts.BundleDescription, "bundle-description", "", "Description of the created bundle. Applies to ios_sdk or android_sdk OTA SDK bundles.")
+
+	// Download async
+	fs := fileAsyncDownloadCmd.Flags()
+	fs.StringVar(&downloadOpts.Format, "format", "", "File format (e.g. json, strings, xml). Must be file extension of any of the file formats we support. May also be ios_sdk or android_sdk for respective OTA SDK bundles. (required)")
+	_ = fileAsyncDownloadCmd.MarkFlagRequired("format")
+
 	fs.BoolVar(&downloadKeepZip, "keep-zip", false, "Keep or delete ZIP file after being unpacked.")
 	fs.StringVar(&downloadDestination, "dest", "./", "Destination folder for ZIP file.")
 	fs.StringVar(&downloadUnzipTo, "unzip-to", "./", "Unzip to this folder.")
