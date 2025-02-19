@@ -247,22 +247,20 @@ var fileAsyncDownloadCmd = &cobra.Command{
 	Short: "Asynchronous file download",
 	Long:  "Initiates a file download, polls for completion, and retrieves the file once ready.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("Initializing download...")
-
-		// Call /init endpoint
-		processID, err := Api.Files().InitDownload(projectId, downloadOpts)
+		initResp, err := Api.Files().InitDownload(projectId, downloadOpts)
 		if err != nil {
 			return err
 		}
 
-		fmt.Printf("Process started with ID: %s\n", processID)
+		fmt.Printf("Process started with ID: %s\n", initResp.ProcessID)
 
-		// Polling loop
+		var statusResp *Api.QueuedProcesses().QueuedProcessResponse
+
 		for {
 			time.Sleep(pollingFrequency)
 			fmt.Println("Checking download status...")
 
-			statusResp, err := Api.QueuedProcesses().Retrieve(projectId, processID)
+			statusResp, err = Api.QueuedProcesses().Retrieve(projectId, initResp.ProcessID)
 			if err != nil {
 				return err
 			}
@@ -282,7 +280,6 @@ var fileAsyncDownloadCmd = &cobra.Command{
 			}
 		}
 
-		// Get file from response URL
 		fileURL := statusResp.Process.Details.DownloadUrl
 		if fileURL == "" {
 			return fmt.Errorf("Download URL not found")
@@ -294,7 +291,6 @@ var fileAsyncDownloadCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Println("Download completed successfully.")
 		return nil
 	},
 }
@@ -354,7 +350,7 @@ func init() {
 	fs.StringVar(&downloadOpts.BundleDescription, "bundle-description", "", "Description of the created bundle. Applies to ios_sdk or android_sdk OTA SDK bundles.")
 
 	// Download async
-	fs := fileAsyncDownloadCmd.Flags()
+	fs = fileAsyncDownloadCmd.Flags()
 	fs.StringVar(&downloadOpts.Format, "format", "", "File format (e.g. json, strings, xml). Must be file extension of any of the file formats we support. May also be ios_sdk or android_sdk for respective OTA SDK bundles. (required)")
 	_ = fileAsyncDownloadCmd.MarkFlagRequired("format")
 
