@@ -254,7 +254,7 @@ var fileAsyncDownloadCmd = &cobra.Command{
 
 		fmt.Printf("Process started with ID: %s\n", initResp.ProcessID)
 
-		var statusResp *Api.QueuedProcesses().QueuedProcessResponse
+		var statusResp *lokalise.QueuedProcessResponse
 
 		for {
 			time.Sleep(pollingFrequency)
