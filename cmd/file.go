@@ -247,7 +247,7 @@ var fileAsyncDownloadCmd = &cobra.Command{
 	Short: "Asynchronous file download",
 	Long:  "Exports project files as a .zip bundle. Generated bundle will be available to download for next 24 hours from returned URL. As the bundle is generated and uploaded you would get a response with the URL to the file. Requires Download files admin right.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		initResp, err := Api.Files().InitDownload(projectId, downloadOpts)
+		initResp, err := Api.Files().InitAsyncDownload(projectId, downloadOpts)
 		if err != nil {
 			return err
 		}
