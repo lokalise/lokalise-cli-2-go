@@ -35,6 +35,7 @@ var (
 	downloadDestination string
 	downloadUnzipTo     string
 	downloadKeepZip     bool
+	downloadAsync       bool
 
 	uploadOpts                                    lokalise.FileUpload
 	uploadOptsConvertPlaceholders                 bool
