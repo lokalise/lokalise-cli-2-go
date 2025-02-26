@@ -124,7 +124,7 @@ Only one concurrent request per token is allowed.
 
 ## Changes
 **3.1.0 (Feb 24, 2025)**
-- Added support for async file download command.
+- Added support for async file download.
 
 **3.0.0 (Jun 04, 2024)**
 - Upgraded lokalise-go-api to v4, which includes breaking changes

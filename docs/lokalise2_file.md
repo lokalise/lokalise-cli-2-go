@@ -24,7 +24,6 @@ Lokalise is a project-oriented translation management system, which means we sto
 
 * [lokalise2](lokalise2.md)	 - Lokalise CLI v3.0.1. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 file download](lokalise2_file_download.md)	 - Download files
-* [lokalise2 file async download](lokalise2_file_async_download.md)	 - Download files in ASYNC mode
 * [lokalise2 file list](lokalise2_file_list.md)	 - List all files
 * [lokalise2 file upload](lokalise2_file_upload.md)	 - Upload a file
 
