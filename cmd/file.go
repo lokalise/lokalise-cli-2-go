@@ -296,7 +296,6 @@ func asyncDownload() error {
 	return nil
 }
 
-
 func init() {
 	fileCmd.AddCommand(fileListCmd, fileUploadCmd, fileDownloadCmd)
 	rootCmd.AddCommand(fileCmd)
