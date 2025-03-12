@@ -249,7 +249,7 @@ var fileDownloadCmd = &cobra.Command{
 }
 
 func asyncDownload() error {
-	initResp, err := Api.Files().InitAsyncDownload(projectId, downloadOpts)
+	initResp, err := Api.Files().AsyncDownload(projectId, downloadOpts)
 	if err != nil {
 		return err
 	}

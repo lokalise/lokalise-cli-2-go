@@ -15,7 +15,7 @@ lokalise2 file download [flags]
 ```
       --add-newline-eof                         Enable to add new line at end of file (if supported by format).
       --all-platforms                           Enable to include all platform keys. If disabled, only the keys, associated with the platform of the format will be exported.
-      --async                                   Use async mode for file download. Download link will be active for 24 hours, and json-only param will be ignored if used.
+      --async                                   Use async mode for file download. Download link will be active for 24 hours, and json-only param will be ignored if used. From June 1st, 2025 required for projects with >= 10,000 key-language pairs.
       --bundle-description string               Description of the created bundle. Applies to ios_sdk or android_sdk OTA SDK bundles.
       --bundle-structure string                 Bundle structure, used when original-filenames set to false. Allowed placeholders are %LANG_ISO%, %LANG_NAME%, %FORMAT% and %PROJECT_NAME%).
       --custom-translation-status-ids strings   Only translations attributed to selected custom statuses will be included. Leave empty for all.
