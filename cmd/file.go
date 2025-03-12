@@ -35,6 +35,7 @@ var (
 	downloadDestination string
 	downloadUnzipTo     string
 	downloadKeepZip     bool
+	downloadAsync       bool
 
 	uploadOpts                                    lokalise.FileUpload
 	uploadOptsConvertPlaceholders                 bool
@@ -213,6 +214,11 @@ var fileDownloadCmd = &cobra.Command{
 		downloadOpts.OriginalFilenames = &downloadOptsOriginalFilenames
 		downloadOpts.IncludeDescription = &downloadOptsIncludeDescription
 
+		// async export processed separately
+		if downloadAsync {
+			return asyncDownload()
+		}
+
 		if !downloadJsonOnly {
 			fmt.Print("Requesting... ")
 		}
@@ -242,6 +248,54 @@ var fileDownloadCmd = &cobra.Command{
 	},
 }
 
+func asyncDownload() error {
+	initResp, err := Api.Files().AsyncDownload(projectId, downloadOpts)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Process started with ID: %s\n", initResp.ProcessID)
+
+	var statusResp lokalise.QueuedProcessResponse
+
+	for {
+		time.Sleep(pollingFrequency)
+		fmt.Println("Checking download status...")
+
+		statusResp, err = Api.QueuedProcesses().Retrieve(projectId, initResp.ProcessID)
+		if err != nil {
+			return err
+		}
+
+		if statusResp.Process.Status == "finished" {
+			fmt.Println("Download ready!")
+			break
+		} else if statusResp.Process.Status == "failed" {
+			return fmt.Errorf("Download process failed!")
+		}
+
+		if statusResp.Process.Details.ItemsToProcess != nil && *statusResp.Process.Details.ItemsToProcess > 0 {
+			if statusResp.Process.Details.ItemsProcessed != nil {
+				progress := (float64(*statusResp.Process.Details.ItemsProcessed) / float64(*statusResp.Process.Details.ItemsToProcess)) * 100
+				fmt.Printf("Progress: %.2f%%\n", progress)
+			}
+		}
+	}
+
+	fileURL := statusResp.Process.Details.DownloadUrl
+	if fileURL == "" {
+		return fmt.Errorf("Getting download URL failed.")
+	}
+	fmt.Printf("Downloading file: %s\n", fileURL)
+
+	err = downloadAndUnzip(fileURL, downloadDestination, downloadUnzipTo)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func init() {
 	fileCmd.AddCommand(fileListCmd, fileUploadCmd, fileDownloadCmd)
 	rootCmd.AddCommand(fileCmd)
@@ -257,6 +311,7 @@ func init() {
 	fs.StringVar(&downloadOpts.Format, "format", "", "File format (e.g. json, strings, xml). Must be file extension of any of the file formats we support. May also be ios_sdk or android_sdk for respective OTA SDK bundles. (required)")
 	_ = fileDownloadCmd.MarkFlagRequired("format")
 
+	fs.BoolVar(&downloadAsync, "async", false, "Enable asynchronous file download (download link active for 24 hours, ignoring json-only flag when active).")
 	fs.BoolVar(&downloadJsonOnly, "json-only", false, "Should only the API JSON response be returned.")
 	fs.BoolVar(&downloadKeepZip, "keep-zip", false, "Keep or delete ZIP file after being unpacked.")
 	fs.StringVar(&downloadDestination, "dest", "./", "Destination folder for ZIP file.")
