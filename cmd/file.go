@@ -194,11 +194,6 @@ var fileDownloadCmd = &cobra.Command{
 	Short: "Download files",
 	Long:  "Exports project files as a .zip bundle. Generated bundle will be uploaded to an Amazon S3 bucket, which will be stored there for 12 months available to download. As the bundle is generated and uploaded you would get a response with the URL to the file. Requires Download files admin right.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// Async export processed separately.
-		if downloadAsync {
-    		return asyncDownload()
-    	}
-
 		// preparing options
 		if downloadOptsLangMapping != "" {
 			var mappings []lokalise.LanguageMapping
@@ -218,6 +213,11 @@ var fileDownloadCmd = &cobra.Command{
 		downloadOpts.ReplaceBreaks = &downloadOptsReplaceBreaks
 		downloadOpts.OriginalFilenames = &downloadOptsOriginalFilenames
 		downloadOpts.IncludeDescription = &downloadOptsIncludeDescription
+
+		// async export processed separately
+		if downloadAsync {
+			return asyncDownload()
+		}
 
 		if !downloadJsonOnly {
 			fmt.Print("Requesting... ")

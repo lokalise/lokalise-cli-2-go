@@ -122,8 +122,25 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 
 Only one concurrent request per token is allowed.
 
+## How to bump go-lokalise-api version?
+
+- modify `go.mod` file around line `github.com/lokalise/go-lokalise-api/v4 v4.1.6` by changing version on the end
+- use `go mod tidy` command to update `go.sum` with new version
+- remember to commit `go.mod` and `go.sum` together
+
+## Release new version
+
+- *if you updated go-lokalise-api as well, follow steps from above*
+- update version number in `root.go`
+- update `README.md` changelog
+- merge changes to `main` branch
+- go to [Tags > Releases](https://github.com/lokalise/lokalise-cli-2-go/releases) and click `"Draft a new release"`
+- create new tag with next version, and use `"Generate release notes"` option
+- adjust title/description if needed
+- click `"Publish release"` to run a release
+
 ## Changes
-**3.1.0 (Feb 24, 2025)**
+**3.1.0 (Mar 12, 2025)**
 - Added support for async file download.
 
 **3.0.0 (Jun 04, 2024)**
