@@ -380,6 +380,30 @@ func init() {
 	fs.BoolVar(&uploadOptsUseAutomations, "use-automations", true, "Whether to run automations for this upload.")
 }
 
+func extractContentDispositionFilename(contentDisp string) (string, error) {
+	_, params, err := mime.ParseMediaType(contentDisp)
+	if err != nil {
+		return "", err
+	}
+
+	// Check for RFC 5987 encoding (filename*)
+	if filenameExt, ok := params["filename*"]; ok {
+		// Format: filename*=UTF-8''encoded_filename
+		parts := strings.SplitN(filenameExt, "''", 2)
+		if len(parts) == 2 {
+			return url.QueryUnescape(parts[1]) // Decode URL encoding
+		}
+		return filenameExt, nil // Return as is if split fails
+	}
+
+	// Fallback to standard filename
+	if filename, ok := params["filename"]; ok {
+		return filename, nil
+	}
+
+	return "", fmt.Errorf("filename not found")
+}
+
 func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	u, err := url.Parse(srcUrl)
 	if err != nil {
@@ -401,12 +425,9 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	// Check for Content-Disposition header for filename
 	contentDisposition := resp.Header.Get("Content-Disposition")
 	if contentDisposition != "" {
-		parts := strings.Split(contentDisposition, "filename=")
-		if len(parts) > 1 {
-			trimmedFilename := strings.Trim(parts[1], "\"")
-			if trimmedFilename != "" {
-				fileName = trimmedFilename
-			}
+		contentDispositionFilename, err := extractContentDispositionFilename(contentDisposition)
+		if contentDispositionFilename != "" {
+			fileName = contentDispositionFilename
 		}
 	}
 
