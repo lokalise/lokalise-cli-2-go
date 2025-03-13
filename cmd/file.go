@@ -403,7 +403,7 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	if contentDisposition != "" {
 		parts := strings.Split(contentDisposition, "filename=")
 		if len(parts) > 1 {
-			trimmedFilename := strings.Trim(parts[1], "\" ")
+			trimmedFilename := strings.Trim(parts[1], "\"")
 			if trimmedFilename != "" {
 				fileName = trimmedFilename
 			}
