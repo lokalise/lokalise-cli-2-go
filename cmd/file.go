@@ -386,28 +386,38 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 		return err
 	}
 
+	// Default destination filename from URL
 	fileName := path.Base(u.Path)
-
 	if filepath.Ext(fileName) != ".zip" {
 		fileName += ".zip"
-	}
-
-	zipFile, err := os.Create(path.Join(destPath, fileName))
-	if err != nil {
-		return err
 	}
 
 	resp, err := http.Get(srcUrl)
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	_, err = io.Copy(zipFile, resp.Body)
+	// Check for Content-Disposition header for filename
+	contentDisposition := resp.Header.Get("Content-Disposition")
+	if contentDisposition != "" {
+		parts := strings.Split(contentDisposition, "filename=")
+		if len(parts) > 1 {
+			trimmedFilename := strings.Trim(parts[1], "\" ")
+			if trimmedFilename != "" {
+				fileName = trimmedFilename
+			}
+		}
+	}
+
+	zipFilePath := path.Join(destPath, fileName)
+	zipFile, err := os.Create(zipFilePath)
 	if err != nil {
 		return err
 	}
+	defer zipFile.Close()
 
-	err = resp.Body.Close()
+	_, err = io.Copy(zipFile, resp.Body)
 	if err != nil {
 		return err
 	}
