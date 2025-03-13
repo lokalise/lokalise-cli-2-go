@@ -386,6 +386,11 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	}
 
 	fileName := path.Base(u.Path)
+
+	if filepath.Ext(fileName) != ".zip" {
+		fileName += ".zip"
+	}
+
 	zipFile, err := os.Create(path.Join(destPath, fileName))
 	if err != nil {
 		return err
