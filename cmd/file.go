@@ -254,13 +254,12 @@ func asyncDownload() error {
 		return err
 	}
 
-	fmt.Printf("Process started with ID: %s\n", initResp.ProcessID)
+	fmt.Printf("Download process started with ID: %s\n", initResp.ProcessID)
 
 	var statusResp lokalise.QueuedProcessResponse
 
 	for {
 		time.Sleep(pollingFrequency)
-		fmt.Println("Checking download status...")
 
 		statusResp, err = Api.QueuedProcesses().Retrieve(projectId, initResp.ProcessID)
 		if err != nil {
@@ -271,13 +270,13 @@ func asyncDownload() error {
 			fmt.Println("Download ready!")
 			break
 		} else if statusResp.Process.Status == "failed" {
-			return fmt.Errorf("Download process failed!")
+			return fmt.Errorf("Download failed!")
 		}
 
 		if statusResp.Process.Details.ItemsToProcess != nil && *statusResp.Process.Details.ItemsToProcess > 0 {
 			if statusResp.Process.Details.ItemsProcessed != nil {
 				progress := (float64(*statusResp.Process.Details.ItemsProcessed) / float64(*statusResp.Process.Details.ItemsToProcess)) * 100
-				fmt.Printf("Progress: %.2f%%\n", progress)
+				fmt.Printf("Preparing download: %.2f%%\n", progress)
 			}
 		}
 	}
@@ -381,7 +380,12 @@ func init() {
 }
 
 func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
-	fileName := path.Base(srcUrl)
+	u, err := url.Parse(srcUrl)
+	if err != nil {
+		return err
+	}
+
+	fileName := path.Base(u.Path)
 	zipFile, err := os.Create(path.Join(destPath, fileName))
 	if err != nil {
 		return err
