@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"mime"
 	"fmt"
 	"io"
 	"net/http"
@@ -426,7 +427,7 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	contentDisposition := resp.Header.Get("Content-Disposition")
 	if contentDisposition != "" {
 		contentDispositionFilename, err := extractContentDispositionFilename(contentDisposition)
-		if contentDispositionFilename != "" {
+		if contentDispositionFilename != "" && err == nil {
 			fileName = contentDispositionFilename
 		}
 	}
