@@ -123,6 +123,10 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 Only one concurrent request per token is allowed.
 
 ## Changes
+
+**3.1.1 (Mar 13, 2025)**
+- Fixed issue with too long filename during async download.
+
 **3.1.0 (Mar 12, 2025)**
 - Added support for async file download.
 

@@ -7,7 +7,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -254,13 +256,12 @@ func asyncDownload() error {
 		return err
 	}
 
-	fmt.Printf("Process started with ID: %s\n", initResp.ProcessID)
+	fmt.Printf("Download process started with ID: %s\n", initResp.ProcessID)
 
 	var statusResp lokalise.QueuedProcessResponse
 
 	for {
 		time.Sleep(pollingFrequency)
-		fmt.Println("Checking download status...")
 
 		statusResp, err = Api.QueuedProcesses().Retrieve(projectId, initResp.ProcessID)
 		if err != nil {
@@ -271,13 +272,13 @@ func asyncDownload() error {
 			fmt.Println("Download ready!")
 			break
 		} else if statusResp.Process.Status == "failed" {
-			return fmt.Errorf("Download process failed!")
+			return fmt.Errorf("Download failed!")
 		}
 
 		if statusResp.Process.Details.ItemsToProcess != nil && *statusResp.Process.Details.ItemsToProcess > 0 {
 			if statusResp.Process.Details.ItemsProcessed != nil {
 				progress := (float64(*statusResp.Process.Details.ItemsProcessed) / float64(*statusResp.Process.Details.ItemsToProcess)) * 100
-				fmt.Printf("Progress: %.2f%%\n", progress)
+				fmt.Printf("Preparing download: %.2f%%\n", progress)
 			}
 		}
 	}
@@ -380,24 +381,65 @@ func init() {
 	fs.BoolVar(&uploadOptsUseAutomations, "use-automations", true, "Whether to run automations for this upload.")
 }
 
+func extractContentDispositionFilename(contentDisp string) (string, error) {
+	_, params, err := mime.ParseMediaType(contentDisp)
+	if err != nil {
+		return "", err
+	}
+
+	// Check for RFC 5987 encoding (filename*)
+	if filenameExt, ok := params["filename*"]; ok {
+		// Format: filename*=UTF-8''encoded_filename
+		parts := strings.SplitN(filenameExt, "''", 2)
+		if len(parts) == 2 {
+			return url.QueryUnescape(parts[1]) // Decode URL encoding
+		}
+		return filenameExt, nil // Return as is if split fails
+	}
+
+	// Fallback to standard filename
+	if filename, ok := params["filename"]; ok {
+		return filename, nil
+	}
+
+	return "", fmt.Errorf("filename not found")
+}
+
 func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
-	fileName := path.Base(srcUrl)
-	zipFile, err := os.Create(path.Join(destPath, fileName))
+	u, err := url.Parse(srcUrl)
 	if err != nil {
 		return err
+	}
+
+	// Default destination filename from URL
+	fileName := path.Base(u.Path)
+	if filepath.Ext(fileName) != ".zip" {
+		fileName += ".zip"
 	}
 
 	resp, err := http.Get(srcUrl)
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	_, err = io.Copy(zipFile, resp.Body)
+	// Check for Content-Disposition header for filename
+	contentDisposition := resp.Header.Get("Content-Disposition")
+	if contentDisposition != "" {
+		contentDispositionFilename, err := extractContentDispositionFilename(contentDisposition)
+		if contentDispositionFilename != "" && err == nil {
+			fileName = contentDispositionFilename
+		}
+	}
+
+	zipFilePath := path.Join(destPath, fileName)
+	zipFile, err := os.Create(zipFilePath)
 	if err != nil {
 		return err
 	}
+	defer zipFile.Close()
 
-	err = resp.Body.Close()
+	_, err = io.Copy(zipFile, resp.Body)
 	if err != nil {
 		return err
 	}
