@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"mime"
 	"net/http"
 	"net/url"
@@ -228,6 +229,10 @@ var fileDownloadCmd = &cobra.Command{
 		resp, err := Api.Files().Download(projectId, downloadOpts)
 		if err != nil {
 			return err
+		}
+
+		if resp.Warning != "" {
+			log.Printf("Warning: %s\n", resp.Warning)
 		}
 
 		if !downloadJsonOnly {
