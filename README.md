@@ -138,6 +138,10 @@ Only one concurrent request per token is allowed.
 
 ## Changes
 
+**3.1.2 (Mar 26, 2025)**
+- Added warning for `file download` sync command when 'X-Response-Too-Big' header is present
+- Added error message from process when `file download --async` fails
+
 **3.1.1 (Mar 13, 2025)**
 - Fixed issue with too long filename during async download.
 
