@@ -175,3 +175,71 @@ func TestFileDownload_WithWarning(t *testing.T) {
 	log.SetOutput(originalOutput)
 	defer os.RemoveAll(outputDir)
 }
+
+func TestAsyncFileDownload_Error(t *testing.T) {
+	client, mux, _, teardown := setup()
+	defer teardown()
+
+	outputDir, err := os.MkdirTemp("", "lokalise-cli-2-go-test")
+	if err != nil {
+		t.Fatal("Failed to create temporary directory:", err)
+	}
+
+	mux.HandleFunc(
+		fmt.Sprintf("/api2/projects/%s/files/async-download", testProjectID),
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			testMethod(t, r, "POST")
+			testHeader(t, r, "X-Api-Token", testApiToken)
+			data := `{
+				"format": "json",
+				"original_filenames": true,
+				"include_description": true,
+				"replace_breaks": true
+			}`
+
+			req := new(bytes.Buffer)
+			_ = json.Compact(req, []byte(data))
+
+			testBody(t, r, req.String())
+
+			_, _ = fmt.Fprint(w, `{
+				"process_id": "74738ff5-5367-5958-9aee-98fffdcd1876"
+			}`)
+		})
+
+	mux.HandleFunc(
+		"/api2/projects/"+testProjectID+"/processes/74738ff5-5367-5958-9aee-98fffdcd1876",
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			testMethod(t, r, "GET")
+			testHeader(t, r, "X-Api-Token", testApiToken)
+
+			_, _ = fmt.Fprint(w, `{
+                "project_id": "`+testProjectID+`",
+                "process": {
+                    "status": "failed",
+					"message": "Error by test"
+				}
+			}`)
+		})
+
+	var buf bytes.Buffer
+	originalOutput := log.Writer()
+	log.SetOutput(&buf)
+
+	args := []string{"file", "download", "--async", "--dest=" + outputDir, "--unzip-to=" + outputDir, "--format=json", "--project-id=" + testProjectID}
+	rootCmd.SetArgs(args)
+	fileDownloadCmd.PreRun = func(cmd *cobra.Command, args []string) {
+		Api = client
+	}
+
+	cmdErr := rootCmd.Execute()
+
+	if cmdErr == nil || cmdErr.Error() != "Download failed: Error by test" {
+		t.Errorf("Expected error message to be 'Download failed: Error by test', but got %q", cmdErr)
+	}
+
+	log.SetOutput(originalOutput)
+	defer os.RemoveAll(outputDir)
+}

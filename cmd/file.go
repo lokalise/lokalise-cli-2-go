@@ -277,7 +277,10 @@ func asyncDownload() error {
 			fmt.Println("Download ready!")
 			break
 		} else if statusResp.Process.Status == "failed" {
-			return fmt.Errorf("Download failed!")
+			if statusResp.Process.Message == "" {
+				return fmt.Errorf("Download failed: Please contact support for assistance")
+			}
+			return fmt.Errorf("Download failed: %s", statusResp.Process.Message)
 		}
 
 		if statusResp.Process.Details.ItemsToProcess != nil && *statusResp.Process.Details.ItemsToProcess > 0 {
