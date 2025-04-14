@@ -146,21 +146,42 @@ func repeatableCursorList(
 	list func() (lokalise.CursorPager, error),
 ) error {
 	cursor := ""
+	var firstResp lokalise.CursorPager
+	var err error
 
-	for {
+	// Get the first response
+	forwardCursor(cursor)
+	firstResp, err = list()
+	if err != nil {
+		return err
+	}
+
+	// If there's no next cursor, just print this response and return
+	if !firstResp.HasNextCursor() {
+		printCursorHeader(cursor, "")
+		return printJson(firstResp)
+	}
+
+	// Otherwise, print the first response
+	printCursorHeader(cursor, firstResp.NextCursor())
+	_ = printJson(firstResp)
+
+	// Iterate through the remaining pages
+	for firstResp.HasNextCursor() {
+		cursor = firstResp.NextCursor()
 		forwardCursor(cursor)
 		resp, err := list()
 		if err != nil {
 			return err
 		}
 
-		printCursorHeader(cursor, resp.NextCursor())
-		_ = printJson(resp)
-
-		if !resp.HasNextCursor() {
-			break
+		// Only print non-empty responses
+		if resp != nil {
+			printCursorHeader(cursor, resp.NextCursor())
+			_ = printJson(resp)
 		}
-		cursor = resp.NextCursor()
+
+		firstResp = resp
 	}
 
 	return nil
