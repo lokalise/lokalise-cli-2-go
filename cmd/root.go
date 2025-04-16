@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	Version          = "3.1.2"
+	Version          = "3.1.3"
 	DefaultPageLimit = 5000
 )
 
@@ -156,13 +156,12 @@ func repeatableCursorList(
 		return err
 	}
 
-	// If there's no next cursor, just print this response and return
-	if !firstResp.HasNextCursor() {
-		printCursorHeader(cursor, "")
-		return printJson(firstResp)
+	// If the first response is empty, return early
+	if firstResp == nil {
+		return nil
 	}
 
-	// Otherwise, print the first response
+	// Print the first response
 	printCursorHeader(cursor, firstResp.NextCursor())
 	_ = printJson(firstResp)
 
@@ -175,13 +174,19 @@ func repeatableCursorList(
 			return err
 		}
 
-		// Only print non-empty responses
-		if resp != nil {
-			printCursorHeader(cursor, resp.NextCursor())
-			_ = printJson(resp)
+		// Skip empty responses
+		if resp == nil {
+			break
 		}
 
-		firstResp = resp
+		// Only print and continue if there's a next cursor
+		if resp.HasNextCursor() {
+			printCursorHeader(cursor, resp.NextCursor())
+			_ = printJson(resp)
+			firstResp = resp
+		} else {
+			break
+		}
 	}
 
 	return nil
