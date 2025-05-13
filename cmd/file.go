@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const pollingFrequency = 2 * time.Second
+const pollingFrequency = time.Duration(1.2 * float64(time.Second))
 
 var (
 	filterFilename string

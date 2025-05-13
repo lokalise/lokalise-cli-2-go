@@ -138,6 +138,9 @@ Only one concurrent request per token is allowed.
 
 ## Changes
 
+**3.1.4 (May 13, 2025)**
+- Improved speed for async export status check
+
 **3.1.3 (Apr 16, 2025)**
 - Fixed empty object returned with key/translation lists endpoint
 - 
