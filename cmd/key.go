@@ -21,9 +21,16 @@ var (
 
 	useAutomations bool
 
-	bulkDeleteKeyIds []int
-	bulkUpdateKeys   string
-	bulkCreateKeys   string
+	// bulk-delete
+	bulkDeleteKeyIds []int64
+
+	// bulk-update
+	bulkUpdateKeys           string
+	bulkUpdateUseAutomations bool
+
+	// bulk-create
+	bulkCreateKeys           string
+	bulkCreateUseAutomations bool
 )
 
 // keyCmd represents the key command
@@ -137,12 +144,7 @@ var keyBulkDeleteCmd = &cobra.Command{
 	Short: "Delete multiple keys",
 	Long:  "Deletes multiple keys from the project. Requires Manage keys admin right.",
 	RunE: func(*cobra.Command, []string) error {
-		var keyIDs []int64
-		for _, id := range bulkDeleteKeyIds {
-			keyIDs = append(keyIDs, int64(id))
-		}
-
-		resp, err := Api.Keys().BulkDelete(projectId, keyIDs)
+		resp, err := Api.Keys().BulkDelete(projectId, bulkDeleteKeyIds)
 		if err != nil {
 			return err
 		}
@@ -163,7 +165,7 @@ var keyBulkUpdateCmd = &cobra.Command{
 		resp, err := Api.Keys().BulkUpdate(
 			projectId,
 			keys,
-			lokalise.WithAutomations(useAutomations),
+			lokalise.WithAutomations(bulkUpdateUseAutomations),
 		)
 		if err != nil {
 			return err
@@ -185,7 +187,7 @@ var keyBulkCreateCmd = &cobra.Command{
 		resp, err := Api.Keys().Create(
 			projectId,
 			keys,
-			lokalise.WithAutomations(useAutomations),
+			lokalise.WithAutomations(bulkCreateUseAutomations),
 		)
 		if err != nil {
 			return err
@@ -263,7 +265,7 @@ func init() {
 	flagKeyId(keyDeleteCmd)
 
 	// Bulk delete
-	keyBulkDeleteCmd.Flags().IntSliceVar(&bulkDeleteKeyIds, "key-ids", []int{},
+	keyBulkDeleteCmd.Flags().Int64SliceVar(&bulkDeleteKeyIds, "key-ids", []int64{},
 		"Comma-separated list of key IDs to delete (required).")
 	_ = keyBulkDeleteCmd.MarkFlagRequired("key-ids")
 
@@ -272,7 +274,7 @@ func init() {
 	fs.StringVar(&bulkUpdateKeys, "keys", "",
 		"JSON array of key objects to update. Each object must contain key_id and fields to update (required).")
 	_ = keyBulkUpdateCmd.MarkFlagRequired("keys")
-	fs.BoolVar(&useAutomations, "use-automations", true,
+	fs.BoolVar(&bulkUpdateUseAutomations, "use-automations", true,
 		"Whether to run automations on the updated key translations.")
 
 	// Bulk create
@@ -280,7 +282,7 @@ func init() {
 	fs.StringVar(&bulkCreateKeys, "keys", "",
 		"JSON array of key objects to create. Each object should contain key_name, platforms, and other fields (required).")
 	_ = keyBulkCreateCmd.MarkFlagRequired("keys")
-	fs.BoolVar(&useAutomations, "use-automations", true,
+	fs.BoolVar(&bulkCreateUseAutomations, "use-automations", true,
 		"Whether to run automations on the new key translations.")
 }
 

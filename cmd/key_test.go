@@ -55,6 +55,11 @@ func TestKeyBulkUpdate(t *testing.T) {
 			testMethod(t, r, "PUT")
 			testHeader(t, r, "X-Api-Token", testApiToken)
 
+			data := `{"keys":[{"key_id":123,"description":"Updated description","tags":["updated"]}],"use_automations":true}`
+			req := new(bytes.Buffer)
+			_ = json.Compact(req, []byte(data))
+			testBody(t, r, req.String())
+
 			_, _ = fmt.Fprint(w, `{
 				"project_id": "`+testProjectID+`",
 				"keys": [
@@ -100,6 +105,11 @@ func TestKeyBulkCreate(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			testMethod(t, r, "POST")
 			testHeader(t, r, "X-Api-Token", testApiToken)
+
+			data := `{"keys":[{"key_name":"welcome","platforms":["web"],"tags":[]},{"key_name":"goodbye","platforms":["ios","android"],"tags":["v2"]}],"use_automations":true}`
+			req := new(bytes.Buffer)
+			_ = json.Compact(req, []byte(data))
+			testBody(t, r, req.String())
 
 			_, _ = fmt.Fprint(w, `{
 				"project_id": "`+testProjectID+`",
