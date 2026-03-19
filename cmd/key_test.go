@@ -162,6 +162,74 @@ func TestKeyBulkCreate(t *testing.T) {
 	}
 }
 
+func TestKeyBulkUpdate_UseAutomationsFalse(t *testing.T) {
+	client, mux, _, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(
+		fmt.Sprintf("/api2/projects/%s/keys", testProjectID),
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			testMethod(t, r, "PUT")
+			testHeader(t, r, "X-Api-Token", testApiToken)
+
+			data := `{"keys":[{"key_id":123,"description":"Updated"}],"use_automations":false}`
+			req := new(bytes.Buffer)
+			_ = json.Compact(req, []byte(data))
+			testBody(t, r, req.String())
+
+			_, _ = fmt.Fprint(w, `{
+				"project_id": "`+testProjectID+`",
+				"keys": [{"key_id": 123}]
+			}`)
+		})
+
+	keysJSON := `[{"key_id":123,"description":"Updated"}]`
+	args := []string{"key", "bulk-update", "--keys=" + keysJSON, "--project-id=" + testProjectID, "--use-automations=false"}
+	rootCmd.SetArgs(args)
+	keyBulkUpdateCmd.PreRun = func(cmd *cobra.Command, args []string) {
+		Api = client
+	}
+
+	if err := rootCmd.Execute(); err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+}
+
+func TestKeyBulkCreate_UseAutomationsFalse(t *testing.T) {
+	client, mux, _, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(
+		fmt.Sprintf("/api2/projects/%s/keys", testProjectID),
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			testMethod(t, r, "POST")
+			testHeader(t, r, "X-Api-Token", testApiToken)
+
+			data := `{"keys":[{"key_name":"welcome","platforms":["web"],"tags":[]}],"use_automations":false}`
+			req := new(bytes.Buffer)
+			_ = json.Compact(req, []byte(data))
+			testBody(t, r, req.String())
+
+			_, _ = fmt.Fprint(w, `{
+				"project_id": "`+testProjectID+`",
+				"keys": [{"key_id": 789}]
+			}`)
+		})
+
+	keysJSON := `[{"key_name":"welcome","platforms":["web"],"tags":[]}]`
+	args := []string{"key", "bulk-create", "--keys=" + keysJSON, "--project-id=" + testProjectID, "--use-automations=false"}
+	rootCmd.SetArgs(args)
+	keyBulkCreateCmd.PreRun = func(cmd *cobra.Command, args []string) {
+		Api = client
+	}
+
+	if err := rootCmd.Execute(); err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+}
+
 func TestKeyBulkUpdate_InvalidJSON(t *testing.T) {
 	client, _, _, teardown := setup()
 	defer teardown()
@@ -191,5 +259,37 @@ func TestKeyBulkCreate_InvalidJSON(t *testing.T) {
 	err := rootCmd.Execute()
 	if err == nil {
 		t.Error("Expected error for invalid JSON, got nil")
+	}
+}
+
+func TestKeyBulkUpdate_EmptyKeys(t *testing.T) {
+	client, _, _, teardown := setup()
+	defer teardown()
+
+	args := []string{"key", "bulk-update", "--keys=[]", "--project-id=" + testProjectID}
+	rootCmd.SetArgs(args)
+	keyBulkUpdateCmd.PreRun = func(cmd *cobra.Command, args []string) {
+		Api = client
+	}
+
+	err := rootCmd.Execute()
+	if err == nil {
+		t.Error("Expected error for empty keys, got nil")
+	}
+}
+
+func TestKeyBulkCreate_EmptyKeys(t *testing.T) {
+	client, _, _, teardown := setup()
+	defer teardown()
+
+	args := []string{"key", "bulk-create", "--keys=[]", "--project-id=" + testProjectID}
+	rootCmd.SetArgs(args)
+	keyBulkCreateCmd.PreRun = func(cmd *cobra.Command, args []string) {
+		Api = client
+	}
+
+	err := rootCmd.Execute()
+	if err == nil {
+		t.Error("Expected error for empty keys, got nil")
 	}
 }

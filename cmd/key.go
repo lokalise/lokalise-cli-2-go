@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/lokalise/go-lokalise-api/v4"
 	"github.com/spf13/cobra"
@@ -161,6 +162,9 @@ var keyBulkUpdateCmd = &cobra.Command{
 		if err := json.Unmarshal([]byte(bulkUpdateKeys), &keys); err != nil {
 			return err
 		}
+		if len(keys) == 0 {
+			return errors.New("--keys must contain at least one key object")
+		}
 
 		resp, err := Api.Keys().BulkUpdate(
 			projectId,
@@ -182,6 +186,9 @@ var keyBulkCreateCmd = &cobra.Command{
 		var keys []lokalise.NewKey
 		if err := json.Unmarshal([]byte(bulkCreateKeys), &keys); err != nil {
 			return err
+		}
+		if len(keys) == 0 {
+			return errors.New("--keys must contain at least one key object")
 		}
 
 		resp, err := Api.Keys().Create(
