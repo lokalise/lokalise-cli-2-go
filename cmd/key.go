@@ -145,6 +145,9 @@ var keyBulkDeleteCmd = &cobra.Command{
 	Short: "Delete multiple keys",
 	Long:  "Deletes multiple keys from the project. Requires Manage keys admin right.",
 	RunE: func(*cobra.Command, []string) error {
+		if len(bulkDeleteKeyIds) == 0 {
+			return errors.New("--key-ids must contain at least one key ID")
+		}
 		resp, err := Api.Keys().BulkDelete(projectId, bulkDeleteKeyIds)
 		if err != nil {
 			return err

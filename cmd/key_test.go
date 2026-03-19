@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -243,6 +244,8 @@ func TestKeyBulkUpdate_InvalidJSON(t *testing.T) {
 	err := rootCmd.Execute()
 	if err == nil {
 		t.Error("Expected error for invalid JSON, got nil")
+	} else if !strings.Contains(err.Error(), "invalid character") {
+		t.Errorf("Expected JSON parse error, got: %v", err)
 	}
 }
 
@@ -259,6 +262,27 @@ func TestKeyBulkCreate_InvalidJSON(t *testing.T) {
 	err := rootCmd.Execute()
 	if err == nil {
 		t.Error("Expected error for invalid JSON, got nil")
+	} else if !strings.Contains(err.Error(), "invalid character") {
+		t.Errorf("Expected JSON parse error, got: %v", err)
+	}
+}
+
+func TestKeyBulkDelete_EmptyKeyIds(t *testing.T) {
+	client, _, _, teardown := setup()
+	defer teardown()
+
+	// Reset package-level var that may retain state from prior tests
+	bulkDeleteKeyIds = []int64{}
+
+	args := []string{"key", "bulk-delete", "--key-ids=", "--project-id=" + testProjectID}
+	rootCmd.SetArgs(args)
+	keyBulkDeleteCmd.PreRun = func(cmd *cobra.Command, args []string) {
+		Api = client
+	}
+
+	err := rootCmd.Execute()
+	if err == nil {
+		t.Error("Expected error for empty key-ids, got nil")
 	}
 }
 
@@ -275,6 +299,8 @@ func TestKeyBulkUpdate_EmptyKeys(t *testing.T) {
 	err := rootCmd.Execute()
 	if err == nil {
 		t.Error("Expected error for empty keys, got nil")
+	} else if err.Error() != "--keys must contain at least one key object" {
+		t.Errorf("Expected empty keys error, got: %v", err)
 	}
 }
 
@@ -291,5 +317,8 @@ func TestKeyBulkCreate_EmptyKeys(t *testing.T) {
 	err := rootCmd.Execute()
 	if err == nil {
 		t.Error("Expected error for empty keys, got nil")
+	} else if err.Error() != "--keys must contain at least one key object" {
+		t.Errorf("Expected empty keys error, got: %v", err)
 	}
 }
+
