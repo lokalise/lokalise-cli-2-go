@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/lokalise/go-lokalise-api/v4"
+	"github.com/lokalise/go-lokalise-api/v5"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"

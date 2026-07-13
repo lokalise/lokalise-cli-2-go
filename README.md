@@ -138,6 +138,10 @@ Only one concurrent request per token is allowed.
 
 ## Changes
 
+**3.1.5 (Jul 13, 2026)**
+- Fixed `details` object empty when retrieving a process for an uploaded file
+- Bumped `go-lokalise-api` to v5.1.0
+
 **3.1.4 (May 13, 2025)**
 - Improved speed for async export status check
 

@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/lokalise/go-lokalise-api/v4"
+	"github.com/lokalise/go-lokalise-api/v5"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"github.com/spf13/pflag"
@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	Version          = "3.1.4"
+	Version          = "3.1.5"
 	DefaultPageLimit = 5000
 )
 

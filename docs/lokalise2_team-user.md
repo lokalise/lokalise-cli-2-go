@@ -18,7 +18,7 @@ Manage team users
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.0.1. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 team-user delete](lokalise2_team-user_delete.md)	 - Delete a team user
 * [lokalise2 team-user list](lokalise2_team-user_list.md)	 - List all team users
 * [lokalise2 team-user retrieve](lokalise2_team-user_retrieve.md)	 - Retrieves a team user

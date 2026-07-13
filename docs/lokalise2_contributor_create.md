@@ -19,13 +19,12 @@ lokalise2 contributor create [flags]
 ### Options
 
 ```
-      --admin-rights strings   Custom list of user permissions. Possible values are upload, activity, download, settings, statistics, keys, screenshots, contributors, languages. Omitted or empty parameter will set default admin rights for user role.
+      --admin-rights strings   Custom list of user permissions. Possible values are activity, contributors, branches_create, branches_main_modify, branches_merge, custom_status_modify, download, glossary, glossary_edit, glossary_delete, keys, manage_languages, review, screenshots, settings, statistics, tasks, upload. Omitted or empty parameter will set no rights for the user.
       --email string           E-mail (required).
       --fullname string        Full name (only valid for inviting users, who previously did not have an account in Lokalise).
   -h, --help                   help for create
-      --is-admin               Whether the user has Admin access to the project.
-      --is-reviewer            Whether the user has Reviewer access to the project.
       --languages string       List of languages, accessible to the user. Required if is_admin is set to false (JSON, see https://lokalise.com/api2docs/curl/#transition-create-contributors-post).
+      --role-id int            Permission template id for the contributor. By setting this admin_rights will be ignored and a template will be assigned with predefined permission set.
 ```
 
 ### Options inherited from parent commands

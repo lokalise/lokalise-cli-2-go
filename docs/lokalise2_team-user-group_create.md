@@ -13,12 +13,11 @@ lokalise2 team-user-group create [flags]
 ### Options
 
 ```
-      --admin-rights strings   List of group administrative permissions. Required if group has admin rights.
+      --admin-rights strings   List of group permissions.
   -h, --help                   help for create
-      --is-admin               Whether the group has Admin access to the project (required).
-      --is-reviewer            Whether the group has reviewer access to the project (required).
       --languages string       List of languages. Required if group doesn't have admin rights. JSON, see https://lokalise.com/api2docs/curl/#transition-create-a-group-post
       --name string            Name of the group (required).
+      --role-id int            Permission template id for the contributor. By setting this admin-rights will be ignored and a template will be assigned with predefined permission set.
 ```
 
 ### Options inherited from parent commands
