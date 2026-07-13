@@ -1,6 +1,6 @@
 ## lokalise2
 
-Lokalise CLI v3.0.1. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 
 ### Options
 
@@ -20,6 +20,7 @@ Lokalise CLI v3.0.1. Read the docs at https://github.com/lokalise/lokalise-cli-2
 * [lokalise2 language](lokalise2_language.md)	 - Manage languages
 * [lokalise2 order](lokalise2_order.md)	 - Manage orders
 * [lokalise2 payment-card](lokalise2_payment-card.md)	 - Manage payment cards
+* [lokalise2 permission-template](lokalise2_permission-template.md)	 - Manage permission templates for a team
 * [lokalise2 project](lokalise2_project.md)	 - Manage projects
 * [lokalise2 queued-process](lokalise2_queued-process.md)	 - Manage queued processes
 * [lokalise2 screenshot](lokalise2_screenshot.md)	 - Manage screenshots

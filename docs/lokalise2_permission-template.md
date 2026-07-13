@@ -1,15 +1,15 @@
-## lokalise2 translation-provider
+## lokalise2 permission-template
 
-List translation providers
+Manage permission templates for a team
 
 ### Synopsis
 
-Translation providers are used for translation orders.
+Manage all templates for permissions inside a team.
 
 ### Options
 
 ```
-  -h, --help          help for translation-provider
+  -h, --help          help for permission-template
       --team-id int   A unique identifier of the team (required).
 ```
 
@@ -23,6 +23,5 @@ Translation providers are used for translation orders.
 ### SEE ALSO
 
 * [lokalise2](lokalise2.md)	 - Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
-* [lokalise2 translation-provider list](lokalise2_translation-provider_list.md)	 - List all providers
-* [lokalise2 translation-provider retrieve](lokalise2_translation-provider_retrieve.md)	 - Retrieve a provider
+* [lokalise2 permission-template list](lokalise2_permission-template_list.md)	 - List permission templates
 

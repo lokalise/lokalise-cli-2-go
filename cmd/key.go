@@ -3,7 +3,7 @@ package cmd
 import (
 	"encoding/json"
 
-	"github.com/lokalise/go-lokalise-api/v4"
+	"github.com/lokalise/go-lokalise-api/v5"
 	"github.com/spf13/cobra"
 )
 
@@ -18,6 +18,18 @@ var (
 	newKeyFilenames    string
 	newKeyComments     []string
 	newKeyTranslations string
+
+	newKeyDescription      string
+	newKeyPlatforms        []string
+	newKeyTags             []string
+	newKeyIsPlural         bool
+	newKeyPluralName       string
+	newKeyIsHidden         bool
+	newKeyIsArchived       bool
+	newKeyContext          string
+	newKeyCharLimit        int
+	newKeyCustomAttributes string
+	newKeyMergeTags        bool
 
 	useAutomations bool
 )
@@ -155,39 +167,39 @@ func init() {
 	fs = keyCreateCmd.Flags()
 	fs.StringVar(&newKeyName, "key-name", "", "Key name. For projects with enabled Per-platform key names, pass JSON object with included ios, android, web and other string attributes. (JSON, required).")
 	_ = keyCreateCmd.MarkFlagRequired("key-name")
-	fs.StringVar(&newKey.Description, "description", "", "Description of the key.")
-	fs.StringSliceVar(&newKey.Platforms, "platforms", []string{}, "List of platforms, enabled for this key (required).")
+	fs.StringVar(&newKeyDescription, "description", "", "Description of the key.")
+	fs.StringSliceVar(&newKeyPlatforms, "platforms", []string{}, "List of platforms, enabled for this key (required).")
 	_ = keyCreateCmd.MarkFlagRequired("platforms")
 	fs.StringVar(&newKeyFilenames, "filenames", "", "An object containing key filename attribute for each platform. (JSON, see https://lokalise.com/api2docs/curl/#transition-create-keys-post).")
-	fs.StringSliceVar(&newKey.Tags, "tags", []string{}, "List of tags for this keys.")
+	fs.StringSliceVar(&newKeyTags, "tags", []string{}, "List of tags for this keys.")
 	fs.StringSliceVar(&newKeyComments, "comments", []string{}, "List of comments for this key.")
 	// screenshots skipped
 	fs.StringVar(&newKeyTranslations, "translations", "", "Translations for all languages. (JSON, see https://lokalise.com/api2docs/curl/#transition-create-keys-post).")
-	fs.BoolVar(&newKey.IsPlural, "is-plural", false, "Whether this key is plural.")
-	fs.StringVar(&newKey.PluralName, "plural-name", "", "Optional custom plural name (used in some formats).")
-	fs.BoolVar(&newKey.IsHidden, "is-hidden", false, "Whether this key is hidden from non-admins (translators).")
-	fs.BoolVar(&newKey.IsArchived, "is-archived", false, "Whether this key is archived.")
-	fs.StringVar(&newKey.Context, "context", "", "Optional context of the key (used with some file formats).")
-	fs.IntVar(&newKey.CharLimit, "char-limit", 0, "Maximum allowed number of characters in translations for this key.")
-	fs.StringVar(&newKey.CustomAttributes, "custom-attributes", "", "JSON containing custom attributes (if any).")
+	fs.BoolVar(&newKeyIsPlural, "is-plural", false, "Whether this key is plural.")
+	fs.StringVar(&newKeyPluralName, "plural-name", "", "Optional custom plural name (used in some formats).")
+	fs.BoolVar(&newKeyIsHidden, "is-hidden", false, "Whether this key is hidden from non-admins (translators).")
+	fs.BoolVar(&newKeyIsArchived, "is-archived", false, "Whether this key is archived.")
+	fs.StringVar(&newKeyContext, "context", "", "Optional context of the key (used with some file formats).")
+	fs.IntVar(&newKeyCharLimit, "char-limit", 0, "Maximum allowed number of characters in translations for this key.")
+	fs.StringVar(&newKeyCustomAttributes, "custom-attributes", "", "JSON containing custom attributes (if any).")
 	fs.BoolVar(&useAutomations, "use-automations", true, "Whether to run automations on the new key translations.")
 
 	// Update
 	flagKeyId(keyUpdateCmd)
 	fs = keyUpdateCmd.Flags()
 	fs.StringVar(&newKeyName, "key-name", "", "Key identifier. For projects with enabled Per-platform key names, pass `object` with included ios, android, web and other string attributes.")
-	fs.StringVar(&newKey.Description, "description", "", "Description of the key.")
-	fs.StringSliceVar(&newKey.Platforms, "platforms", []string{}, "List of platforms, enabled for this key. Possible values are ios, android, web and other.")
+	fs.StringVar(&newKeyDescription, "description", "", "Description of the key.")
+	fs.StringSliceVar(&newKeyPlatforms, "platforms", []string{}, "List of platforms, enabled for this key. Possible values are ios, android, web and other.")
 	fs.StringVar(&newKeyFilenames, "filenames", "", "An object containing key filename attribute for each platform. (JSON, see https://lokalise.com/api2docs/curl/#transition-update-a-key-put).")
-	fs.StringSliceVar(&newKey.Tags, "tags", []string{}, "List of tags for this keys.")
-	fs.BoolVar(&newKey.MergeTags, "merge-tags", false, "Enable to merge specified tags with the current tags attached to the key.")
-	fs.BoolVar(&newKey.IsPlural, "is-plural", false, "Whether this key is plural.")
-	fs.StringVar(&newKey.PluralName, "plural-name", "", "Optional custom plural name (used in some formats).")
-	fs.BoolVar(&newKey.IsHidden, "is-hidden", false, "Whether this key is hidden from non-admins (translators).")
-	fs.BoolVar(&newKey.IsArchived, "is-archived", false, "Whether this key is archived.")
-	fs.StringVar(&newKey.Context, "context", "", "Optional context of the key (used with some file formats).")
-	fs.IntVar(&newKey.CharLimit, "char-limit", 0, "Maximum allowed number of characters in translations for this key.")
-	fs.StringVar(&newKey.CustomAttributes, "custom-attributes", "", "JSON containing custom attributes (if any).")
+	fs.StringSliceVar(&newKeyTags, "tags", []string{}, "List of tags for this keys.")
+	fs.BoolVar(&newKeyMergeTags, "merge-tags", false, "Enable to merge specified tags with the current tags attached to the key.")
+	fs.BoolVar(&newKeyIsPlural, "is-plural", false, "Whether this key is plural.")
+	fs.StringVar(&newKeyPluralName, "plural-name", "", "Optional custom plural name (used in some formats).")
+	fs.BoolVar(&newKeyIsHidden, "is-hidden", false, "Whether this key is hidden from non-admins (translators).")
+	fs.BoolVar(&newKeyIsArchived, "is-archived", false, "Whether this key is archived.")
+	fs.StringVar(&newKeyContext, "context", "", "Optional context of the key (used with some file formats).")
+	fs.IntVar(&newKeyCharLimit, "char-limit", 0, "Maximum allowed number of characters in translations for this key.")
+	fs.StringVar(&newKeyCustomAttributes, "custom-attributes", "", "JSON containing custom attributes (if any).")
 
 	// retrieve, delete
 	flagKeyId(keyRetrieveCmd)
@@ -216,10 +228,46 @@ func newKeyFillFields() error {
 	}
 
 	if newKeyTranslations != "" {
-		err := json.Unmarshal([]byte(newKeyTranslations), &newKey.Translations)
+		var translations []lokalise.NewTranslation
+		err := json.Unmarshal([]byte(newKeyTranslations), &translations)
 		if err != nil {
 			return err
 		}
+		newKey.Translations = &translations
+	}
+
+	if newKeyDescription != "" {
+		newKey.Description = &newKeyDescription
+	}
+	if len(newKeyPlatforms) > 0 {
+		newKey.Platforms = &newKeyPlatforms
+	}
+	if len(newKeyTags) > 0 {
+		newKey.Tags = &newKeyTags
+	}
+	if newKeyIsPlural {
+		newKey.IsPlural = &newKeyIsPlural
+	}
+	if newKeyPluralName != "" {
+		newKey.PluralName = &newKeyPluralName
+	}
+	if newKeyIsHidden {
+		newKey.IsHidden = &newKeyIsHidden
+	}
+	if newKeyIsArchived {
+		newKey.IsArchived = &newKeyIsArchived
+	}
+	if newKeyContext != "" {
+		newKey.Context = &newKeyContext
+	}
+	if newKeyCharLimit != 0 {
+		newKey.CharLimit = &newKeyCharLimit
+	}
+	if newKeyCustomAttributes != "" {
+		newKey.CustomAttributes = &newKeyCustomAttributes
+	}
+	if newKeyMergeTags {
+		newKey.MergeTags = &newKeyMergeTags
 	}
 
 	return nil
