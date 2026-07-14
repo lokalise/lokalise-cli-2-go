@@ -18,6 +18,7 @@ lokalise2 order create [flags]
       --dry-run                        Return the response without actually placing an order. Useful for price estimation. The card will not be charged.
   -h, --help                           help for create
       --keys ints                      List of keys identifiers, included in the order (required).
+      --payment-method string          Payment method to use for the order. Available values are credit_card, team_credit. (default "credit_card")
       --project-id string              Project identifier. (required).
       --provider-slug string           Translation provider slug (required).
       --source-language-iso string     Source language code of the order (required).

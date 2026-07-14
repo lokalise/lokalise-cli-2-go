@@ -78,6 +78,7 @@ func init() {
 	_ = orderCreateCmd.MarkFlagRequired("project-id")
 	fs.Int64Var(&newOrder.CardID, "card-id", 0, "Card identifier that should be used for payment. (required).")
 	_ = orderCreateCmd.MarkFlagRequired("card-id")
+	fs.StringVar(&newOrder.PaymentMethod, "payment-method", "credit_card", "Payment method to use for the order. Available values are credit_card, team_credit.")
 	fs.StringVar(&newOrder.Briefing, "briefing", "", "Order briefing (required).")
 	_ = orderCreateCmd.MarkFlagRequired("briefing")
 	fs.StringVar(&newOrder.SourceLangISO, "source-language-iso", "", "Source language code of the order (required).")
