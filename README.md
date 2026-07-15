@@ -50,7 +50,7 @@ Docker image could be downloaded from the following registries:
 - [GitHub Container Registry](https://github.com/orgs/lokalise/packages/container/package/lokalise-cli-2)
 
 ## Tokens
-All endpoints require the `--token` parameter. You can generate your API token in [Personal profile](https://lokalise.com/profile). Note, the token is personal and mimics your access level on team and project level. If you require a user-independent API token, create a separate user in your team (e.g. API user), set proper access rights and use this user's token.
+All endpoints require the `--token` parameter. You can generate your API token in [Personal profile](https://app.lokalise.com/profile#apitokens). Note, the token is personal and mimics your access level on team and project level. If you require a user-independent API token, create a separate user in your team (e.g. API user), set proper access rights and use this user's token.
 
 ## Passing the flags
 
