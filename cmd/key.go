@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/lokalise/go-lokalise-api/v5"
 	"github.com/spf13/cobra"
@@ -32,6 +33,17 @@ var (
 	newKeyMergeTags        bool
 
 	useAutomations bool
+
+	// bulk-delete
+	bulkDeleteKeyIds []int64
+
+	// bulk-update
+	bulkUpdateKeys           string
+	bulkUpdateUseAutomations bool
+
+	// bulk-create
+	bulkCreateKeys           string
+	bulkCreateUseAutomations bool
 )
 
 // keyCmd represents the key command
@@ -140,8 +152,75 @@ var keyDeleteCmd = &cobra.Command{
 	},
 }
 
+var keyBulkDeleteCmd = &cobra.Command{
+	Use:   "bulk-delete",
+	Short: "Delete multiple keys",
+	Long:  "Deletes multiple keys from the project. Requires Manage keys admin right.",
+	RunE: func(*cobra.Command, []string) error {
+		if len(bulkDeleteKeyIds) == 0 {
+			return errors.New("--key-ids must contain at least one key ID")
+		}
+		resp, err := Api.Keys().BulkDelete(projectId, bulkDeleteKeyIds)
+		if err != nil {
+			return err
+		}
+		return printJson(resp)
+	},
+}
+
+var keyBulkUpdateCmd = &cobra.Command{
+	Use:   "bulk-update",
+	Short: "Update multiple keys",
+	Long:  "Updates multiple keys in the project. Requires Manage keys admin right.",
+	RunE: func(*cobra.Command, []string) error {
+		var keys []lokalise.BulkUpdateKey
+		if err := json.Unmarshal([]byte(bulkUpdateKeys), &keys); err != nil {
+			return err
+		}
+		if len(keys) == 0 {
+			return errors.New("--keys must contain at least one key object")
+		}
+
+		resp, err := Api.Keys().BulkUpdate(
+			projectId,
+			keys,
+			lokalise.WithAutomations(bulkUpdateUseAutomations),
+		)
+		if err != nil {
+			return err
+		}
+		return printJson(resp)
+	},
+}
+
+var keyBulkCreateCmd = &cobra.Command{
+	Use:   "bulk-create",
+	Short: "Create multiple keys",
+	Long:  "Creates multiple keys in the project from a JSON array.",
+	RunE: func(*cobra.Command, []string) error {
+		var keys []lokalise.NewKey
+		if err := json.Unmarshal([]byte(bulkCreateKeys), &keys); err != nil {
+			return err
+		}
+		if len(keys) == 0 {
+			return errors.New("--keys must contain at least one key object")
+		}
+
+		resp, err := Api.Keys().Create(
+			projectId,
+			keys,
+			lokalise.WithAutomations(bulkCreateUseAutomations),
+		)
+		if err != nil {
+			return err
+		}
+		return printJson(resp)
+	},
+}
+
 func init() {
-	keyCmd.AddCommand(keyListCmd, keyCreateCmd, keyRetrieveCmd, keyUpdateCmd, keyDeleteCmd)
+	keyCmd.AddCommand(keyListCmd, keyCreateCmd, keyRetrieveCmd, keyUpdateCmd, keyDeleteCmd,
+		keyBulkDeleteCmd, keyBulkUpdateCmd, keyBulkCreateCmd)
 	rootCmd.AddCommand(keyCmd)
 
 	// common for all Comment cmd`s
@@ -206,6 +285,27 @@ func init() {
 	keyRetrieveCmd.Flags().Uint8Var(&keyListOpts.DisableReferences, "disable-references", 0, "Whether to disable key references.")
 
 	flagKeyId(keyDeleteCmd)
+
+	// Bulk delete
+	keyBulkDeleteCmd.Flags().Int64SliceVar(&bulkDeleteKeyIds, "key-ids", []int64{},
+		"Comma-separated list of key IDs to delete (required).")
+	_ = keyBulkDeleteCmd.MarkFlagRequired("key-ids")
+
+	// Bulk update
+	fs = keyBulkUpdateCmd.Flags()
+	fs.StringVar(&bulkUpdateKeys, "keys", "",
+		"JSON array of key objects to update. Each object must contain key_id and fields to update (required).")
+	_ = keyBulkUpdateCmd.MarkFlagRequired("keys")
+	fs.BoolVar(&bulkUpdateUseAutomations, "use-automations", true,
+		"Whether to run automations on the updated key translations.")
+
+	// Bulk create
+	fs = keyBulkCreateCmd.Flags()
+	fs.StringVar(&bulkCreateKeys, "keys", "",
+		"JSON array of key objects to create. Each object should contain key_name, platforms, and other fields (required).")
+	_ = keyBulkCreateCmd.MarkFlagRequired("keys")
+	fs.BoolVar(&bulkCreateUseAutomations, "use-automations", true,
+		"Whether to run automations on the new key translations.")
 }
 
 func flagKeyId(cmd *cobra.Command) {
