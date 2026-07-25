@@ -46,7 +46,7 @@ lokalise2 file download [flags]
       --language-mapping string                 List of languages to override default iso codes for this export (JSON, see https://lokalise.com/api2docs/curl/#transition-download-files-post).
       --original-filenames                      Enable to use original filenames/formats. If set to false (--original-filenames=false) all keys will be export to a single file per language (default true). (default true)
       --placeholder-format string               Override the default placeholder format for the file type. Allowed values are printf, ios, icu, net, symfony, i18n, raw.
-      --plural-format string                    Override the default plural format for the file type. Allowed values are json_string, icu, array, generic, symfony, i18next.
+      --plural-format string                    Override the default plural format for the file type. Allowed values are json_string, icu, array, generic, symfony, i18next, i18next_v4.
       --replace-breaks                          Enable to replace line breaks in exported translations with \n (default true). Use --replace-breaks=false to disable. (default true)
       --triggers strings                        Trigger integration exports (must be enabled in project settings). Allowed values are amazons3, gcs, github, github-enterprise, gitlab, bitbucket, bitbucket-enterprise.
       --unzip-to string                         Unzip to this folder. (default "./")
