@@ -35,7 +35,7 @@ jobs:
         uses: actions/setup-go@v4
       -
         name: Run GoReleaser build only
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
         if: "!startsWith(github.ref, 'refs/tags/')"
         with:
           distribution: goreleaser
@@ -54,7 +54,7 @@ jobs:
           draft: true
       -
         name: Run GoReleaser release and publish
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
         if: startsWith(github.ref, 'refs/tags/')
         with:
           distribution: goreleaser
