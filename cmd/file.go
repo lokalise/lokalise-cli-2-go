@@ -398,6 +398,17 @@ func extractContentDispositionFilename(contentDisp string) (string, error) {
 	return "", fmt.Errorf("filename not found")
 }
 
+// stripURL removes the request URL from *url.Error values. Bundle URLs are
+// pre-signed, so the URL itself is a bearer credential and must never be printed.
+func stripURL(err error) error {
+	var urlErr *url.Error
+	if errors.As(err, &urlErr) {
+		return fmt.Errorf("bundle download failed (%s): %w", urlErr.Op, urlErr.Err)
+	}
+
+	return err
+}
+
 // formatSize renders a byte count in a human-readable form, e.g. "1.5 MiB".
 func formatSize(n int64) string {
 	const unit = 1024
@@ -414,10 +425,12 @@ func formatSize(n int64) string {
 	return fmt.Sprintf("%.1f %ciB", float64(n)/float64(div), "KMGTPE"[exp])
 }
 
+// downloadAndUnzip downloads the bundle at srcUrl and unpacks it.
+// srcUrl is a pre-signed URL: it must not appear in any output or error.
 func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	u, err := url.Parse(srcUrl)
 	if err != nil {
-		return err
+		return stripURL(err)
 	}
 
 	// Default destination filename from URL
@@ -428,9 +441,14 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 
 	resp, err := http.Get(srcUrl)
 	if err != nil {
-		return err
+		return stripURL(err)
 	}
 	defer resp.Body.Close()
+
+	// The body of a failed request (e.g. an S3 XML error) is not printed: it can echo request details.
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return fmt.Errorf("bundle download failed: unexpected HTTP status %s", resp.Status)
+	}
 
 	if resp.ContentLength >= 0 {
 		printInfof("Downloading bundle (%s)...\n", formatSize(resp.ContentLength))
@@ -456,7 +474,7 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 
 	_, err = io.Copy(zipFile, resp.Body)
 	if err != nil {
-		return err
+		return stripURL(err)
 	}
 
 	printInfo("Unzipping to", unzipPath+"...")

@@ -4,10 +4,12 @@ import (
 	"archive/zip"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -402,6 +404,47 @@ func TestFileDownload_JsonOnlyStillReturnsBundleURL(t *testing.T) {
 
 	if !strings.Contains(out, secretBundlePath+"?"+secretBundleQuery) {
 		t.Errorf("expected --json-only to print the bundle URL, got %q", out)
+	}
+}
+
+func TestFileDownload_BundleNon2xxFailsWithoutURL(t *testing.T) {
+	client, mux, serverUrl, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(fmt.Sprintf("/api2/projects/%s/files/download", testProjectID), syncDownloadHandler(serverUrl))
+	mux.HandleFunc(secretBundlePath, func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+		_, _ = fmt.Fprint(w, `<Error><Code>AccessDenied</Code><Key>secret-bundle-path.zip</Key></Error>`)
+	})
+
+	out, err := runDownload(t, client)
+	if err == nil {
+		t.Fatal("expected an error for a 403 bundle response")
+	}
+
+	if !strings.Contains(err.Error(), "403") {
+		t.Errorf("expected the error to mention the HTTP status, got %q", err)
+	}
+	assertNoBundleURL(t, "error", err.Error())
+	assertNoBundleURL(t, "stdout", out)
+}
+
+func TestDownloadAndUnzip_NetworkErrorWithoutURL(t *testing.T) {
+	// A closed server makes http.Get fail with a *url.Error that embeds the full URL.
+	_, _, serverUrl, teardown := setup()
+	teardown()
+
+	dir := t.TempDir()
+	err := downloadAndUnzip(serverUrl+secretBundlePath+"?"+secretBundleQuery, dir, dir)
+	if err == nil {
+		t.Fatal("expected an error when the server is unreachable")
+	}
+
+	assertNoBundleURL(t, "error", err.Error())
+
+	var urlErr *url.Error
+	if errors.As(err, &urlErr) {
+		t.Errorf("expected *url.Error to be unwrapped, got %#v", err)
 	}
 }
 
