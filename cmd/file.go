@@ -235,23 +235,14 @@ var fileDownloadCmd = &cobra.Command{
 			log.Printf("Warning: %s\n", resp.Warning)
 		}
 
-		if !downloadJsonOnly {
-			printInfo("OK")
-		}
-
+		// --json-only is the explicit way to get the bundle URL.
 		if downloadJsonOnly {
 			return printJson(resp)
-		} else {
-			printInfo("Downloading", resp.BundleURL+"...")
 		}
 
-		err = downloadAndUnzip(resp.BundleURL, downloadDestination, downloadUnzipTo)
+		printInfo("OK")
 
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return downloadAndUnzip(resp.BundleURL, downloadDestination, downloadUnzipTo)
 	},
 }
 
@@ -295,14 +286,8 @@ func asyncDownload() error {
 	if fileURL == "" {
 		return fmt.Errorf("Getting download URL failed.")
 	}
-	printInfof("Downloading file: %s\n", fileURL)
 
-	err = downloadAndUnzip(fileURL, downloadDestination, downloadUnzipTo)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return downloadAndUnzip(fileURL, downloadDestination, downloadUnzipTo)
 }
 
 func init() {
@@ -413,6 +398,22 @@ func extractContentDispositionFilename(contentDisp string) (string, error) {
 	return "", fmt.Errorf("filename not found")
 }
 
+// formatSize renders a byte count in a human-readable form, e.g. "1.5 MiB".
+func formatSize(n int64) string {
+	const unit = 1024
+	if n < unit {
+		return fmt.Sprintf("%d B", n)
+	}
+
+	div, exp := int64(unit), 0
+	for m := n / unit; m >= unit; m /= unit {
+		div *= unit
+		exp++
+	}
+
+	return fmt.Sprintf("%.1f %ciB", float64(n)/float64(div), "KMGTPE"[exp])
+}
+
 func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	u, err := url.Parse(srcUrl)
 	if err != nil {
@@ -430,6 +431,12 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 		return err
 	}
 	defer resp.Body.Close()
+
+	if resp.ContentLength >= 0 {
+		printInfof("Downloading bundle (%s)...\n", formatSize(resp.ContentLength))
+	} else {
+		printInfo("Downloading bundle...")
+	}
 
 	// Check for Content-Disposition header for filename
 	contentDisposition := resp.Header.Get("Content-Disposition")

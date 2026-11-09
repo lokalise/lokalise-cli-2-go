@@ -309,6 +309,68 @@ func syncDownloadHandler(serverUrl string) http.HandlerFunc {
 	}
 }
 
+func assertNoBundleURL(t *testing.T, label, s string) {
+	t.Helper()
+	for _, secret := range []string{"secret-bundle-path", "secret-signature"} {
+		if strings.Contains(s, secret) {
+			t.Errorf("%s leaks the bundle URL (%q): %q", label, secret, s)
+		}
+	}
+}
+
+func TestFileDownload_DoesNotPrintBundleURL(t *testing.T) {
+	client, mux, serverUrl, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(fmt.Sprintf("/api2/projects/%s/files/download", testProjectID), syncDownloadHandler(serverUrl))
+	mux.HandleFunc(secretBundlePath, func(w http.ResponseWriter, r *http.Request) { zipHandler(w) })
+
+	out, err := runDownload(t, client)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	assertNoBundleURL(t, "stdout", out)
+	if !strings.Contains(out, "Downloading bundle (") {
+		t.Errorf("expected a 'Downloading bundle (<size>)...' line, got %q", out)
+	}
+}
+
+func TestAsyncFileDownload_DoesNotPrintDownloadURL(t *testing.T) {
+	client, mux, serverUrl, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(
+		fmt.Sprintf("/api2/projects/%s/files/async-download", testProjectID),
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = fmt.Fprint(w, `{"process_id": "74738ff5-5367-5958-9aee-98fffdcd1876"}`)
+		})
+	mux.HandleFunc(
+		"/api2/projects/"+testProjectID+"/processes/74738ff5-5367-5958-9aee-98fffdcd1876",
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = fmt.Fprint(w, `{
+				"project_id": "`+testProjectID+`",
+				"process": {
+					"status": "finished",
+					"details": {"download_url": "`+serverUrl+secretBundlePath+`?`+secretBundleQuery+`"}
+				}
+			}`)
+		})
+	mux.HandleFunc(secretBundlePath, func(w http.ResponseWriter, r *http.Request) { zipHandler(w) })
+
+	out, err := runDownload(t, client, "--async")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	assertNoBundleURL(t, "stdout", out)
+	if strings.Contains(out, "Downloading file:") {
+		t.Errorf("unexpected legacy 'Downloading file:' line in %q", out)
+	}
+}
+
 func TestFileDownload_Quiet(t *testing.T) {
 	client, mux, serverUrl, teardown := setup()
 	defer teardown()
@@ -340,5 +402,13 @@ func TestFileDownload_JsonOnlyStillReturnsBundleURL(t *testing.T) {
 
 	if !strings.Contains(out, secretBundlePath+"?"+secretBundleQuery) {
 		t.Errorf("expected --json-only to print the bundle URL, got %q", out)
+	}
+}
+
+func TestFormatSize(t *testing.T) {
+	for n, want := range map[int64]string{0: "0 B", 1023: "1023 B", 1024: "1.0 KiB", 1536: "1.5 KiB", 5 * 1024 * 1024: "5.0 MiB"} {
+		if got := formatSize(n); got != want {
+			t.Errorf("formatSize(%d) = %q, want %q", n, got, want)
+		}
 	}
 }
