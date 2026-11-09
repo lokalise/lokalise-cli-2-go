@@ -20,12 +20,13 @@ There are situations when it is necessary to export different language codes to 
 
 ```
       --config string   config file (default is ./config.yml)
+  -q, --quiet           Suppress progress messages. Command results (JSON) and errors are still printed.
   -t, --token string    API token. You can create API tokens at https://app.lokalise.com/profile.
 ```
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 language create](lokalise2_language_create.md)	 - Create languages
 * [lokalise2 language delete](lokalise2_language_delete.md)	 - Delete a language
 * [lokalise2 language list](lokalise2_language_list.md)	 - List project languages

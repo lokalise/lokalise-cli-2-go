@@ -20,12 +20,13 @@ Each phrase that is used in your app or website must be identified by a key and 
 
 ```
       --config string   config file (default is ./config.yml)
+  -q, --quiet           Suppress progress messages. Command results (JSON) and errors are still printed.
   -t, --token string    API token. You can create API tokens at https://app.lokalise.com/profile.
 ```
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 key create](lokalise2_key_create.md)	 - Create keys
 * [lokalise2 key delete](lokalise2_key_delete.md)	 - Delete a key
 * [lokalise2 key list](lokalise2_key_list.md)	 - List all keys

@@ -17,12 +17,13 @@ Manage queued processes. Some heavy actions are processed asynchronously. Queued
 
 ```
       --config string   config file (default is ./config.yml)
+  -q, --quiet           Suppress progress messages. Command results (JSON) and errors are still printed.
   -t, --token string    API token. You can create API tokens at https://app.lokalise.com/profile.
 ```
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 queued-process list](lokalise2_queued-process_list.md)	 - Lists all queued processes for a project
 * [lokalise2 queued-process retrieve](lokalise2_queued-process_retrieve.md)	 - Retrieve a process for a project
 

@@ -13,12 +13,13 @@ Manage translations
 
 ```
       --config string   config file (default is ./config.yml)
+  -q, --quiet           Suppress progress messages. Command results (JSON) and errors are still printed.
   -t, --token string    API token. You can create API tokens at https://app.lokalise.com/profile.
 ```
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 translation list](lokalise2_translation_list.md)	 - List all translations
 * [lokalise2 translation retrieve](lokalise2_translation_retrieve.md)	 - Retrieve a translation 
 * [lokalise2 translation update](lokalise2_translation_update.md)	 - Update a translation

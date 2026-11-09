@@ -145,6 +145,13 @@ Only one concurrent request per token is allowed.
 
 ## Changes
 
+**3.2.0 (Unreleased)**
+- **Breaking (output):** `file download` no longer prints the pre-signed bundle URL. The `Downloading <url>...` (sync) and `Downloading file: <url>` (async) lines are replaced by `Downloading bundle (<size>)...`. Scripts that parse those lines to get the URL will break: use `--json-only` to get the API response with `bundle_url` instead.
+- Added the global `--quiet` (`-q`) flag (or `quiet: true` in the config) to suppress progress messages
+- `file download` now fails with a clear error when the bundle request returns a non-2xx status, instead of trying to unzip the error response
+- Bundle download errors no longer include the bundle URL
+- Documented that `debug` output is sensitive
+
 **3.1.5 (Jul 13, 2026)**
 - Fixed `details` object empty when retrieving a process for an uploaded file
 - Bumped `go-lokalise-api` to v5.1.0

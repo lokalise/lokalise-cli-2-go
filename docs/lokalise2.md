@@ -1,12 +1,13 @@
 ## lokalise2
 
-Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+Lokalise CLI v3.2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 
 ### Options
 
 ```
       --config string   config file (default is ./config.yml)
   -h, --help            help for lokalise2
+  -q, --quiet           Suppress progress messages. Command results (JSON) and errors are still printed.
   -t, --token string    API token. You can create API tokens at https://app.lokalise.com/profile.
 ```
 
