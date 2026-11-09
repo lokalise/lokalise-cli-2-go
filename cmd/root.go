@@ -77,9 +77,11 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./config.yml)")
 	rootCmd.PersistentFlags().StringVarP(&Token, "token", "t", "", "API token. You can create API tokens at https://app.lokalise.com/profile.")
+	rootCmd.PersistentFlags().BoolP("quiet", "q", false, "Suppress progress messages. Command results (JSON) and errors are still printed.")
 
 	// binding
 	_ = viper.BindPFlag("token", rootCmd.PersistentFlags().Lookup("token"))
+	_ = viper.BindPFlag("quiet", rootCmd.PersistentFlags().Lookup("quiet"))
 }
 
 // ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
@@ -94,6 +96,20 @@ func printJson(v interface{}) error {
 
 	fmt.Println(string(output))
 	return nil
+}
+
+// printInfo prints a progress message, unless --quiet is set.
+func printInfo(a ...interface{}) {
+	if !viper.GetBool("quiet") {
+		fmt.Println(a...)
+	}
+}
+
+// printInfof prints a formatted progress message, unless --quiet is set.
+func printInfof(format string, a ...interface{}) {
+	if !viper.GetBool("quiet") {
+		fmt.Printf(format, a...)
+	}
 }
 
 func printPageHeader(cur, total int64) {

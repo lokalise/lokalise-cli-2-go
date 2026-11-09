@@ -120,7 +120,7 @@ var fileUploadCmd = &cobra.Command{
 
 			filesProcessed = true
 			for _, file := range files {
-				fmt.Println("Uploading", file+"...")
+				printInfo("Uploading", file+"...")
 
 				buf, err := os.ReadFile(file)
 				if err != nil {
@@ -223,7 +223,7 @@ var fileDownloadCmd = &cobra.Command{
 		}
 
 		if !downloadJsonOnly {
-			fmt.Print("Requesting... ")
+			printInfof("Requesting... ")
 		}
 
 		resp, err := Api.Files().Download(projectId, downloadOpts)
@@ -236,13 +236,13 @@ var fileDownloadCmd = &cobra.Command{
 		}
 
 		if !downloadJsonOnly {
-			fmt.Println("OK")
+			printInfo("OK")
 		}
 
 		if downloadJsonOnly {
 			return printJson(resp)
 		} else {
-			fmt.Println("Downloading", resp.BundleURL+"...")
+			printInfo("Downloading", resp.BundleURL+"...")
 		}
 
 		err = downloadAndUnzip(resp.BundleURL, downloadDestination, downloadUnzipTo)
@@ -261,7 +261,7 @@ func asyncDownload() error {
 		return err
 	}
 
-	fmt.Printf("Download process started with ID: %s\n", initResp.ProcessID)
+	printInfof("Download process started with ID: %s\n", initResp.ProcessID)
 
 	var statusResp lokalise.QueuedProcessResponse
 
@@ -274,7 +274,7 @@ func asyncDownload() error {
 		}
 
 		if statusResp.Process.Status == "finished" {
-			fmt.Println("Download ready!")
+			printInfo("Download ready!")
 			break
 		} else if statusResp.Process.Status == "failed" {
 			if statusResp.Process.Message == "" {
@@ -286,7 +286,7 @@ func asyncDownload() error {
 		if statusResp.Process.Details.ItemsToProcess != nil && *statusResp.Process.Details.ItemsToProcess > 0 {
 			if statusResp.Process.Details.ItemsProcessed != nil {
 				progress := (float64(*statusResp.Process.Details.ItemsProcessed) / float64(*statusResp.Process.Details.ItemsToProcess)) * 100
-				fmt.Printf("Preparing download: %.2f%%\n", progress)
+				printInfof("Preparing download: %.2f%%\n", progress)
 			}
 		}
 	}
@@ -295,7 +295,7 @@ func asyncDownload() error {
 	if fileURL == "" {
 		return fmt.Errorf("Getting download URL failed.")
 	}
-	fmt.Printf("Downloading file: %s\n", fileURL)
+	printInfof("Downloading file: %s\n", fileURL)
 
 	err = downloadAndUnzip(fileURL, downloadDestination, downloadUnzipTo)
 	if err != nil {
@@ -452,7 +452,7 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 		return err
 	}
 
-	fmt.Println("Unzipping to", unzipPath+"...")
+	printInfo("Unzipping to", unzipPath+"...")
 	err = unzip(zipFile.Name(), unzipPath)
 	if err != nil {
 		return err

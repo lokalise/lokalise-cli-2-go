@@ -5,12 +5,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/cobra"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"testing"
+
+	"github.com/lokalise/go-lokalise-api/v5"
+	"github.com/spf13/cobra"
 )
 
 func zipHandler(w http.ResponseWriter) {
@@ -242,4 +246,99 @@ func TestAsyncFileDownload_Error(t *testing.T) {
 
 	log.SetOutput(originalOutput)
 	defer os.RemoveAll(outputDir)
+}
+
+// secretBundlePath mimics a pre-signed URL: both the path and the query are sensitive.
+const secretBundlePath = "/objects/secret-bundle-path.zip"
+const secretBundleQuery = "X-Amz-Signature=secret-signature"
+
+// runDownload executes `file download` with a clean flag state and returns its stdout.
+func runDownload(t *testing.T, client *lokalise.Api, args ...string) (string, error) {
+	t.Helper()
+
+	// cobra keeps flag values between Execute calls: reset the ones the tests touch.
+	downloadAsync, downloadJsonOnly = false, false
+	_ = rootCmd.PersistentFlags().Set("quiet", "false")
+	t.Cleanup(func() {
+		downloadAsync, downloadJsonOnly = false, false
+		_ = rootCmd.PersistentFlags().Set("quiet", "false")
+	})
+
+	outputDir := t.TempDir()
+	rootCmd.SetArgs(append([]string{
+		"file", "download", "--dest=" + outputDir, "--unzip-to=" + outputDir, "--format=json", "--project-id=" + testProjectID,
+	}, args...))
+	fileDownloadCmd.PreRun = func(cmd *cobra.Command, args []string) {
+		Api = client
+	}
+
+	return captureStdout(t, rootCmd.Execute)
+}
+
+func captureStdout(t *testing.T, f func() error) (string, error) {
+	t.Helper()
+
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	original := os.Stdout
+	os.Stdout = w
+	defer func() { os.Stdout = original }()
+
+	out := make(chan string)
+	go func() {
+		b, _ := io.ReadAll(r)
+		out <- string(b)
+	}()
+
+	fErr := f()
+	_ = w.Close()
+
+	return <-out, fErr
+}
+
+func syncDownloadHandler(serverUrl string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprint(w, `{
+			"project_id": "`+testProjectID+`",
+			"bundle_url": "`+serverUrl+secretBundlePath+`?`+secretBundleQuery+`"
+		}`)
+	}
+}
+
+func TestFileDownload_Quiet(t *testing.T) {
+	client, mux, serverUrl, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(fmt.Sprintf("/api2/projects/%s/files/download", testProjectID), syncDownloadHandler(serverUrl))
+	mux.HandleFunc(secretBundlePath, func(w http.ResponseWriter, r *http.Request) { zipHandler(w) })
+
+	out, err := runDownload(t, client, "--quiet")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if out != "" {
+		t.Errorf("expected no output with --quiet, got %q", out)
+	}
+}
+
+func TestFileDownload_JsonOnlyStillReturnsBundleURL(t *testing.T) {
+	client, mux, serverUrl, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(fmt.Sprintf("/api2/projects/%s/files/download", testProjectID), syncDownloadHandler(serverUrl))
+
+	// --quiet must not hide command results.
+	out, err := runDownload(t, client, "--json-only", "--quiet")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !strings.Contains(out, secretBundlePath+"?"+secretBundleQuery) {
+		t.Errorf("expected --json-only to print the bundle URL, got %q", out)
+	}
 }
