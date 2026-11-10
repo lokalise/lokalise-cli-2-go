@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"os"
 	"strconv"
@@ -453,5 +454,39 @@ func TestFormatSize(t *testing.T) {
 		if got := formatSize(n); got != want {
 			t.Errorf("formatSize(%d) = %q, want %q", n, got, want)
 		}
+	}
+}
+
+func TestDownloadAndUnzip_MalformedRedirectWithoutURL(t *testing.T) {
+	// net/http quotes an unparsable Location header in the inner error, so it can carry
+	// another pre-signed URL (e.g. a regional S3 redirect) past stripURL's outer unwrap.
+	mux := http.NewServeMux()
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	mux.HandleFunc(secretBundlePath, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Location", "https://bucket.example.com/secret-bundle-path%zz.zip?"+secretBundleQuery)
+		w.WriteHeader(http.StatusFound)
+	})
+
+	dir := t.TempDir()
+	err := downloadAndUnzip(server.URL+secretBundlePath+"?"+secretBundleQuery, dir, dir)
+	if err == nil {
+		t.Fatal("expected an error for a malformed redirect")
+	}
+
+	assertNoBundleURL(t, "error", err.Error())
+}
+
+func TestStripURL_KeepsDiagnostics(t *testing.T) {
+	err := stripURL(&url.Error{
+		Op:  "Get",
+		URL: "https://bucket.example.com" + secretBundlePath + "?" + secretBundleQuery,
+		Err: errors.New("dial tcp 127.0.0.1:443: connect: connection refused"),
+	})
+
+	want := "bundle download failed (Get): dial tcp 127.0.0.1:443: connect: connection refused"
+	if err.Error() != want {
+		t.Errorf("stripURL() = %q, want %q", err, want)
 	}
 }

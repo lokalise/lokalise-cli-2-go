@@ -14,6 +14,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -398,15 +399,22 @@ func extractContentDispositionFilename(contentDisp string) (string, error) {
 	return "", fmt.Errorf("filename not found")
 }
 
-// stripURL removes the request URL from *url.Error values. Bundle URLs are
-// pre-signed, so the URL itself is a bearer credential and must never be printed.
+// sensitiveErrText matches what net/http may echo in an error message: quoted
+// values (e.g. an unparsable redirect Location header) and anything URL-shaped.
+var sensitiveErrText = regexp.MustCompile(`"(?:[^"\\]|\\.)*"|[a-zA-Z][a-zA-Z0-9+.-]*://\S+`)
+
+// stripURL turns a *url.Error into a message without URLs. Bundle URLs are pre-signed
+// bearer credentials, so neither the request URL nor a redirect target may be printed.
+// The inner error is not wrapped: printing a wrapped error would print its original text.
 func stripURL(err error) error {
 	var urlErr *url.Error
-	if errors.As(err, &urlErr) {
-		return fmt.Errorf("bundle download failed (%s): %w", urlErr.Op, urlErr.Err)
+	if !errors.As(err, &urlErr) {
+		return err
 	}
 
-	return err
+	msg := sensitiveErrText.ReplaceAllString(urlErr.Err.Error(), "[REDACTED]")
+
+	return fmt.Errorf("bundle download failed (%s): %s", urlErr.Op, msg)
 }
 
 // formatSize renders a byte count in a human-readable form, e.g. "1.5 MiB".
