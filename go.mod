@@ -1,8 +1,6 @@
 module github.com/lokalise/lokalise-cli-2-go
 
-go 1.23.0
-
-toolchain go1.23.4
+go 1.27.3
 
 require (
 	github.com/lokalise/go-lokalise-api/v5 v5.1.1

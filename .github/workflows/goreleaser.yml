@@ -33,6 +33,8 @@ jobs:
       -
         name: Set up Go
         uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
       -
         name: Run GoReleaser build only
         uses: goreleaser/goreleaser-action@v5
