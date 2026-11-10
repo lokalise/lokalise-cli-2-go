@@ -13,12 +13,13 @@ Manage team users
 
 ```
       --config string   config file (default is ./config.yml)
+  -q, --quiet           Suppress progress messages. Command results (JSON) and errors are still printed.
   -t, --token string    API token. You can create API tokens at https://app.lokalise.com/profile.
 ```
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 team-user delete](lokalise2_team-user_delete.md)	 - Delete a team user
 * [lokalise2 team-user list](lokalise2_team-user_list.md)	 - List all team users
 * [lokalise2 team-user retrieve](lokalise2_team-user_retrieve.md)	 - Retrieves a team user

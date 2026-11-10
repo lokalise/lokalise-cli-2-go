@@ -117,6 +117,13 @@ If you are using project branching feature in Lokalise, simply add branch name s
 ## Config file
 Optionally, you may rename included `config-example.yml` to `config.yml` and set various CLI tool parameters like token or timeouts. You can specify a config file location using `--config` parameter.
 
+## Output and sensitive data
+`file download` never prints the bundle URL: the URL is pre-signed, so anyone who holds it can download your files while it is valid. Use `--json-only` if you need the URL; it prints the API response, which includes `bundle_url`. Make sure that output does not end up in shared or retained logs.
+
+Use the global `--quiet` (`-q`) flag, or `quiet: true` in the config file, to suppress progress messages such as `Downloading bundle...`. Command results (JSON) and errors are still printed.
+
+The `debug` config option logs full API requests and responses. The `X-Api-Token` header is redacted, but responses are logged as-is, including pre-signed bundle URLs. Treat debug output as sensitive and do not enable it in CI or anywhere logs are retained or shared.
+
 ## Rate limits
 [Access to all endpoints is limited](https://app.lokalise.com/api2docs/curl/#resource-rate-limits) to 6 requests per second from 14 September, 2021. This limit is applied per API token and per IP address. If you exceed the limit, a 429 HTTP status code will be returned and the corresponding exception will be raised that you should handle properly. To handle such errors, we recommend an exponential backoff mechanism with a limited number of retries.
 
@@ -137,6 +144,14 @@ Only one concurrent request per token is allowed.
 - release should happen automatically
 
 ## Changes
+
+**3.2.0 (Unreleased)**
+- **Breaking (output):** `file download` no longer prints the pre-signed bundle URL. The `Downloading <url>...` (sync) and `Downloading file: <url>` (async) lines are replaced by `Downloading bundle (<size>)...`. Scripts that parse those lines to get the URL will break: use `--json-only` to get the API response with `bundle_url` instead.
+- Added the global `--quiet` (`-q`) flag (or `quiet: true` in the config) to suppress progress messages
+- `file download` now fails with a clear error when the bundle request returns a non-2xx status, instead of trying to unzip the error response
+- Bundle download errors no longer include the bundle URL
+- Documented that `debug` output is sensitive
+- Bumped `go-lokalise-api` to v5.1.1: the `X-Api-Token` header is now redacted in `debug` output
 
 **3.1.5 (Jul 13, 2026)**
 - Fixed `details` object empty when retrieving a process for an uploaded file

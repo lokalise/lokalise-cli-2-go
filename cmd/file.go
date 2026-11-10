@@ -14,6 +14,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -120,7 +121,7 @@ var fileUploadCmd = &cobra.Command{
 
 			filesProcessed = true
 			for _, file := range files {
-				fmt.Println("Uploading", file+"...")
+				printInfo("Uploading", file+"...")
 
 				buf, err := os.ReadFile(file)
 				if err != nil {
@@ -223,7 +224,7 @@ var fileDownloadCmd = &cobra.Command{
 		}
 
 		if !downloadJsonOnly {
-			fmt.Print("Requesting... ")
+			printInfof("Requesting... ")
 		}
 
 		resp, err := Api.Files().Download(projectId, downloadOpts)
@@ -235,23 +236,14 @@ var fileDownloadCmd = &cobra.Command{
 			log.Printf("Warning: %s\n", resp.Warning)
 		}
 
-		if !downloadJsonOnly {
-			fmt.Println("OK")
-		}
-
+		// --json-only is the explicit way to get the bundle URL.
 		if downloadJsonOnly {
 			return printJson(resp)
-		} else {
-			fmt.Println("Downloading", resp.BundleURL+"...")
 		}
 
-		err = downloadAndUnzip(resp.BundleURL, downloadDestination, downloadUnzipTo)
+		printInfo("OK")
 
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return downloadAndUnzip(resp.BundleURL, downloadDestination, downloadUnzipTo)
 	},
 }
 
@@ -261,7 +253,7 @@ func asyncDownload() error {
 		return err
 	}
 
-	fmt.Printf("Download process started with ID: %s\n", initResp.ProcessID)
+	printInfof("Download process started with ID: %s\n", initResp.ProcessID)
 
 	var statusResp lokalise.QueuedProcessResponse
 
@@ -274,7 +266,7 @@ func asyncDownload() error {
 		}
 
 		if statusResp.Process.Status == "finished" {
-			fmt.Println("Download ready!")
+			printInfo("Download ready!")
 			break
 		} else if statusResp.Process.Status == "failed" {
 			if statusResp.Process.Message == "" {
@@ -286,7 +278,7 @@ func asyncDownload() error {
 		if statusResp.Process.Details.ItemsToProcess != nil && *statusResp.Process.Details.ItemsToProcess > 0 {
 			if statusResp.Process.Details.ItemsProcessed != nil {
 				progress := (float64(*statusResp.Process.Details.ItemsProcessed) / float64(*statusResp.Process.Details.ItemsToProcess)) * 100
-				fmt.Printf("Preparing download: %.2f%%\n", progress)
+				printInfof("Preparing download: %.2f%%\n", progress)
 			}
 		}
 	}
@@ -295,14 +287,8 @@ func asyncDownload() error {
 	if fileURL == "" {
 		return fmt.Errorf("Getting download URL failed.")
 	}
-	fmt.Printf("Downloading file: %s\n", fileURL)
 
-	err = downloadAndUnzip(fileURL, downloadDestination, downloadUnzipTo)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return downloadAndUnzip(fileURL, downloadDestination, downloadUnzipTo)
 }
 
 func init() {
@@ -413,10 +399,46 @@ func extractContentDispositionFilename(contentDisp string) (string, error) {
 	return "", fmt.Errorf("filename not found")
 }
 
+// sensitiveErrText matches what net/http may echo in an error message: quoted
+// values (e.g. an unparsable redirect Location header) and anything URL-shaped.
+var sensitiveErrText = regexp.MustCompile(`"(?:[^"\\]|\\.)*"|[a-zA-Z][a-zA-Z0-9+.-]*://\S+`)
+
+// stripURL turns a *url.Error into a message without URLs. Bundle URLs are pre-signed
+// bearer credentials, so neither the request URL nor a redirect target may be printed.
+// The inner error is not wrapped: printing a wrapped error would print its original text.
+func stripURL(err error) error {
+	var urlErr *url.Error
+	if !errors.As(err, &urlErr) {
+		return err
+	}
+
+	msg := sensitiveErrText.ReplaceAllString(urlErr.Err.Error(), "[REDACTED]")
+
+	return fmt.Errorf("bundle download failed (%s): %s", urlErr.Op, msg)
+}
+
+// formatSize renders a byte count in a human-readable form, e.g. "1.5 MiB".
+func formatSize(n int64) string {
+	const unit = 1024
+	if n < unit {
+		return fmt.Sprintf("%d B", n)
+	}
+
+	div, exp := int64(unit), 0
+	for m := n / unit; m >= unit; m /= unit {
+		div *= unit
+		exp++
+	}
+
+	return fmt.Sprintf("%.1f %ciB", float64(n)/float64(div), "KMGTPE"[exp])
+}
+
+// downloadAndUnzip downloads the bundle at srcUrl and unpacks it.
+// srcUrl is a pre-signed URL: it must not appear in any output or error.
 func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 	u, err := url.Parse(srcUrl)
 	if err != nil {
-		return err
+		return stripURL(err)
 	}
 
 	// Default destination filename from URL
@@ -427,9 +449,20 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 
 	resp, err := http.Get(srcUrl)
 	if err != nil {
-		return err
+		return stripURL(err)
 	}
 	defer resp.Body.Close()
+
+	// The body of a failed request (e.g. an S3 XML error) is not printed: it can echo request details.
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return fmt.Errorf("bundle download failed: unexpected HTTP status %s", resp.Status)
+	}
+
+	if resp.ContentLength >= 0 {
+		printInfof("Downloading bundle (%s)...\n", formatSize(resp.ContentLength))
+	} else {
+		printInfo("Downloading bundle...")
+	}
 
 	// Check for Content-Disposition header for filename
 	contentDisposition := resp.Header.Get("Content-Disposition")
@@ -449,10 +482,10 @@ func downloadAndUnzip(srcUrl, destPath, unzipPath string) error {
 
 	_, err = io.Copy(zipFile, resp.Body)
 	if err != nil {
-		return err
+		return stripURL(err)
 	}
 
-	fmt.Println("Unzipping to", unzipPath+"...")
+	printInfo("Unzipping to", unzipPath+"...")
 	err = unzip(zipFile.Name(), unzipPath)
 	if err != nil {
 		return err

@@ -17,12 +17,13 @@ Lokalise is a project-oriented translation management system, which means we sto
 
 ```
       --config string   config file (default is ./config.yml)
+  -q, --quiet           Suppress progress messages. Command results (JSON) and errors are still printed.
   -t, --token string    API token. You can create API tokens at https://app.lokalise.com/profile.
 ```
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 file download](lokalise2_file_download.md)	 - Download files
 * [lokalise2 file list](lokalise2_file_list.md)	 - List all files
 * [lokalise2 file upload](lokalise2_file_upload.md)	 - Upload a file

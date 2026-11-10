@@ -17,12 +17,13 @@ Comments can be used to give translators a context about the key, or as a discus
 
 ```
       --config string   config file (default is ./config.yml)
+  -q, --quiet           Suppress progress messages. Command results (JSON) and errors are still printed.
   -t, --token string    API token. You can create API tokens at https://app.lokalise.com/profile.
 ```
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 comment create](lokalise2_comment_create.md)	 - Add a comment
 * [lokalise2 comment delete](lokalise2_comment_delete.md)	 - Delete a comment
 * [lokalise2 comment list](lokalise2_comment_list.md)	 - List project comments

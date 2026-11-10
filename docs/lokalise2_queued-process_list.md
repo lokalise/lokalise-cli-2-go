@@ -17,6 +17,7 @@ lokalise2 queued-process list [flags]
 ```
       --config string       config file (default is ./config.yml)
       --project-id string   Unique project identifier (required).
+  -q, --quiet               Suppress progress messages. Command results (JSON) and errors are still printed.
   -t, --token string        API token. You can create API tokens at https://app.lokalise.com/profile.
 ```
 

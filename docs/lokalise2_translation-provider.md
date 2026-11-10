@@ -17,12 +17,13 @@ Translation providers are used for translation orders.
 
 ```
       --config string   config file (default is ./config.yml)
+  -q, --quiet           Suppress progress messages. Command results (JSON) and errors are still printed.
   -t, --token string    API token. You can create API tokens at https://app.lokalise.com/profile.
 ```
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 translation-provider list](lokalise2_translation-provider_list.md)	 - List all providers
 * [lokalise2 translation-provider retrieve](lokalise2_translation-provider_retrieve.md)	 - Retrieve a provider
 

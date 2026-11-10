@@ -16,12 +16,13 @@ Credit cards are used to pay for translation orders. Each user has their own car
 
 ```
       --config string   config file (default is ./config.yml)
+  -q, --quiet           Suppress progress messages. Command results (JSON) and errors are still printed.
   -t, --token string    API token. You can create API tokens at https://app.lokalise.com/profile.
 ```
 
 ### SEE ALSO
 
-* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.1.5. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
+* [lokalise2](lokalise2.md)	 - Lokalise CLI v3.2.0. Read the docs at https://github.com/lokalise/lokalise-cli-2-go
 * [lokalise2 payment-card create](lokalise2_payment-card_create.md)	 - Create a card
 * [lokalise2 payment-card delete](lokalise2_payment-card_delete.md)	 - Delete a card
 * [lokalise2 payment-card list](lokalise2_payment-card_list.md)	 - Lists all cards

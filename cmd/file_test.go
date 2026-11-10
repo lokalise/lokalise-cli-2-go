@@ -4,13 +4,20 @@ import (
 	"archive/zip"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/spf13/cobra"
+	"io"
 	"log"
 	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"testing"
+
+	"github.com/lokalise/go-lokalise-api/v5"
+	"github.com/spf13/cobra"
 )
 
 func zipHandler(w http.ResponseWriter) {
@@ -242,4 +249,244 @@ func TestAsyncFileDownload_Error(t *testing.T) {
 
 	log.SetOutput(originalOutput)
 	defer os.RemoveAll(outputDir)
+}
+
+// secretBundlePath mimics a pre-signed URL: both the path and the query are sensitive.
+const secretBundlePath = "/objects/secret-bundle-path.zip"
+const secretBundleQuery = "X-Amz-Signature=secret-signature"
+
+// runDownload executes `file download` with a clean flag state and returns its stdout.
+func runDownload(t *testing.T, client *lokalise.Api, args ...string) (string, error) {
+	t.Helper()
+
+	// cobra keeps flag values between Execute calls: reset the ones the tests touch.
+	downloadAsync, downloadJsonOnly = false, false
+	_ = rootCmd.PersistentFlags().Set("quiet", "false")
+	t.Cleanup(func() {
+		downloadAsync, downloadJsonOnly = false, false
+		_ = rootCmd.PersistentFlags().Set("quiet", "false")
+	})
+
+	outputDir := t.TempDir()
+	rootCmd.SetArgs(append([]string{
+		"file", "download", "--dest=" + outputDir, "--unzip-to=" + outputDir, "--format=json", "--project-id=" + testProjectID,
+	}, args...))
+	fileDownloadCmd.PreRun = func(cmd *cobra.Command, args []string) {
+		Api = client
+	}
+
+	return captureStdout(t, rootCmd.Execute)
+}
+
+func captureStdout(t *testing.T, f func() error) (string, error) {
+	t.Helper()
+
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	original := os.Stdout
+	os.Stdout = w
+	defer func() { os.Stdout = original }()
+
+	out := make(chan string)
+	go func() {
+		b, _ := io.ReadAll(r)
+		out <- string(b)
+	}()
+
+	fErr := f()
+	_ = w.Close()
+
+	return <-out, fErr
+}
+
+func syncDownloadHandler(serverUrl string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprint(w, `{
+			"project_id": "`+testProjectID+`",
+			"bundle_url": "`+serverUrl+secretBundlePath+`?`+secretBundleQuery+`"
+		}`)
+	}
+}
+
+func assertNoBundleURL(t *testing.T, label, s string) {
+	t.Helper()
+	for _, secret := range []string{"secret-bundle-path", "secret-signature"} {
+		if strings.Contains(s, secret) {
+			t.Errorf("%s leaks the bundle URL (%q): %q", label, secret, s)
+		}
+	}
+}
+
+func TestFileDownload_DoesNotPrintBundleURL(t *testing.T) {
+	client, mux, serverUrl, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(fmt.Sprintf("/api2/projects/%s/files/download", testProjectID), syncDownloadHandler(serverUrl))
+	mux.HandleFunc(secretBundlePath, func(w http.ResponseWriter, r *http.Request) { zipHandler(w) })
+
+	out, err := runDownload(t, client)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	assertNoBundleURL(t, "stdout", out)
+	if !strings.Contains(out, "Downloading bundle (") {
+		t.Errorf("expected a 'Downloading bundle (<size>)...' line, got %q", out)
+	}
+}
+
+func TestAsyncFileDownload_DoesNotPrintDownloadURL(t *testing.T) {
+	client, mux, serverUrl, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(
+		fmt.Sprintf("/api2/projects/%s/files/async-download", testProjectID),
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = fmt.Fprint(w, `{"process_id": "74738ff5-5367-5958-9aee-98fffdcd1876"}`)
+		})
+	mux.HandleFunc(
+		"/api2/projects/"+testProjectID+"/processes/74738ff5-5367-5958-9aee-98fffdcd1876",
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = fmt.Fprint(w, `{
+				"project_id": "`+testProjectID+`",
+				"process": {
+					"status": "finished",
+					"details": {"download_url": "`+serverUrl+secretBundlePath+`?`+secretBundleQuery+`"}
+				}
+			}`)
+		})
+	mux.HandleFunc(secretBundlePath, func(w http.ResponseWriter, r *http.Request) { zipHandler(w) })
+
+	out, err := runDownload(t, client, "--async")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	assertNoBundleURL(t, "stdout", out)
+	if strings.Contains(out, "Downloading file:") {
+		t.Errorf("unexpected legacy 'Downloading file:' line in %q", out)
+	}
+}
+
+func TestFileDownload_Quiet(t *testing.T) {
+	client, mux, serverUrl, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(fmt.Sprintf("/api2/projects/%s/files/download", testProjectID), syncDownloadHandler(serverUrl))
+	mux.HandleFunc(secretBundlePath, func(w http.ResponseWriter, r *http.Request) { zipHandler(w) })
+
+	out, err := runDownload(t, client, "--quiet")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if out != "" {
+		t.Errorf("expected no output with --quiet, got %q", out)
+	}
+}
+
+func TestFileDownload_JsonOnlyStillReturnsBundleURL(t *testing.T) {
+	client, mux, serverUrl, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(fmt.Sprintf("/api2/projects/%s/files/download", testProjectID), syncDownloadHandler(serverUrl))
+
+	// --quiet must not hide command results.
+	out, err := runDownload(t, client, "--json-only", "--quiet")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !strings.Contains(out, secretBundlePath+"?"+secretBundleQuery) {
+		t.Errorf("expected --json-only to print the bundle URL, got %q", out)
+	}
+}
+
+func TestFileDownload_BundleNon2xxFailsWithoutURL(t *testing.T) {
+	client, mux, serverUrl, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(fmt.Sprintf("/api2/projects/%s/files/download", testProjectID), syncDownloadHandler(serverUrl))
+	mux.HandleFunc(secretBundlePath, func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+		_, _ = fmt.Fprint(w, `<Error><Code>AccessDenied</Code><Key>secret-bundle-path.zip</Key></Error>`)
+	})
+
+	out, err := runDownload(t, client)
+	if err == nil {
+		t.Fatal("expected an error for a 403 bundle response")
+	}
+
+	if !strings.Contains(err.Error(), "403") {
+		t.Errorf("expected the error to mention the HTTP status, got %q", err)
+	}
+	assertNoBundleURL(t, "error", err.Error())
+	assertNoBundleURL(t, "stdout", out)
+}
+
+func TestDownloadAndUnzip_NetworkErrorWithoutURL(t *testing.T) {
+	// A closed server makes http.Get fail with a *url.Error that embeds the full URL.
+	_, _, serverUrl, teardown := setup()
+	teardown()
+
+	dir := t.TempDir()
+	err := downloadAndUnzip(serverUrl+secretBundlePath+"?"+secretBundleQuery, dir, dir)
+	if err == nil {
+		t.Fatal("expected an error when the server is unreachable")
+	}
+
+	assertNoBundleURL(t, "error", err.Error())
+
+	var urlErr *url.Error
+	if errors.As(err, &urlErr) {
+		t.Errorf("expected *url.Error to be unwrapped, got %#v", err)
+	}
+}
+
+func TestFormatSize(t *testing.T) {
+	for n, want := range map[int64]string{0: "0 B", 1023: "1023 B", 1024: "1.0 KiB", 1536: "1.5 KiB", 5 * 1024 * 1024: "5.0 MiB"} {
+		if got := formatSize(n); got != want {
+			t.Errorf("formatSize(%d) = %q, want %q", n, got, want)
+		}
+	}
+}
+
+func TestDownloadAndUnzip_MalformedRedirectWithoutURL(t *testing.T) {
+	// net/http quotes an unparsable Location header in the inner error, so it can carry
+	// another pre-signed URL (e.g. a regional S3 redirect) past stripURL's outer unwrap.
+	mux := http.NewServeMux()
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	mux.HandleFunc(secretBundlePath, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Location", "https://bucket.example.com/secret-bundle-path%zz.zip?"+secretBundleQuery)
+		w.WriteHeader(http.StatusFound)
+	})
+
+	dir := t.TempDir()
+	err := downloadAndUnzip(server.URL+secretBundlePath+"?"+secretBundleQuery, dir, dir)
+	if err == nil {
+		t.Fatal("expected an error for a malformed redirect")
+	}
+
+	assertNoBundleURL(t, "error", err.Error())
+}
+
+func TestStripURL_KeepsDiagnostics(t *testing.T) {
+	err := stripURL(&url.Error{
+		Op:  "Get",
+		URL: "https://bucket.example.com" + secretBundlePath + "?" + secretBundleQuery,
+		Err: errors.New("dial tcp 127.0.0.1:443: connect: connection refused"),
+	})
+
+	want := "bundle download failed (Get): dial tcp 127.0.0.1:443: connect: connection refused"
+	if err.Error() != want {
+		t.Errorf("stripURL() = %q, want %q", err, want)
+	}
 }
