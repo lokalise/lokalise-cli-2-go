@@ -20,6 +20,24 @@ Direct download:
 - [lokalise2_darwin_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_darwin_x86_64.tar.gz)
 
 
+### Using mise
+
+With [mise](https://mise.jdx.dev/getting-started.html) installed, add the following to your project's `mise.toml`:
+
+```toml
+[tools]
+"github:lokalise/lokalise-cli-2-go" = "3.1.7"
+```
+
+Install the CLI and check its version from the project directory:
+
+```console
+mise install
+mise exec -- lokalise2 --version
+```
+
+Commit `mise.toml` to pin the CLI alongside your other development tools and use the same version locally and in CI.
+
 ### Linux
 Get the binaries (including for Raspberry Pi) using our installer script:
 ```console
