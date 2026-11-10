@@ -29,6 +29,7 @@ Direct download:
 
 - [lokalise2_linux_i386.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_linux_i386.tar.gz)
 - [lokalise2_linux_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_linux_x86_64.tar.gz)
+- [lokalise2_linux_riscv64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_linux_riscv64.tar.gz)
 
 ### FreeBSD
 - [lokalise2_freebsd_i386.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_freebsd_i386.tar.gz)
