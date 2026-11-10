@@ -122,7 +122,7 @@ Optionally, you may rename included `config-example.yml` to `config.yml` and set
 
 Use the global `--quiet` (`-q`) flag, or `quiet: true` in the config file, to suppress progress messages such as `Downloading bundle...`. Command results (JSON) and errors are still printed.
 
-The `debug` config option logs full API requests and responses, including pre-signed bundle URLs. Treat debug output as sensitive and do not enable it in CI or anywhere logs are retained or shared.
+The `debug` config option logs full API requests and responses. The `X-Api-Token` header is redacted, but responses are logged as-is, including pre-signed bundle URLs. Treat debug output as sensitive and do not enable it in CI or anywhere logs are retained or shared.
 
 ## Rate limits
 [Access to all endpoints is limited](https://app.lokalise.com/api2docs/curl/#resource-rate-limits) to 6 requests per second from 14 September, 2021. This limit is applied per API token and per IP address. If you exceed the limit, a 429 HTTP status code will be returned and the corresponding exception will be raised that you should handle properly. To handle such errors, we recommend an exponential backoff mechanism with a limited number of retries.
@@ -151,6 +151,7 @@ Only one concurrent request per token is allowed.
 - `file download` now fails with a clear error when the bundle request returns a non-2xx status, instead of trying to unzip the error response
 - Bundle download errors no longer include the bundle URL
 - Documented that `debug` output is sensitive
+- Bumped `go-lokalise-api` to v5.1.1: the `X-Api-Token` header is now redacted in `debug` output
 
 **3.1.5 (Jul 13, 2026)**
 - Fixed `details` object empty when retrieving a process for an uploaded file

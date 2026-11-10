@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.23.4
 
 require (
-	github.com/lokalise/go-lokalise-api/v5 v5.1.0
+	github.com/lokalise/go-lokalise-api/v5 v5.1.1
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.16.0

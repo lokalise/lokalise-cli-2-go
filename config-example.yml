@@ -31,9 +31,10 @@ token: a12345a12345a12345a12345a12345a12345a123
 #quiet: true
 
 # Debug API requests.
-# WARNING: debug output is sensitive. It logs full API requests and responses,
-# including the pre-signed bundle URLs returned by `file download`, which let
-# anyone holding them download your files while they are valid.
+# WARNING: debug output is sensitive. It logs full API requests and responses.
+# The X-Api-Token header is redacted, but responses are logged as-is, including
+# the pre-signed bundle URLs returned by `file download`, which let anyone
+# holding them download your files while they are valid.
 # Do not enable it in CI or anywhere logs are retained or shared.
 # Default is false.
 #debug: true
