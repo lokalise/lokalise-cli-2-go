@@ -152,6 +152,7 @@ Only one concurrent request per token is allowed.
 - Bundle download errors no longer include the bundle URL
 - Documented that `debug` output is sensitive
 - Bumped `go-lokalise-api` to v5.1.1: the `X-Api-Token` header is now redacted in `debug` output
+- Upgraded Docker images to Alpine 3.22
 
 **3.1.5 (Jul 13, 2026)**
 - Fixed `details` object empty when retrieving a process for an uploaded file
