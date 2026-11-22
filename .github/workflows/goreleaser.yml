@@ -38,12 +38,12 @@ jobs:
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
       -
         name: Run GoReleaser build only
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
         if: "!startsWith(github.ref, 'refs/tags/')"
         with:
           distribution: goreleaser
-          version: '~> v1'
-          args: release --clean --skip-publish --skip-validate
+          version: '~> v2'
+          args: release --clean --snapshot
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
@@ -57,11 +57,11 @@ jobs:
           draft: true
       -
         name: Run GoReleaser release and publish
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
         if: startsWith(github.ref, 'refs/tags/')
         with:
           distribution: goreleaser
-          version: '~> v1'
+          version: '~> v2'
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
