@@ -1,3 +1,5 @@
+version: 2
+
 builds:
   -
     id: lokalise2
@@ -14,28 +16,35 @@ builds:
       - amd64
       - arm
       - arm64
+      - riscv64
     goarm:
       - 6
       - 7
     ignore:
       - goos: darwin
         goarch: 386
+      - goos: darwin
+        goarch: riscv64
+      - goos: windows
+        goarch: riscv64
+      - goos: freebsd
+        goarch: riscv64
 
 archives:
   - format_overrides:
       - goos: windows
-        format: zip
+        formats: ["zip"]
 
     name_template: 'lokalise2_{{ .Os }}_{{ if eq .Arch "386" }}i386{{ else }}{{ if eq .Arch "amd64" }}x86_64{{ else }}{{ .Arch }}{{ end }}{{ end }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     files:
       - none*
 
 brews:
-  - tap:
+  - repository:
       owner: lokalise
       name: homebrew-cli-2
       token: "{{ .Env.TAP_GITHUB_TOKEN }}"
-    folder: Formula
+    directory: Formula
     homepage: "https://github.com/lokalise/lokalise-cli-2-go"
     description: "Lokalise CLI v2"
     skip_upload: false
@@ -64,23 +73,34 @@ dockers:
     dockerfile: Dockerfile.goreleaser
     build_flag_templates:
       - "--platform=linux/arm64/v8"
+  - image_templates:
+      - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-riscv64"
+      - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-riscv64"
+    goarch: riscv64
+    dockerfile: Dockerfile.goreleaser
+    build_flag_templates:
+      - "--platform=linux/riscv64"
 docker_manifests:
   - name_template: "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}"
     image_templates:
       - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-arm64v8"
       - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-amd64"
+      - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-riscv64"
   - name_template: "docker.io/lokalise/lokalise-cli-2:latest"
     image_templates:
       - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-arm64v8"
       - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-amd64"
+      - "docker.io/lokalise/lokalise-cli-2:{{ .Tag }}-riscv64"
   - name_template: "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}"
     image_templates:
       - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-arm64v8"
       - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-amd64"
+      - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-riscv64"
   - name_template: "ghcr.io/lokalise/lokalise-cli-2:latest"
     image_templates:
       - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-arm64v8"
       - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-amd64"
+      - "ghcr.io/lokalise/lokalise-cli-2:{{ .Tag }}-riscv64"
 
 release:
   github:

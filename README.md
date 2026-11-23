@@ -29,6 +29,7 @@ Direct download:
 
 - [lokalise2_linux_i386.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_linux_i386.tar.gz)
 - [lokalise2_linux_x86_64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_linux_x86_64.tar.gz)
+- [lokalise2_linux_riscv64.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_linux_riscv64.tar.gz)
 
 ### FreeBSD
 - [lokalise2_freebsd_i386.tar.gz](https://github.com/lokalise/lokalise-cli-2-go/releases/latest/download/lokalise2_freebsd_i386.tar.gz)
@@ -152,6 +153,7 @@ Only one concurrent request per token is allowed.
 - Bundle download errors no longer include the bundle URL
 - Documented that `debug` output is sensitive
 - Bumped `go-lokalise-api` to v5.1.1: the `X-Api-Token` header is now redacted in `debug` output
+- Upgraded Docker images to Alpine 3.22
 
 **3.1.5 (Jul 13, 2026)**
 - Fixed `details` object empty when retrieving a process for an uploaded file
