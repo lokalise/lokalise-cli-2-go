@@ -10,6 +10,9 @@ on:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: write
     steps:
       - name: Login to Github Container registry
         uses: docker/login-action@v3
