@@ -1,12 +1,19 @@
 package cmd
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+	"strings"
+)
 
 var (
 	cfgFile string
 )
 
 func parseConfig() {
+	viper.SetEnvPrefix("LOKALISE")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_"))
+	viper.AutomaticEnv()
+
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile) // Use config file from the flag.
 	} else {
